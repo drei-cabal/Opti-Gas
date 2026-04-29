@@ -1,0 +1,1750 @@
+[
+  {
+    "name": "ASF",
+    "brand": "Independent",
+    "lat": 7.417726,
+    "lng": 125.835664,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Blue Panda",
+    "brand": "Blue Panda",
+    "lat": 7.462966,
+    "lng": 125.809384,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Blue Panda",
+    "brand": "Independent",
+    "lat": 7.394209,
+    "lng": 125.767709,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Boost",
+    "brand": "Independent",
+    "lat": 7.425173,
+    "lng": 125.828907,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Bumble V",
+    "brand": "Independent",
+    "lat": 7.427959,
+    "lng": 125.825622,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Bumble V",
+    "brand": "Bumble V",
+    "lat": 7.450184,
+    "lng": 125.802705,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Caltex",
+    "brand": "Caltex",
+    "lat": 7.450551,
+    "lng": 125.804434,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Eagle Power Fuels",
+    "brand": "Independent",
+    "lat": 7.463675,
+    "lng": 125.812304,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Eco Oil",
+    "brand": "Independent",
+    "lat": 7.461466,
+    "lng": 125.803314,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Emb Gas",
+    "brand": "Emb",
+    "lat": 7.463865,
+    "lng": 125.812682,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "EMB Gas Station",
+    "brand": "Independent",
+    "lat": 7.459872,
+    "lng": 125.784978,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Flying V",
+    "brand": "Flying V",
+    "lat": 7.435779,
+    "lng": 125.82312,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Flying V",
+    "brand": "Flying V",
+    "lat": 7.448612,
+    "lng": 125.802868,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Flying V",
+    "brand": "Flying V",
+    "lat": 7.476468,
+    "lng": 125.804918,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Flying V",
+    "brand": "Flying V",
+    "lat": 7.45188,
+    "lng": 125.802351,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Flying V",
+    "brand": "Flying V",
+    "lat": 7.44722,
+    "lng": 125.796166,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Fusion",
+    "brand": "Independent",
+    "lat": 7.423225,
+    "lng": 125.791171,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Fusion",
+    "brand": "Fusion",
+    "lat": 7.455056,
+    "lng": 125.796446,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Fusion",
+    "brand": "Independent",
+    "lat": 7.423978,
+    "lng": 125.830043,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Fusion",
+    "brand": "Independent",
+    "lat": 7.44632,
+    "lng": 125.80829,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Fusion",
+    "brand": "Independent",
+    "lat": 7.463559,
+    "lng": 125.802467,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Gas I",
+    "brand": "Independent",
+    "lat": 7.445729,
+    "lng": 125.81188,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Gas Island",
+    "brand": "Gas Island",
+    "lat": 7.422726,
+    "lng": 125.789655,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Gas Island",
+    "brand": "Independent",
+    "lat": 7.455562,
+    "lng": 125.803724,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Gas Island",
+    "brand": "Gas Island",
+    "lat": 7.437316,
+    "lng": 125.809197,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Gas Island",
+    "brand": "Gas Island",
+    "lat": 7.4319,
+    "lng": 125.797051,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Gas Island",
+    "brand": "Independent",
+    "lat": 7.449667,
+    "lng": 125.811007,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Gas Island",
+    "brand": "Independent",
+    "lat": 7.439085,
+    "lng": 125.802663,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Gusty Shone",
+    "brand": "Independent",
+    "lat": 7.398881,
+    "lng": 125.771735,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Island",
+    "brand": "Independent",
+    "lat": 7.468659,
+    "lng": 125.802484,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Jetti",
+    "brand": "Jetti",
+    "lat": 7.461551,
+    "lng": 125.803972,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Jetti",
+    "brand": "Jetti",
+    "lat": 7.43665,
+    "lng": 125.822722,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Jetti",
+    "brand": "Jetti",
+    "lat": 7.442066,
+    "lng": 125.802351,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Jetti",
+    "brand": "Jetti",
+    "lat": 7.459607,
+    "lng": 125.785435,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "MDD Gas",
+    "brand": "Independent",
+    "lat": 7.429255,
+    "lng": 125.824737,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "My Gas",
+    "brand": "Independent",
+    "lat": 7.45293,
+    "lng": 125.802762,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "My Gas",
+    "brand": "Independent",
+    "lat": 7.461571,
+    "lng": 125.804834,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "My Gas",
+    "brand": "My Gas",
+    "lat": 7.427004,
+    "lng": 125.784851,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Oro Fuels",
+    "brand": "Independent",
+    "lat": 7.463545,
+    "lng": 125.79862,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Petron",
+    "brand": "Petron",
+    "lat": 7.46076,
+    "lng": 125.819587,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Petron",
+    "brand": "Petron",
+    "lat": 7.423999,
+    "lng": 125.829347,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Petron",
+    "brand": "Petron",
+    "lat": 7.453946,
+    "lng": 125.802674,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Petron",
+    "brand": "Petron",
+    "lat": 7.460429,
+    "lng": 125.784573,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Petron",
+    "brand": "Petron",
+    "lat": 7.462117,
+    "lng": 125.805282,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Petron",
+    "brand": "Petron",
+    "lat": 7.460519,
+    "lng": 125.798148,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Petron",
+    "brand": "Petron",
+    "lat": 7.462249,
+    "lng": 125.805562,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Petron",
+    "brand": "Petron",
+    "lat": 7.432817,
+    "lng": 125.797788,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Petron",
+    "brand": "Petron",
+    "lat": 7.44367,
+    "lng": 125.774998,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Petron",
+    "brand": "Petron",
+    "lat": 7.445186,
+    "lng": 125.808458,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "PhilFumes",
+    "brand": "Independent",
+    "lat": 7.418034,
+    "lng": 125.799016,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Phoenix",
+    "brand": "Phoenix",
+    "lat": 7.431377,
+    "lng": 125.797574,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Phoenix",
+    "brand": "Phoenix",
+    "lat": 7.464033,
+    "lng": 125.824964,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Phoenix",
+    "brand": "Phoenix",
+    "lat": 7.460264,
+    "lng": 125.820289,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Phoenix",
+    "brand": "Phoenix",
+    "lat": 7.455428,
+    "lng": 125.816538,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Phoenix",
+    "brand": "Phoenix",
+    "lat": 7.455308,
+    "lng": 125.796818,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Pryce Auto Gas",
+    "brand": "Independent",
+    "lat": 7.459032,
+    "lng": 125.81833,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Rheyma",
+    "brand": "Independent",
+    "lat": 7.420584,
+    "lng": 125.857774,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Seaoil",
+    "brand": "Seaoil",
+    "lat": 7.443336,
+    "lng": 125.82466,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Seaoil",
+    "brand": "Seaoil",
+    "lat": 7.42806,
+    "lng": 125.795069,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Seaoil",
+    "brand": "Seaoil",
+    "lat": 7.447748,
+    "lng": 125.810503,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Seaoil",
+    "brand": "Seaoil",
+    "lat": 7.454702,
+    "lng": 125.796158,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Shell",
+    "brand": "Shell",
+    "lat": 7.392409,
+    "lng": 125.766238,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Shell",
+    "brand": "Shell",
+    "lat": 7.445785,
+    "lng": 125.807976,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Shell",
+    "brand": "Shell",
+    "lat": 7.4527,
+    "lng": 125.800327,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Shell",
+    "brand": "Shell",
+    "lat": 7.448585,
+    "lng": 125.807618,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Shell",
+    "brand": "Shell",
+    "lat": 7.442603,
+    "lng": 125.815343,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Shell",
+    "brand": "Shell",
+    "lat": 7.465048,
+    "lng": 125.828156,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Super Kymer",
+    "brand": "Independent",
+    "lat": 7.462484,
+    "lng": 125.805754,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Super Kymer",
+    "brand": "Super Kymer",
+    "lat": 7.45488,
+    "lng": 125.795884,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Tri Star Gas",
+    "brand": "Independent",
+    "lat": 7.444701,
+    "lng": 125.807173,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Uni V",
+    "brand": "Independent",
+    "lat": 7.444126,
+    "lng": 125.813671,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Univ",
+    "brand": "Independent",
+    "lat": 7.450877,
+    "lng": 125.802338,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Unnamed Fuel Station 55",
+    "brand": "Independent",
+    "lat": 7.43628,
+    "lng": 125.774118,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Velox",
+    "brand": "Velox",
+    "lat": 7.444876,
+    "lng": 125.802661,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Velox Energy",
+    "brand": "Independent",
+    "lat": 7.447891,
+    "lng": 125.825254,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Velox Energy",
+    "brand": "Independent",
+    "lat": 7.458656,
+    "lng": 125.79781,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 999.99,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  }
+]

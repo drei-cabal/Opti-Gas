@@ -1,0 +1,159 @@
+from __future__ import annotations
+
+import os
+from pathlib import Path
+
+from dotenv import load_dotenv
+from flask import Flask, jsonify, render_template, request
+
+from utils.algorithms import recommend_stations
+from utils.scoring import RECOMMENDATION_MODES
+from utils.station_store import (
+    StationValidationError,
+    get_station_id,
+    load_landmarks,
+    load_stations,
+    update_station_price,
+)
+
+
+BASE_DIR = Path(__file__).resolve().parent
+
+
+def create_app(test_config: dict | None = None) -> Flask:
+    load_dotenv()
+
+    app = Flask(__name__)
+    app.config.update(
+        ORS_API_KEY=os.getenv("ORS_API_KEY", "").strip(),
+        STATIONS_PATH=BASE_DIR / "data" / "stations" / "stations.json",
+        LANDMARKS_PATH=BASE_DIR / "data" / "landmarks.json",
+    )
+
+    if test_config:
+        app.config.update(test_config)
+
+    @app.get("/")
+    def index():
+        return render_template("index.html")
+
+    @app.get("/api/stations")
+    def api_stations():
+        stations = load_stations(app.config["STATIONS_PATH"])
+        return jsonify(
+            [
+                {
+                    **station,
+                    "station_id": get_station_id(station),
+                }
+                for station in stations
+            ]
+        )
+
+    @app.get("/api/landmarks")
+    def api_landmarks():
+        landmarks = load_landmarks(app.config["LANDMARKS_PATH"])
+        return jsonify(landmarks)
+
+    @app.get("/api/recommend")
+    def api_recommend():
+        try:
+            lat = _parse_float_query("lat")
+            lng = _parse_float_query("lng")
+            radius_km = _parse_float_query("radius_km", default=5.0)
+        except ValueError as exc:
+            return jsonify({"error": str(exc)}), 400
+
+        mode = request.args.get("mode", "opti-route").strip().lower()
+        brand = request.args.get("brand", "any").strip()
+        fuel_type = request.args.get("fuel_type", "Unleaded 91").strip()
+        if mode not in RECOMMENDATION_MODES:
+            return jsonify({"error": "Unsupported mode."}), 400
+        if radius_km <= 0:
+            return jsonify({"error": "radius_km must be positive."}), 400
+        if not fuel_type:
+            return jsonify({"error": "fuel_type is required."}), 400
+
+        stations = load_stations(app.config["STATIONS_PATH"])
+        recommendation = recommend_stations(
+            stations=stations,
+            origin=(lat, lng),
+            mode=mode,
+            brand=brand,
+            fuel_type=fuel_type,
+            radius_km=radius_km,
+            ors_api_key=app.config["ORS_API_KEY"],
+        )
+        return jsonify(recommendation)
+
+    @app.post("/api/update-price")
+    def api_update_price():
+        payload = request.get_json(silent=True) or {}
+        station_id = str(payload.get("station_id", "")).strip()
+        station_name = str(payload.get("station_name", "")).strip()
+        fuel_type = str(payload.get("fuel_type", "")).strip()
+        new_price = payload.get("new_price")
+
+        if not station_name and not station_id:
+            return jsonify({"error": "station_name is required."}), 400
+        if not fuel_type:
+            return jsonify({"error": "fuel_type is required."}), 400
+
+        try:
+            new_price = float(new_price)
+        except (TypeError, ValueError):
+            return jsonify({"error": "new_price must be numeric."}), 400
+
+        if new_price <= 0:
+            return jsonify({"error": "new_price must be positive."}), 400
+
+        try:
+            updated_station = update_station_price(
+                app.config["STATIONS_PATH"],
+                station_name=station_name,
+                station_id=station_id or None,
+                fuel_type=fuel_type,
+                new_price=new_price,
+            )
+        except FileNotFoundError:
+            return jsonify({"error": "Station data file not found."}), 500
+        except KeyError:
+            return jsonify({"error": "Unknown station."}), 404
+        except StationValidationError as exc:
+            return jsonify({"error": str(exc)}), 400
+
+        updated_fuel = next(
+            fuel
+            for fuel in updated_station["fuels"]
+            if fuel["fuel_type"] == fuel_type
+        )
+        return jsonify(
+            {
+                "success": True,
+                "last_updated": updated_fuel["last_updated"],
+                "station": updated_station,
+            }
+        )
+
+    return app
+
+
+def _parse_float_query(name: str, default: float | None = None) -> float:
+    raw = request.args.get(name, None if default is None else str(default))
+    if raw is None or str(raw).strip() == "":
+        raise ValueError(f"{name} is required.")
+    try:
+        return float(raw)
+    except ValueError as exc:
+        raise ValueError(f"{name} must be numeric.") from exc
+
+
+app = create_app()
+
+
+if __name__ == "__main__":
+    app.run(
+        host=os.getenv("FLASK_HOST", "0.0.0.0"),
+        port=int(os.getenv("FLASK_PORT", "5000")),
+        debug=os.getenv("FLASK_DEBUG", "0") == "1",
+    )

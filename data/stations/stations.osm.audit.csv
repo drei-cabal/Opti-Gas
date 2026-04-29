@@ -1,0 +1,77 @@
+score,name,brand,lat,lng,issue_types,notes
+155,My Gas,Independent,7.461571,125.804834,"generic_brand,duplicate_name,nearby_duplicate,placeholder_prices",Brand could not be confidently inferred from OSM tags. Same station name appears 3 times; nearest is 988m away. Nearby candidate within 144m: Super Kymer. Fuel prices are placeholders and must be replaced.
+155,Super Kymer,Independent,7.462484,125.805754,"generic_brand,duplicate_name,nearby_duplicate,placeholder_prices",Brand could not be confidently inferred from OSM tags. Same station name appears 2 times; nearest is 1378m away. Nearby candidate within 144m: My Gas. Fuel prices are placeholders and must be replaced.
+145,Unnamed Fuel Station 55,Independent,7.43628,125.774118,"unnamed,generic_brand,placeholder_prices",Generated fallback name from OSM; needs manual naming. Brand could not be confidently inferred from OSM tags. Fuel prices are placeholders and must be replaced.
+120,Petron,Petron,7.462117,125.805282,"duplicate_name,nearby_duplicate,placeholder_prices",Same station name appears 10 times; nearest is 34m away. Nearby candidate within 34m: Petron. Fuel prices are placeholders and must be replaced.
+120,Petron,Petron,7.462249,125.805562,"duplicate_name,nearby_duplicate,placeholder_prices",Same station name appears 10 times; nearest is 34m away. Nearby candidate within 34m: Petron. Fuel prices are placeholders and must be replaced.
+100,Blue Panda,Independent,7.394209,125.767709,"generic_brand,duplicate_name,placeholder_prices",Brand could not be confidently inferred from OSM tags. Same station name appears 2 times; nearest is 8920m away. Fuel prices are placeholders and must be replaced.
+100,Bumble V,Independent,7.427959,125.825622,"generic_brand,duplicate_name,placeholder_prices",Brand could not be confidently inferred from OSM tags. Same station name appears 2 times; nearest is 3534m away. Fuel prices are placeholders and must be replaced.
+100,Fusion,Independent,7.423225,125.791171,"generic_brand,duplicate_name,placeholder_prices",Brand could not be confidently inferred from OSM tags. Same station name appears 5 times; nearest is 3187m away. Fuel prices are placeholders and must be replaced.
+100,Fusion,Independent,7.423978,125.830043,"generic_brand,duplicate_name,placeholder_prices",Brand could not be confidently inferred from OSM tags. Same station name appears 5 times; nearest is 3453m away. Fuel prices are placeholders and must be replaced.
+100,Fusion,Independent,7.44632,125.80829,"generic_brand,duplicate_name,placeholder_prices",Brand could not be confidently inferred from OSM tags. Same station name appears 5 times; nearest is 1628m away. Fuel prices are placeholders and must be replaced.
+100,Fusion,Independent,7.463559,125.802467,"generic_brand,duplicate_name,placeholder_prices",Brand could not be confidently inferred from OSM tags. Same station name appears 5 times; nearest is 1155m away. Fuel prices are placeholders and must be replaced.
+100,Gas Island,Independent,7.455562,125.803724,"generic_brand,duplicate_name,placeholder_prices",Brand could not be confidently inferred from OSM tags. Same station name appears 6 times; nearest is 1037m away. Fuel prices are placeholders and must be replaced.
+100,Gas Island,Independent,7.449667,125.811007,"generic_brand,duplicate_name,placeholder_prices",Brand could not be confidently inferred from OSM tags. Same station name appears 6 times; nearest is 1037m away. Fuel prices are placeholders and must be replaced.
+100,Gas Island,Independent,7.439085,125.802663,"generic_brand,duplicate_name,placeholder_prices",Brand could not be confidently inferred from OSM tags. Same station name appears 6 times; nearest is 747m away. Fuel prices are placeholders and must be replaced.
+100,My Gas,Independent,7.45293,125.802762,"generic_brand,duplicate_name,placeholder_prices",Brand could not be confidently inferred from OSM tags. Same station name appears 3 times; nearest is 988m away. Fuel prices are placeholders and must be replaced.
+100,Velox Energy,Independent,7.447891,125.825254,"generic_brand,duplicate_name,placeholder_prices",Brand could not be confidently inferred from OSM tags. Same station name appears 2 times; nearest is 3254m away. Fuel prices are placeholders and must be replaced.
+100,Velox Energy,Independent,7.458656,125.79781,"generic_brand,duplicate_name,placeholder_prices",Brand could not be confidently inferred from OSM tags. Same station name appears 2 times; nearest is 3254m away. Fuel prices are placeholders and must be replaced.
+65,Blue Panda,Blue Panda,7.462966,125.809384,"duplicate_name,placeholder_prices",Same station name appears 2 times; nearest is 8920m away. Fuel prices are placeholders and must be replaced.
+65,Bumble V,Bumble V,7.450184,125.802705,"duplicate_name,placeholder_prices",Same station name appears 2 times; nearest is 3534m away. Fuel prices are placeholders and must be replaced.
+65,Flying V,Flying V,7.435779,125.82312,"duplicate_name,placeholder_prices",Same station name appears 5 times; nearest is 2650m away. Fuel prices are placeholders and must be replaced.
+65,Flying V,Flying V,7.448612,125.802868,"duplicate_name,placeholder_prices",Same station name appears 5 times; nearest is 368m away. Fuel prices are placeholders and must be replaced.
+65,Flying V,Flying V,7.476468,125.804918,"duplicate_name,placeholder_prices",Same station name appears 5 times; nearest is 2749m away. Fuel prices are placeholders and must be replaced.
+65,Flying V,Flying V,7.45188,125.802351,"duplicate_name,placeholder_prices",Same station name appears 5 times; nearest is 368m away. Fuel prices are placeholders and must be replaced.
+65,Flying V,Flying V,7.44722,125.796166,"duplicate_name,placeholder_prices",Same station name appears 5 times; nearest is 755m away. Fuel prices are placeholders and must be replaced.
+65,Fusion,Fusion,7.455056,125.796446,"duplicate_name,placeholder_prices",Same station name appears 5 times; nearest is 1155m away. Fuel prices are placeholders and must be replaced.
+65,Gas Island,Gas Island,7.422726,125.789655,"duplicate_name,placeholder_prices",Same station name appears 6 times; nearest is 1306m away. Fuel prices are placeholders and must be replaced.
+65,Gas Island,Gas Island,7.437316,125.809197,"duplicate_name,placeholder_prices",Same station name appears 6 times; nearest is 747m away. Fuel prices are placeholders and must be replaced.
+65,Gas Island,Gas Island,7.4319,125.797051,"duplicate_name,placeholder_prices",Same station name appears 6 times; nearest is 1011m away. Fuel prices are placeholders and must be replaced.
+65,Jetti,Jetti,7.461551,125.803972,"duplicate_name,placeholder_prices",Same station name appears 4 times; nearest is 2055m away. Fuel prices are placeholders and must be replaced.
+65,Jetti,Jetti,7.43665,125.822722,"duplicate_name,placeholder_prices",Same station name appears 4 times; nearest is 2325m away. Fuel prices are placeholders and must be replaced.
+65,Jetti,Jetti,7.442066,125.802351,"duplicate_name,placeholder_prices",Same station name appears 4 times; nearest is 2174m away. Fuel prices are placeholders and must be replaced.
+65,Jetti,Jetti,7.459607,125.785435,"duplicate_name,placeholder_prices",Same station name appears 4 times; nearest is 2055m away. Fuel prices are placeholders and must be replaced.
+65,My Gas,My Gas,7.427004,125.784851,"duplicate_name,placeholder_prices",Same station name appears 3 times; nearest is 3494m away. Fuel prices are placeholders and must be replaced.
+65,Petron,Petron,7.46076,125.819587,"duplicate_name,placeholder_prices",Same station name appears 10 times; nearest is 1555m away. Fuel prices are placeholders and must be replaced.
+65,Petron,Petron,7.423999,125.829347,"duplicate_name,placeholder_prices",Same station name appears 10 times; nearest is 3295m away. Fuel prices are placeholders and must be replaced.
+65,Petron,Petron,7.453946,125.802674,"duplicate_name,placeholder_prices",Same station name appears 10 times; nearest is 885m away. Fuel prices are placeholders and must be replaced.
+65,Petron,Petron,7.460429,125.784573,"duplicate_name,placeholder_prices",Same station name appears 10 times; nearest is 1497m away. Fuel prices are placeholders and must be replaced.
+65,Petron,Petron,7.460519,125.798148,"duplicate_name,placeholder_prices",Same station name appears 10 times; nearest is 806m away. Fuel prices are placeholders and must be replaced.
+65,Petron,Petron,7.432817,125.797788,"duplicate_name,placeholder_prices",Same station name appears 10 times; nearest is 1810m away. Fuel prices are placeholders and must be replaced.
+65,Petron,Petron,7.44367,125.774998,"duplicate_name,placeholder_prices",Same station name appears 10 times; nearest is 2142m away. Fuel prices are placeholders and must be replaced.
+65,Petron,Petron,7.445186,125.808458,"duplicate_name,placeholder_prices",Same station name appears 10 times; nearest is 1164m away. Fuel prices are placeholders and must be replaced.
+65,Phoenix,Phoenix,7.431377,125.797574,"duplicate_name,placeholder_prices",Same station name appears 5 times; nearest is 2662m away. Fuel prices are placeholders and must be replaced.
+65,Phoenix,Phoenix,7.464033,125.824964,"duplicate_name,placeholder_prices",Same station name appears 5 times; nearest is 664m away. Fuel prices are placeholders and must be replaced.
+65,Phoenix,Phoenix,7.460264,125.820289,"duplicate_name,placeholder_prices",Same station name appears 5 times; nearest is 664m away. Fuel prices are placeholders and must be replaced.
+65,Phoenix,Phoenix,7.455428,125.816538,"duplicate_name,placeholder_prices",Same station name appears 5 times; nearest is 678m away. Fuel prices are placeholders and must be replaced.
+65,Phoenix,Phoenix,7.455308,125.796818,"duplicate_name,placeholder_prices",Same station name appears 5 times; nearest is 2174m away. Fuel prices are placeholders and must be replaced.
+65,Seaoil,Seaoil,7.443336,125.82466,"duplicate_name,placeholder_prices",Same station name appears 4 times; nearest is 1636m away. Fuel prices are placeholders and must be replaced.
+65,Seaoil,Seaoil,7.42806,125.795069,"duplicate_name,placeholder_prices",Same station name appears 4 times; nearest is 2773m away. Fuel prices are placeholders and must be replaced.
+65,Seaoil,Seaoil,7.447748,125.810503,"duplicate_name,placeholder_prices",Same station name appears 4 times; nearest is 1636m away. Fuel prices are placeholders and must be replaced.
+65,Seaoil,Seaoil,7.454702,125.796158,"duplicate_name,placeholder_prices",Same station name appears 4 times; nearest is 1761m away. Fuel prices are placeholders and must be replaced.
+65,Shell,Shell,7.392409,125.766238,"duplicate_name,placeholder_prices",Same station name appears 6 times; nearest is 7510m away. Fuel prices are placeholders and must be replaced.
+65,Shell,Shell,7.445785,125.807976,"duplicate_name,placeholder_prices",Same station name appears 6 times; nearest is 314m away. Fuel prices are placeholders and must be replaced.
+65,Shell,Shell,7.4527,125.800327,"duplicate_name,placeholder_prices",Same station name appears 6 times; nearest is 925m away. Fuel prices are placeholders and must be replaced.
+65,Shell,Shell,7.448585,125.807618,"duplicate_name,placeholder_prices",Same station name appears 6 times; nearest is 314m away. Fuel prices are placeholders and must be replaced.
+65,Shell,Shell,7.442603,125.815343,"duplicate_name,placeholder_prices",Same station name appears 6 times; nearest is 886m away. Fuel prices are placeholders and must be replaced.
+65,Shell,Shell,7.465048,125.828156,"duplicate_name,placeholder_prices",Same station name appears 6 times; nearest is 2868m away. Fuel prices are placeholders and must be replaced.
+65,Super Kymer,Super Kymer,7.45488,125.795884,"duplicate_name,placeholder_prices",Same station name appears 2 times; nearest is 1378m away. Fuel prices are placeholders and must be replaced.
+55,ASF,Independent,7.417726,125.835664,"generic_brand,placeholder_prices",Brand could not be confidently inferred from OSM tags. Fuel prices are placeholders and must be replaced.
+55,Boost,Independent,7.425173,125.828907,"generic_brand,placeholder_prices",Brand could not be confidently inferred from OSM tags. Fuel prices are placeholders and must be replaced.
+55,Eagle Power Fuels,Independent,7.463675,125.812304,"generic_brand,placeholder_prices",Brand could not be confidently inferred from OSM tags. Fuel prices are placeholders and must be replaced.
+55,Eco Oil,Independent,7.461466,125.803314,"generic_brand,placeholder_prices",Brand could not be confidently inferred from OSM tags. Fuel prices are placeholders and must be replaced.
+55,EMB Gas Station,Independent,7.459872,125.784978,"generic_brand,placeholder_prices",Brand could not be confidently inferred from OSM tags. Fuel prices are placeholders and must be replaced.
+55,Gas I,Independent,7.445729,125.81188,"generic_brand,placeholder_prices",Brand could not be confidently inferred from OSM tags. Fuel prices are placeholders and must be replaced.
+55,Gusty Shone,Independent,7.398881,125.771735,"generic_brand,placeholder_prices",Brand could not be confidently inferred from OSM tags. Fuel prices are placeholders and must be replaced.
+55,Island,Independent,7.468659,125.802484,"generic_brand,placeholder_prices",Brand could not be confidently inferred from OSM tags. Fuel prices are placeholders and must be replaced.
+55,MDD Gas,Independent,7.429255,125.824737,"generic_brand,placeholder_prices",Brand could not be confidently inferred from OSM tags. Fuel prices are placeholders and must be replaced.
+55,Oro Fuels,Independent,7.463545,125.79862,"generic_brand,placeholder_prices",Brand could not be confidently inferred from OSM tags. Fuel prices are placeholders and must be replaced.
+55,PhilFumes,Independent,7.418034,125.799016,"generic_brand,placeholder_prices",Brand could not be confidently inferred from OSM tags. Fuel prices are placeholders and must be replaced.
+55,Pryce Auto Gas,Independent,7.459032,125.81833,"generic_brand,placeholder_prices",Brand could not be confidently inferred from OSM tags. Fuel prices are placeholders and must be replaced.
+55,Rheyma,Independent,7.420584,125.857774,"generic_brand,placeholder_prices",Brand could not be confidently inferred from OSM tags. Fuel prices are placeholders and must be replaced.
+55,Tri Star Gas,Independent,7.444701,125.807173,"generic_brand,placeholder_prices",Brand could not be confidently inferred from OSM tags. Fuel prices are placeholders and must be replaced.
+55,Uni V,Independent,7.444126,125.813671,"generic_brand,placeholder_prices",Brand could not be confidently inferred from OSM tags. Fuel prices are placeholders and must be replaced.
+55,Univ,Independent,7.450877,125.802338,"generic_brand,placeholder_prices",Brand could not be confidently inferred from OSM tags. Fuel prices are placeholders and must be replaced.
+20,Caltex,Caltex,7.450551,125.804434,placeholder_prices,Fuel prices are placeholders and must be replaced.
+20,Emb Gas,Emb,7.463865,125.812682,placeholder_prices,Fuel prices are placeholders and must be replaced.
+20,Velox,Velox,7.444876,125.802661,placeholder_prices,Fuel prices are placeholders and must be replaced.

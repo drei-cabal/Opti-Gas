@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <title>OPTI-GAS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  </head>
+  <body>
+    <div id="appShell" class="app-shell" data-sheet-state="collapsed">
+      <header class="top-bar">
+        <label class="search-shell" for="stationSearchInput">
+          <svg class="search-shell__icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M10.5 4a6.5 6.5 0 1 0 4.09 11.55l4.43 4.43 1.41-1.41-4.43-4.43A6.5 6.5 0 0 0 10.5 4Zm0 2a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9Z"
+            />
+          </svg>
+          <input
+            id="stationSearchInput"
+            class="search-shell__input"
+            type="search"
+            placeholder="Search gas stations"
+            autocomplete="off"
+          />
+          <button id="clearSearchButton" class="search-shell__clear hidden" type="button" aria-label="Clear search">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M6.7 5.3 5.3 6.7 10.59 12l-5.3 5.3 1.41 1.4 5.3-5.29 5.3 5.3 1.4-1.41L13.41 12l5.3-5.3-1.41-1.4-5.3 5.29-5.3-5.3Z"
+              />
+            </svg>
+          </button>
+        </label>
+      </header>
+
+      <main id="map" aria-label="Station map"></main>
+
+      <div id="warningBanner" class="banner hidden" role="status" aria-live="polite"></div>
+
+      <button id="locationPrompt" class="location-prompt hidden" type="button">
+        Use my location
+      </button>
+
+      <button id="landmarkPrompt" class="location-prompt location-prompt--secondary hidden" type="button">
+        Choose a landmark instead
+      </button>
+
+      <button id="recenterButton" class="recenter-button" type="button" aria-label="Recenter map">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M11 2h2v2.07A8 8 0 0 1 19.93 11H22v2h-2.07A8 8 0 0 1 13 19.93V22h-2v-2.07A8 8 0 0 1 4.07 13H2v-2h2.07A8 8 0 0 1 11 4.07V2Zm1 4a6 6 0 1 0 0 12 6 6 0 0 0 0-12Zm0 3a3 3 0 1 1 0 6 3 3 0 0 1 0-6Z"
+          />
+        </svg>
+      </button>
+
+      <section id="emptyState" class="empty-state hidden" aria-live="polite">
+        <h2>No stations found nearby.</h2>
+        <p>Try a wider radius or clear the brand filter.</p>
+        <div class="empty-state__actions">
+          <button id="expandRadiusButton" class="ghost-button" type="button">Expand radius</button>
+          <button id="clearBrandButton" class="ghost-button" type="button">Any brand</button>
+        </div>
+      </section>
+
+      <section
+        id="bottomSheet"
+        class="bottom-sheet"
+        data-state="collapsed"
+        aria-label="Station results"
+      >
+        <button id="sheetHandle" class="sheet-handle" type="button" aria-label="Expand station details">
+          <span></span>
+        </button>
+
+        <div class="sheet-summary">
+          <div class="sheet-summary__text">
+            <p id="summaryBadge" class="summary-badge">Awaiting location</p>
+            <h1 id="summaryTitle">Find the best station near you</h1>
+            <p id="summaryMeta" class="summary-meta">
+              Enable GPS or pick a landmark to start routing.
+            </p>
+          </div>
+          <button id="summaryDirections" class="primary-button" type="button" disabled>
+            Get Directions
+          </button>
+        </div>
+
+        <div class="sheet-body">
+          <section class="sheet-panel">
+            <div class="panel-heading">
+              <h2>Stations</h2>
+              <button id="showFiltersInline" class="text-button" type="button">Filters</button>
+            </div>
+            <div id="candidateList" class="candidate-list"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="filterSheet" class="overlay-sheet hidden" aria-label="Filters">
+        <div class="overlay-sheet__scrim" data-close-sheet="filterSheet"></div>
+        <div class="overlay-sheet__panel">
+          <div class="overlay-sheet__header">
+            <h2>Filters</h2>
+            <button class="text-button" type="button" data-close-sheet="filterSheet">Close</button>
+          </div>
+
+          <div class="field-group">
+            <label>Mode</label>
+            <div id="modeButtons" class="choice-row">
+              <button class="choice-pill active" data-mode="opti-route" type="button">Opti-Route</button>
+              <button class="choice-pill" data-mode="shortest" type="button">Shortest</button>
+              <button class="choice-pill" data-mode="cheapest" type="button">Cheapest</button>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label>Brand</label>
+            <div id="brandButtons" class="choice-row wrap">
+              <button class="choice-pill active" data-brand="any" type="button">Any</button>
+              <button class="choice-pill" data-brand="Shell" type="button">Shell</button>
+              <button class="choice-pill" data-brand="Petron" type="button">Petron</button>
+              <button class="choice-pill" data-brand="Phoenix" type="button">Phoenix</button>
+              <button class="choice-pill" data-brand="Caltex" type="button">Caltex</button>
+              <button class="choice-pill" data-brand="Seaoil" type="button">Seaoil</button>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label>Fuel Type</label>
+            <div id="fuelTypeButtons" class="choice-row wrap"></div>
+          </div>
+
+          <div class="field-group">
+            <label for="radiusInput">Radius <span id="radiusValue">5 km</span></label>
+            <input id="radiusInput" type="range" min="1" max="20" step="1" value="5" />
+          </div>
+
+          <button id="applyFiltersButton" class="primary-button primary-button--full" type="button">
+            Apply Filters
+          </button>
+        </div>
+      </section>
+
+      <section id="landmarkSheet" class="overlay-sheet hidden" aria-label="Landmark picker">
+        <div class="overlay-sheet__scrim" data-close-sheet="landmarkSheet"></div>
+        <div class="overlay-sheet__panel">
+          <div class="overlay-sheet__header">
+            <h2>Choose a landmark</h2>
+            <button class="text-button" type="button" data-close-sheet="landmarkSheet">Close</button>
+          </div>
+          <div id="landmarkList" class="landmark-list"></div>
+        </div>
+      </section>
+
+      <section id="priceModal" class="modal hidden" aria-label="Update price">
+        <div class="modal__scrim" data-close-sheet="priceModal"></div>
+        <div class="modal__card">
+          <div class="overlay-sheet__header">
+            <h2>Update Price</h2>
+            <button class="text-button" type="button" data-close-sheet="priceModal">Close</button>
+          </div>
+          <p id="priceModalStation" class="modal__subhead"></p>
+          <p id="priceModalCurrent" class="modal__meta"></p>
+          <label for="priceInput">New price</label>
+          <input id="priceInput" type="number" min="1" step="0.01" />
+          <div class="modal__actions">
+            <button class="ghost-button" type="button" data-close-sheet="priceModal">Cancel</button>
+            <button id="submitPriceButton" class="primary-button" type="button">Submit</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <script type="module" src="{{ url_for('static', filename='js/ui.js') }}"></script>
+  </body>
+</html>
