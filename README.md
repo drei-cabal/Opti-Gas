@@ -250,38 +250,6 @@ This project demonstrates:
 
 In other words, the web app is the interface, but the core system behavior is driven by algorithm selection, complexity tradeoffs, and structured decision logic.
 
-## Demo Checklist
-
-Before presenting, verify these items:
-
-1. `pytest` runs with the project config in `pytest.ini`
-2. `/api/recommend` returns the scoring breakdown fields needed to explain the algorithm
-3. The recommendation flow is easy to describe as:
-   - filter
-   - route
-   - normalize
-   - weight
-   - rank
-4. The fallback route path is explained as a deliberate algorithm, not a bug
-5. The station identity rule is explained as coordinate-based, not name-based
-6. The response contract includes `candidate_count`, `scoring_mode`, `preset_used`, and `reference_price_source`
-
-For the subject paper, the best comparison table is still:
-
-1. `save-time`
-2. `save-money`
-3. `opti-route`
-
-For each mode, record:
-
-- route distance
-- estimated travel time
-- fuel price
-- total economic cost
-- final score
-
-That gives you a clean way to discuss correctness, tradeoffs, and complexity without overselling the frontend.
-
 ## Seed From OSM
 
 To pull Tagum fuel-station candidates from OpenStreetMap into a review file:
@@ -346,3 +314,18 @@ Each station now stores one location with multiple fuel records in `data/station
   ]
 }
 ```
+
+## Credits And Attributions
+
+OPTI-GAS should keep credits in two places:
+
+- this `README.md` for maintainers and reviewers
+- the in-app `Garage -> Credits and Attributions` entry for end users
+
+Current attributions:
+
+- OpenStreetMap: map data source; © OpenStreetMap contributors
+- OpenRouteService: road-routing and ETA provider
+- Google Maps: external navigation handoff target for `Get Directions`
+
+If map providers, routing providers, seeded data sources, or major framework dependencies change, this section and the in-app credits should be updated in the same task.

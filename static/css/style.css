@@ -1080,6 +1080,7 @@ input[type="range"] {
 .modal__card--wide {
   max-height: min(88vh, 720px);
   overflow: auto;
+  padding-bottom: 16px;
 }
 
 .garage-view {
@@ -1258,6 +1259,70 @@ input[type="range"] {
 .garage-button--subtle {
   background: rgba(47, 111, 209, 0.1);
   color: var(--color-primary);
+}
+
+.garage-link-card {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: rgba(248, 250, 253, 0.96);
+  color: var(--color-text);
+  text-align: left;
+}
+
+.garage-link-card__text {
+  display: grid;
+  gap: 4px;
+}
+
+.garage-link-card__text strong {
+  font-size: 13px;
+}
+
+.garage-link-card__text span {
+  color: var(--color-secondary);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.garage-link-card__chevron {
+  color: var(--color-secondary);
+  font-size: 24px;
+  line-height: 1;
+}
+
+.credits-list {
+  display: grid;
+  gap: 12px;
+}
+
+.credits-item {
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-surface);
+}
+
+.credits-item h3 {
+  margin: 0 0 4px;
+  font-size: 14px;
+}
+
+.credits-item p {
+  margin: 0;
+  color: var(--color-secondary);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.credits-inline-code {
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 11px;
 }
 
 .app-nav {

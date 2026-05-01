@@ -174,6 +174,7 @@ const elements = {
   vehicleCountMeta: document.getElementById("vehicleCountMeta"),
   garageVehicleList: document.getElementById("garageVehicleList"),
   addVehicleButton: document.getElementById("addVehicleButton"),
+  openCreditsButton: document.getElementById("openCreditsButton"),
   vehicleModal: document.getElementById("vehicleModal"),
   vehicleModalTitle: document.getElementById("vehicleModalTitle"),
   vehicleNicknameInput: document.getElementById("vehicleNicknameInput"),
@@ -184,6 +185,7 @@ const elements = {
   vehicleKmPerLiterInput: document.getElementById("vehicleKmPerLiterInput"),
   saveVehicleButton: document.getElementById("saveVehicleButton"),
   deleteVehicleButton: document.getElementById("deleteVehicleButton"),
+  creditsModal: document.getElementById("creditsModal"),
   showMapViewButton: document.getElementById("showMapViewButton"),
   showGarageViewButton: document.getElementById("showGarageViewButton"),
 };
@@ -276,6 +278,7 @@ function bindEvents() {
   elements.showMapViewButton.addEventListener("click", openMapView);
   elements.showGarageViewButton.addEventListener("click", openGarageView);
   elements.addVehicleButton.addEventListener("click", () => openVehicleModal());
+  elements.openCreditsButton.addEventListener("click", () => openSheet(elements.creditsModal));
   elements.vehicleFamilySelect.addEventListener("change", handleVehicleFamilyChange);
   elements.vehicleSubtypeSelect.addEventListener("change", handleVehicleSubtypeChange);
   elements.saveVehicleButton.addEventListener("click", saveVehicleProfile);
@@ -1345,6 +1348,7 @@ function renderViewState() {
   if (isGarageView) {
     closeSheet(elements.filterSheet);
     closeSheet(elements.priceModal);
+    closeSheet(elements.creditsModal);
   }
 }
 

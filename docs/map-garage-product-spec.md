@@ -48,6 +48,7 @@ It should:
 - allow exactly one active vehicle at a time
 - let the user edit or delete saved vehicles anytime
 - let the user switch the active vehicle anytime
+- include a small `About OPTI-GAS` area with a `Credits and Attributions` entry
 
 If the active vehicle changes while the map is open, the recommendation should refresh immediately.
 
@@ -219,5 +220,16 @@ When visual styling changes materially, this document should be updated in the s
 ## Documentation Rule
 
 If the product interaction between Map and Garage changes, this document must be updated in the same task.
+
+Credits should remain duplicated in:
+
+- `README.md` for repository-level attribution
+- the in-app Garage credits surface for end-user visibility
+
+The in-app credits surface should list only:
+
+- OpenStreetMap
+- OpenRouteService
+- Google Maps
 
 The paired design-engineering skill for this product surface lives at `skills/opti-gas-ui-design-engineering/SKILL.md`.

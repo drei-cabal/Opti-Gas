@@ -246,6 +246,19 @@
             </div>
           </div>
         </section>
+
+        <section class="garage-panel">
+          <div class="garage-panel__header">
+            <h2>About OPTI-GAS</h2>
+          </div>
+          <button id="openCreditsButton" class="garage-link-card" type="button">
+            <span class="garage-link-card__text">
+              <strong>Credits and attributions</strong>
+              <span>View the libraries, map data, routing provider, and navigation services used by the app.</span>
+            </span>
+            <span class="garage-link-card__chevron" aria-hidden="true">›</span>
+          </button>
+        </section>
       </section>
 
       <section id="vehicleModal" class="modal hidden" aria-label="Vehicle setup">
@@ -254,7 +267,6 @@
           <div class="modal__header modal__header--vehicle">
             <div class="modal__header-top">
               <h2 id="vehicleModalTitle">Add Vehicle</h2>
-              <button class="text-button modal__close" type="button" data-close-sheet="vehicleModal">Close</button>
             </div>
             <p class="modal__helper">Update the vehicle profile used for personalized recommendations.</p>
           </div>
@@ -301,6 +313,33 @@
               <button class="ghost-button" type="button" data-close-sheet="vehicleModal">Cancel</button>
               <button id="saveVehicleButton" class="primary-button" type="button">Save Vehicle</button>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="creditsModal" class="modal hidden" aria-label="Credits and attributions">
+        <div class="modal__scrim" data-close-sheet="creditsModal"></div>
+        <div class="modal__card modal__card--wide">
+          <div class="modal__header">
+            <div class="modal__header-top">
+              <h2>Credits and Attributions</h2>
+              <button class="text-button modal__close" type="button" data-close-sheet="creditsModal">Close</button>
+            </div>
+          </div>
+
+          <div class="credits-list">
+            <article class="credits-item">
+              <h3>OpenStreetMap</h3>
+              <p>Map data source. © OpenStreetMap contributors.</p>
+            </article>
+            <article class="credits-item">
+              <h3>OpenRouteService</h3>
+              <p>Road-routing and ETA provider.</p>
+            </article>
+            <article class="credits-item">
+              <h3>Google Maps</h3>
+              <p>External navigation handoff target for <span class="credits-inline-code">Get Directions</span>.</p>
+            </article>
           </div>
         </div>
       </section>
