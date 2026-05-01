@@ -12,6 +12,7 @@ pytest-cache-files-*/
 tmp*/
 
 archive/
+skills/
 
 .vscode/
 .idea/
