@@ -6,7 +6,7 @@ OPTI-GAS is a mobile-first Flask + Leaflet web app for Tagum City drivers. It op
 
 - Backend: Flask
 - Frontend: HTML, CSS, vanilla JavaScript, Leaflet.js
-- Data: `data/stations/stations.json`, `data/landmarks.json`
+- Data: `data/stations/stations.json`
 - Routing: OpenRouteService with Haversine fallback
 
 ## Quick Start
@@ -60,6 +60,29 @@ pytest
 ## Algorithms Used
 
 This project is not only a Flask + Leaflet application. Its core behavior is driven by filtering, routing, ranking, and fallback-estimation algorithms that determine which fuel station should be recommended to the user.
+
+For the current Opti-Route redesign specification, see `docs/opti-route-formula-spec.md`.
+
+For the current Map + Garage product interaction, saved-vehicle behavior, and first-run gating rules, see `docs/map-garage-product-spec.md`.
+
+For repo-local UI design engineering guidance used for this mobile map experience, see `skills/opti-gas-ui-design-engineering/SKILL.md`.
+
+## Current UI Notes
+
+The current frontend direction is:
+
+- map-first mobile layout
+- dark chrome for search, advisory, prompts, and bottom navigation
+- muted cool blue-gray surfaces for sheets, cards, filters, and Garage
+- white reserved for highest-elevation surfaces such as modals
+- amber reserved for recommendation and active-state emphasis
+
+Current map behavior notes:
+
+- the app requests the user's current browser geolocation on load
+- there is no landmark picker in the current product scope
+- the collapsed station sheet defaults to a compact recommendation summary
+- tank status lives only in the Map filter flow, not in the saved vehicle model
 
 ### 1. Candidate Filtering
 
@@ -130,18 +153,27 @@ Time complexity:
 
 ### 3. Recommendation / Ranking Algorithm
 
-After computing route and fuel data for every candidate station, the system ranks stations according to the selected mode:
+After computing route and fuel data for every candidate station, the system ranks stations using preset-based weighted scoring:
 
-- `shortest`: minimize route distance
-- `cheapest`: minimize fuel price
-- `opti-route`: minimize estimated total trip cost
+- `opti-route`
+- `save-money`
+- `save-time`
+- `balanced`
 
-The `opti-route` mode uses:
+The current formula uses:
 
 ```text
-trip_cost = (driving_liters + liters_to_fill) * price_per_liter
-driving_liters = route_distance_km / default_km_per_liter
+economic_cost = travel_fuel_cost + purchase_cost
+travel_fuel_cost = (distance_km / km_per_liter) * reference_price
+purchase_cost = liters_to_buy * station_price
+
+final_score =
+    w_cost * norm_cost +
+    w_time * norm_time +
+    w_distance * norm_distance
 ```
+
+Trip assumptions are now sourced from the active saved vehicle in `Garage` plus the current Map tank-status override, rather than from always-visible manual sliders.
 
 Relevant file:
 
@@ -218,36 +250,37 @@ This project demonstrates:
 
 In other words, the web app is the interface, but the core system behavior is driven by algorithm selection, complexity tradeoffs, and structured decision logic.
 
-## Next Step
+## Demo Checklist
 
-The strongest next step for this project is to add a formal algorithm evaluation section and compare recommendation quality across modes.
+Before presenting, verify these items:
 
-Recommended implementation:
+1. `pytest` runs with the project config in `pytest.ini`
+2. `/api/recommend` returns the scoring breakdown fields needed to explain the algorithm
+3. The recommendation flow is easy to describe as:
+   - filter
+   - route
+   - normalize
+   - weight
+   - rank
+4. The fallback route path is explained as a deliberate algorithm, not a bug
+5. The station identity rule is explained as coordinate-based, not name-based
+6. The response contract includes `candidate_count`, `scoring_mode`, `preset_used`, and `reference_price_source`
 
-1. Prepare a fixed test set of sample user locations in Tagum City
-2. Run the three recommendation modes:
-   - `shortest`
-   - `cheapest`
-   - `opti-route`
-3. Record for each result:
-   - route distance
-   - estimated travel time
-   - fuel price
-   - estimated total trip cost
-4. Compare which mode performs best for different user priorities
-5. Present the results as tables/charts in the project paper or demo
+For the subject paper, the best comparison table is still:
 
-Why this is the best next step:
+1. `save-time`
+2. `save-money`
+3. `opti-route`
 
-- it proves the algorithms are not only implemented, but also evaluated
-- it gives a clear basis for discussing correctness and tradeoffs
-- it directly supports a `Complexities and Algorithms` subject requirement
+For each mode, record:
 
-Possible follow-up after that:
+- route distance
+- estimated travel time
+- fuel price
+- total economic cost
+- final score
 
-- add weighted multi-criteria scoring instead of mode-based sorting only
-- benchmark route-source accuracy between `ORS`, `OSRM`, and fallback estimation
-- add coordinate-clustering dedupe helpers as another algorithmic feature
+That gives you a clean way to discuss correctness, tradeoffs, and complexity without overselling the frontend.
 
 ## Seed From OSM
 

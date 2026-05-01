@@ -3,105 +3,69 @@ from __future__ import annotations
 from utils import algorithms
 
 
-def test_recommend_stations_prefers_lowest_trip_cost(monkeypatch):
+def build_station(name: str, brand: str, lat: float, lng: float, price: float) -> dict:
+    return {
+        "name": name,
+        "brand": brand,
+        "lat": lat,
+        "lng": lng,
+        "fuels": [
+            {"fuel_type": "Unleaded 91", "price": price, "last_updated": "2026-04-28"},
+            {"fuel_type": "Premium 95", "price": price + 4.0, "last_updated": "2026-04-28"},
+            {"fuel_type": "Diesel", "price": price - 2.0, "last_updated": "2026-04-28"},
+        ],
+    }
+
+
+def test_recommend_stations_uses_weighted_presets(monkeypatch):
     stations = [
-        {
-            "name": "A",
-            "brand": "Petron",
-            "lat": 7.45,
-            "lng": 125.81,
-            "fuels": [
-                {
-                    "fuel_type": "Unleaded 91",
-                    "price": 90.0,
-                    "last_updated": "2026-04-28",
-                },
-                {
-                    "fuel_type": "Premium 95",
-                    "price": 95.0,
-                    "last_updated": "2026-04-28",
-                },
-                {
-                    "fuel_type": "Diesel",
-                    "price": 88.0,
-                    "last_updated": "2026-04-28",
-                }
-            ],
-        },
-        {
-            "name": "B",
-            "brand": "Shell",
-            "lat": 7.46,
-            "lng": 125.82,
-            "fuels": [
-                {
-                    "fuel_type": "Unleaded 91",
-                    "price": 85.0,
-                    "last_updated": "2026-04-28",
-                },
-                {
-                    "fuel_type": "Premium 95",
-                    "price": 91.0,
-                    "last_updated": "2026-04-28",
-                },
-                {
-                    "fuel_type": "Diesel",
-                    "price": 84.0,
-                    "last_updated": "2026-04-28",
-                }
-            ],
-        },
+        build_station("Cheap Far", "Shell", 7.45, 125.81, 85.0),
+        build_station("Close Costly", "Petron", 7.46, 125.82, 95.0),
+        build_station("Middle", "Seaoil", 7.47, 125.83, 90.0),
     ]
 
-    def fake_get_route(origin, station, ors_api_key=None):
-        return {
-            "distance_km": 1.0 if station["name"] == "A" else 3.0,
-            "duration_min": 5.0,
-            "source": "ors",
-        }
+    routes = {
+        "Cheap Far": {"distance_km": 6.0, "duration_min": 12.0, "source": "ors"},
+        "Close Costly": {"distance_km": 1.0, "duration_min": 3.0, "source": "ors"},
+        "Middle": {"distance_km": 3.0, "duration_min": 6.0, "source": "ors"},
+    }
 
-    monkeypatch.setattr(algorithms, "get_route", fake_get_route)
+    monkeypatch.setattr(
+        algorithms,
+        "get_route",
+        lambda origin, station, ors_api_key=None: routes[station["name"]],
+    )
 
-    result = algorithms.recommend_stations(
+    save_money = algorithms.recommend_stations(
         stations=stations,
         origin=(7.44, 125.8),
-        mode="opti-route",
+        preset="save-money",
+        brand="any",
+        fuel_type="Unleaded 91",
+        radius_km=10,
+        ors_api_key="test-key",
+    )
+    save_time = algorithms.recommend_stations(
+        stations=stations,
+        origin=(7.44, 125.8),
+        preset="save-time",
         brand="any",
         fuel_type="Unleaded 91",
         radius_km=10,
         ors_api_key="test-key",
     )
 
-    assert result["best"]["name"] == "B"
-    assert result["fallback_warning"] is False
+    assert save_money["best"]["name"] == "Cheap Far"
+    assert save_time["best"]["name"] == "Close Costly"
+    assert save_money["reference_price_source"] == "candidate-average"
+    assert "travel_liters" in save_money["best"]
+    assert "purchase_cost" in save_money["best"]
+    assert "norm_cost" in save_money["best"]
+    assert save_money["best"]["preset_used"] == "save-money"
 
 
-def test_recommend_stations_flags_fallback(monkeypatch):
-    stations = [
-        {
-            "name": "A",
-            "brand": "Petron",
-            "lat": 7.45,
-            "lng": 125.81,
-            "fuels": [
-                {
-                    "fuel_type": "Unleaded 91",
-                    "price": 90.0,
-                    "last_updated": "2026-04-18",
-                },
-                {
-                    "fuel_type": "Premium 95",
-                    "price": 94.0,
-                    "last_updated": "2026-04-18",
-                },
-                {
-                    "fuel_type": "Diesel",
-                    "price": 88.0,
-                    "last_updated": "2026-04-18",
-                }
-            ],
-        }
-    ]
+def test_recommend_stations_flags_single_option(monkeypatch):
+    stations = [build_station("Only Option", "Petron", 7.45, 125.81, 90.0)]
 
     monkeypatch.setattr(
         algorithms,
@@ -116,68 +80,21 @@ def test_recommend_stations_flags_fallback(monkeypatch):
     result = algorithms.recommend_stations(
         stations=stations,
         origin=(7.44, 125.8),
-        mode="shortest",
+        preset="balanced",
         brand="Petron",
         fuel_type="Unleaded 91",
         radius_km=10,
         ors_api_key=None,
     )
 
-    assert result["best"]["distance_source"] == "haversine"
+    assert result["candidate_count"] == 1
+    assert result["scoring_mode"] == "single-option"
+    assert result["best"]["final_score"] is None
+    assert result["best"]["primary_reason"] == "Only matching station"
     assert result["fallback_warning"] is True
 
 
-def test_recommend_stations_keeps_duplicate_names_as_distinct_locations(monkeypatch):
-    stations = [
-        {
-            "name": "Shell Tagum",
-            "brand": "Shell",
-            "lat": 7.45,
-            "lng": 125.81,
-            "fuels": [
-                {"fuel_type": "Unleaded 91", "price": 90.0, "last_updated": "2026-04-28"},
-                {"fuel_type": "Premium 95", "price": 95.0, "last_updated": "2026-04-28"},
-                {"fuel_type": "Diesel", "price": 88.0, "last_updated": "2026-04-28"},
-            ],
-        },
-        {
-            "name": "Shell Tagum",
-            "brand": "Shell",
-            "lat": 7.46,
-            "lng": 125.82,
-            "fuels": [
-                {"fuel_type": "Unleaded 91", "price": 91.0, "last_updated": "2026-04-28"},
-                {"fuel_type": "Premium 95", "price": 96.0, "last_updated": "2026-04-28"},
-                {"fuel_type": "Diesel", "price": 89.0, "last_updated": "2026-04-28"},
-            ],
-        },
-    ]
-
-    monkeypatch.setattr(
-        algorithms,
-        "get_route",
-        lambda origin, station, ors_api_key=None: {
-            "distance_km": 1.0 if station["lat"] == 7.45 else 2.0,
-            "duration_min": 5.0,
-            "source": "ors",
-        },
-    )
-
-    result = algorithms.recommend_stations(
-        stations=stations,
-        origin=(7.44, 125.8),
-        mode="shortest",
-        brand="any",
-        fuel_type="Unleaded 91",
-        radius_km=10,
-        ors_api_key="test-key",
-    )
-
-    assert len(result["candidates"]) == 2
-    assert result["candidates"][0]["station_id"] != result["candidates"][1]["station_id"]
-
-
-def test_recommend_stations_skips_stations_without_selected_fuel(monkeypatch):
+def test_recommend_stations_returns_no_option_when_fuel_missing(monkeypatch):
     stations = [
         {
             "name": "Diesel Only",
@@ -185,11 +102,7 @@ def test_recommend_stations_skips_stations_without_selected_fuel(monkeypatch):
             "lat": 7.45,
             "lng": 125.81,
             "fuels": [
-                {
-                    "fuel_type": "Diesel",
-                    "price": 88.0,
-                    "last_updated": "2026-04-18",
-                }
+                {"fuel_type": "Diesel", "price": 88.0, "last_updated": "2026-04-18"}
             ],
         }
     ]
@@ -207,7 +120,7 @@ def test_recommend_stations_skips_stations_without_selected_fuel(monkeypatch):
     result = algorithms.recommend_stations(
         stations=stations,
         origin=(7.44, 125.8),
-        mode="shortest",
+        preset="opti-route",
         brand="Petron",
         fuel_type="Unleaded 91",
         radius_km=10,
@@ -216,3 +129,5 @@ def test_recommend_stations_skips_stations_without_selected_fuel(monkeypatch):
 
     assert result["best"] is None
     assert result["candidates"] == []
+    assert result["scoring_mode"] == "no-option"
+    assert result["reason"] == "No stations match the current filters."

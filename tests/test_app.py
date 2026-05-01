@@ -90,11 +90,18 @@ def test_api_recommend_returns_selected_fuel(tmp_path):
     )
 
     response = app.test_client().get(
-        "/api/recommend?lat=7.4478&lng=125.8079&mode=opti-route&brand=any&fuel_type=Diesel&radius_km=5"
+        "/api/recommend?lat=7.4478&lng=125.8079&mode=balanced&brand=any&fuel_type=Diesel&radius_km=5"
     )
     assert response.status_code == 200
     payload = response.get_json()
     assert payload["best"]["fuel_type"] == "Diesel"
+    assert payload["preset_used"] == "balanced"
+    assert payload["candidate_count"] == 1
+    assert payload["scoring_mode"] == "single-option"
+    assert payload["reference_price_source"] == "citywide-average"
+    assert "travel_liters" in payload["best"]
+    assert "purchase_cost" in payload["best"]
+    assert "norm_distance" in payload["best"]
 
 
 def test_api_update_price(tmp_path):

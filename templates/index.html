@@ -23,7 +23,7 @@
   </head>
   <body>
     <div id="appShell" class="app-shell" data-sheet-state="collapsed">
-      <header class="top-bar">
+      <header id="topBar" class="top-bar">
         <label class="search-shell" for="stationSearchInput">
           <svg class="search-shell__icon" viewBox="0 0 24 24" aria-hidden="true">
             <path
@@ -45,19 +45,25 @@
             </svg>
           </button>
         </label>
+
+        <button
+          id="announcementButton"
+          class="announcement-button announcement-button--empty"
+          type="button"
+          aria-label="Show advisories"
+          aria-expanded="false"
+          aria-controls="advisorySheet"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M12 3a4 4 0 0 0-4 4v1.1c0 .7-.24 1.38-.68 1.92L6.1 11.5A3 3 0 0 0 5.4 13.4V15a2 2 0 0 0 2 2h9.2a2 2 0 0 0 2-2v-1.6a3 3 0 0 0-.7-1.9l-1.22-1.48A3 3 0 0 1 16 8.1V7a4 4 0 0 0-4-4Zm0 18a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 21Z"
+            />
+          </svg>
+          <span class="announcement-button__dot" aria-hidden="true"></span>
+        </button>
       </header>
 
       <main id="map" aria-label="Station map"></main>
-
-      <div id="warningBanner" class="banner hidden" role="status" aria-live="polite"></div>
-
-      <button id="locationPrompt" class="location-prompt hidden" type="button">
-        Use my location
-      </button>
-
-      <button id="landmarkPrompt" class="location-prompt location-prompt--secondary hidden" type="button">
-        Choose a landmark instead
-      </button>
 
       <button id="recenterButton" class="recenter-button" type="button" aria-label="Recenter map">
         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -76,6 +82,17 @@
         </div>
       </section>
 
+      <div id="setupPromptBackdrop" class="setup-prompt-backdrop hidden" aria-hidden="true"></div>
+
+      <section id="setupPrompt" class="setup-prompt hidden" aria-live="polite">
+        <p class="setup-prompt__eyebrow">Personalized Opti-Route</p>
+        <h2>Set up your vehicle once to unlock personalized cost-based recommendations.</h2>
+        <div class="setup-prompt__actions">
+          <button id="openGaragePromptButton" class="primary-button" type="button">Set Up Now</button>
+          <button id="dismissSetupPromptButton" class="ghost-button" type="button">Maybe Later</button>
+        </div>
+      </section>
+
       <section
         id="bottomSheet"
         class="bottom-sheet"
@@ -91,7 +108,7 @@
             <p id="summaryBadge" class="summary-badge">Awaiting location</p>
             <h1 id="summaryTitle">Find the best station near you</h1>
             <p id="summaryMeta" class="summary-meta">
-              Enable GPS or pick a landmark to start routing.
+              Enable GPS to start routing.
             </p>
           </div>
           <button id="summaryDirections" class="primary-button" type="button" disabled>
@@ -122,9 +139,11 @@
             <label>Mode</label>
             <div id="modeButtons" class="choice-row">
               <button class="choice-pill active" data-mode="opti-route" type="button">Opti-Route</button>
-              <button class="choice-pill" data-mode="shortest" type="button">Shortest</button>
-              <button class="choice-pill" data-mode="cheapest" type="button">Cheapest</button>
+              <button class="choice-pill" data-mode="save-money" type="button">Save Money</button>
+              <button class="choice-pill" data-mode="save-time" type="button">Save Time</button>
+              <button class="choice-pill" data-mode="balanced" type="button">Balanced</button>
             </div>
+            <p id="modeHelpText" class="field-help hidden">Add a vehicle in Garage to unlock personalized recommendations.</p>
           </div>
 
           <div class="field-group">
@@ -149,20 +168,45 @@
             <input id="radiusInput" type="range" min="1" max="20" step="1" value="5" />
           </div>
 
+          <div class="field-group">
+            <label>Active Vehicle</label>
+            <div id="vehicleSummaryCard" class="vehicle-summary-card">
+              <p id="vehicleSummaryTitle" class="vehicle-summary-card__title">No saved vehicle</p>
+              <p id="vehicleSummaryMeta" class="vehicle-summary-card__meta">Save Time is available now. Personalized presets unlock after Garage setup.</p>
+              <button id="openGarageInlineButton" class="text-button" type="button">Open Garage</button>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label>Tank Status</label>
+            <div id="tankStatusButtons" class="choice-row wrap">
+              <button class="choice-pill" data-tank-status="empty" type="button">Empty</button>
+              <button class="choice-pill active" data-tank-status="half" type="button">Half</button>
+              <button class="choice-pill" data-tank-status="topping_up" type="button">Topping Up</button>
+            </div>
+          </div>
+
           <button id="applyFiltersButton" class="primary-button primary-button--full" type="button">
             Apply Filters
           </button>
         </div>
       </section>
 
-      <section id="landmarkSheet" class="overlay-sheet hidden" aria-label="Landmark picker">
-        <div class="overlay-sheet__scrim" data-close-sheet="landmarkSheet"></div>
-        <div class="overlay-sheet__panel">
-          <div class="overlay-sheet__header">
-            <h2>Choose a landmark</h2>
-            <button class="text-button" type="button" data-close-sheet="landmarkSheet">Close</button>
+      <section id="advisorySheet" class="advisory-sheet hidden" aria-label="Advisories">
+        <div class="overlay-sheet__scrim" data-close-sheet="advisorySheet"></div>
+        <div id="advisoryPanel" class="advisory-sheet__panel">
+          <button
+            id="advisoryHandle"
+            class="sheet-handle advisory-sheet__handle"
+            type="button"
+            aria-label="Close advisories"
+          >
+            <span></span>
+          </button>
+          <div id="advisoryHeader" class="advisory-sheet__header">
+            <h2>Advisories</h2>
           </div>
-          <div id="landmarkList" class="landmark-list"></div>
+          <div id="advisoryList" class="advisory-list"></div>
         </div>
       </section>
 
@@ -183,6 +227,98 @@
           </div>
         </div>
       </section>
+
+      <section id="garageView" class="garage-view hidden" aria-label="Garage">
+        <div class="garage-view__header">
+          <h1>My Garage</h1>
+          <button id="addVehicleButton" class="primary-button garage-button garage-button--add" type="button">+ Add Vehicle</button>
+        </div>
+
+        <section class="garage-panel">
+          <div class="garage-panel__header">
+            <h2>Your vehicles</h2>
+            <p id="vehicleCountMeta">0 / 5</p>
+          </div>
+          <div id="garageVehicleList" class="garage-vehicle-list">
+            <div class="garage-empty">
+              <h3>No vehicles saved</h3>
+              <p>Create your first vehicle profile to personalize cost-based recommendations.</p>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section id="vehicleModal" class="modal hidden" aria-label="Vehicle setup">
+        <div class="modal__scrim" data-close-sheet="vehicleModal"></div>
+        <div class="modal__card modal__card--wide">
+          <div class="modal__header modal__header--vehicle">
+            <div class="modal__header-top">
+              <h2 id="vehicleModalTitle">Add Vehicle</h2>
+              <button class="text-button modal__close" type="button" data-close-sheet="vehicleModal">Close</button>
+            </div>
+            <p class="modal__helper">Update the vehicle profile used for personalized recommendations.</p>
+          </div>
+
+          <div class="vehicle-form">
+            <div class="manual-inputs">
+              <label for="vehicleNicknameInput">Nickname</label>
+              <input id="vehicleNicknameInput" type="text" maxlength="40" placeholder="e.g. Daily Scooter" />
+            </div>
+
+            <div class="field-group">
+              <label for="vehicleFamilySelect">Vehicle Family</label>
+              <select id="vehicleFamilySelect"></select>
+            </div>
+
+            <div class="field-group">
+              <label for="vehicleSubtypeSelect">Vehicle Subtype</label>
+              <select id="vehicleSubtypeSelect"></select>
+            </div>
+
+            <div class="field-group">
+              <label for="vehicleFuelTypeSelect">Fuel Type</label>
+              <select id="vehicleFuelTypeSelect">
+                <option value="Unleaded 91">Unleaded 91</option>
+                <option value="Premium 95">Premium 95</option>
+                <option value="Diesel">Diesel</option>
+              </select>
+            </div>
+
+            <div class="manual-inputs">
+              <label for="vehicleTankCapacityInput">Tank Capacity (L)</label>
+              <input id="vehicleTankCapacityInput" type="number" min="1" step="0.1" />
+            </div>
+
+            <div class="manual-inputs">
+              <label for="vehicleKmPerLiterInput">KM per Liter</label>
+              <input id="vehicleKmPerLiterInput" type="number" min="1" step="0.1" />
+            </div>
+          </div>
+
+          <div class="modal__actions modal__actions--spread">
+            <button id="deleteVehicleButton" class="ghost-button hidden" type="button">Delete Vehicle</button>
+            <div class="modal__actions-group">
+              <button class="ghost-button" type="button" data-close-sheet="vehicleModal">Cancel</button>
+              <button id="saveVehicleButton" class="primary-button" type="button">Save Vehicle</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <nav class="app-nav" aria-label="Primary">
+        <button id="showMapViewButton" class="app-nav__button app-nav__button--active" type="button" data-view="map">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M15 5.2 9 3 3 5.2v15.6l6-2.2 6 2.2 6-2.2V2.9Zm-6 .1 6 2.2v10.8l-6-2.2Zm-4 1.1 3-1.1v10.8l-3 1.1Zm13 10.8-3 1.1V7.4l3-1.1Z" />
+          </svg>
+          <span>Map</span>
+        </button>
+        <button id="showGarageViewButton" class="app-nav__button" type="button" data-view="garage">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 11h14l-1.3-4.2A3 3 0 0 0 14.8 5H9.2a3 3 0 0 0-2.9 1.8L5 11Zm-.7 2-.3 1.3V18a1 1 0 0 0 1 1h1.5a1 1 0 0 0 1-1v-1h9v1a1 1 0 0 0 1 1H19a1 1 0 0 0 1-1v-3.7l-.3-1.3ZM7.5 14.5A1.5 1.5 0 1 1 6 13a1.5 1.5 0 0 1 1.5 1.5Zm10.5 0A1.5 1.5 0 1 1 16.5 13 1.5 1.5 0 0 1 18 14.5Z" />
+          </svg>
+          <span>Garage</span>
+        </button>
+      </nav>
     </div>
 
     <script

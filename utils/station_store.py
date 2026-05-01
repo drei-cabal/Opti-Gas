@@ -53,10 +53,11 @@ def load_stations(path: str | Path) -> list[dict]:
     payload = _load_json(path)
     normalized = normalize_station_collection(payload)
     validate_station_collection(normalized)
+    public_stations = [_strip_runtime_metadata(station) for station in normalized]
 
     with _cache_lock:
-        _station_cache[path] = {**cache_key, "data": copy.deepcopy(normalized)}
-    return normalized
+        _station_cache[path] = {**cache_key, "data": copy.deepcopy(public_stations)}
+    return public_stations
 
 
 def load_landmarks(path: str | Path) -> list[dict]:
@@ -116,6 +117,9 @@ def validate_station_record(station: dict) -> None:
     seen_fuel_types: set[str] = set()
     for fuel in fuels:
         validate_fuel_record(name, fuel, seen_fuel_types)
+
+    if station.get("_legacy_single_fuel"):
+        return
 
     if seen_fuel_types != REQUIRED_FUEL_TYPES:
         missing = sorted(REQUIRED_FUEL_TYPES - seen_fuel_types)
@@ -253,6 +257,7 @@ def normalize_station_record(station: dict) -> dict:
     if "fuels" in station:
         normalized["fuels"] = [normalize_fuel_record(fuel) for fuel in station["fuels"]]
     else:
+        normalized["_legacy_single_fuel"] = True
         normalized["fuels"] = [
             normalize_fuel_record(
                 {
@@ -310,3 +315,9 @@ def _serialize_station(station: dict) -> dict:
             for fuel in station["fuels"]
         ],
     }
+
+
+def _strip_runtime_metadata(station: dict) -> dict:
+    cleaned = dict(station)
+    cleaned.pop("_legacy_single_fuel", None)
+    return cleaned

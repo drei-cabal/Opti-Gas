@@ -75,9 +75,9 @@ copy .env.example .env
 
 ## 6. Get an OpenRouteService API key
 
-This project uses OpenRouteService for route distance and estimated travel time.
+For full system testing, this project requires an OpenRouteService key so the team can verify the intended route calculation flow.
 
-OpenRouteService website:
+Create an account on the OpenRouteService website:
 
 ```text
 https://openrouteservice.org/
@@ -133,14 +133,7 @@ Before editing or testing station data, run:
 python scripts\validate_stations.py
 ```
 
-Expected success output:
-
-```text
-OK: 76 stations loaded
-OK: All required fields present
-OK: All coordinates within Tagum City bounds
-OK: Duplicate station names are allowed
-```
+Expected success output should confirm that the station file loads and validates successfully. The exact station count depends on the current `data/stations/stations.json` file.
 
 ## 10. If Python is not available locally
 
@@ -159,7 +152,11 @@ $env:PYTHONPATH='.vendor'
 
 This is machine-specific and should not be treated as the standard setup for other users.
 
-## 11. Common first-time issues
+## 11. Location access
+
+For the best Map experience, the browser will ask for current location on first load. If location is blocked, the app still runs, but the team will not be able to fully test live Map recommendations until permission is granted.
+
+## 12. Common first-time issues
 
 ### `python` not found
 
@@ -200,7 +197,7 @@ Then open:
 http://127.0.0.1:5001
 ```
 
-## 12. Recommended first-time command sequence
+## 13. Recommended first-time command sequence
 
 ```powershell
 git clone https://github.com/drei-cabal/Opti-Gas.git

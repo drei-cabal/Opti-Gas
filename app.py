@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify, render_template, request
 
 from utils.algorithms import recommend_stations
-from utils.scoring import RECOMMENDATION_MODES
+from utils.recommendation_request import parse_recommendation_request
 from utils.station_store import (
     StationValidationError,
     get_station_id,
@@ -58,31 +58,21 @@ def create_app(test_config: dict | None = None) -> Flask:
     @app.get("/api/recommend")
     def api_recommend():
         try:
-            lat = _parse_float_query("lat")
-            lng = _parse_float_query("lng")
-            radius_km = _parse_float_query("radius_km", default=5.0)
+            recommendation_request = parse_recommendation_request(request.args)
         except ValueError as exc:
             return jsonify({"error": str(exc)}), 400
-
-        mode = request.args.get("mode", "opti-route").strip().lower()
-        brand = request.args.get("brand", "any").strip()
-        fuel_type = request.args.get("fuel_type", "Unleaded 91").strip()
-        if mode not in RECOMMENDATION_MODES:
-            return jsonify({"error": "Unsupported mode."}), 400
-        if radius_km <= 0:
-            return jsonify({"error": "radius_km must be positive."}), 400
-        if not fuel_type:
-            return jsonify({"error": "fuel_type is required."}), 400
 
         stations = load_stations(app.config["STATIONS_PATH"])
         recommendation = recommend_stations(
             stations=stations,
-            origin=(lat, lng),
-            mode=mode,
-            brand=brand,
-            fuel_type=fuel_type,
-            radius_km=radius_km,
+            origin=(recommendation_request["lat"], recommendation_request["lng"]),
+            preset=recommendation_request["preset"],
+            brand=recommendation_request["brand"],
+            fuel_type=recommendation_request["fuel_type"],
+            radius_km=recommendation_request["radius_km"],
             ors_api_key=app.config["ORS_API_KEY"],
+            km_per_liter=recommendation_request["km_per_liter"],
+            liters_to_fill=recommendation_request["liters_to_fill"],
         )
         return jsonify(recommendation)
 
@@ -136,16 +126,6 @@ def create_app(test_config: dict | None = None) -> Flask:
         )
 
     return app
-
-
-def _parse_float_query(name: str, default: float | None = None) -> float:
-    raw = request.args.get(name, None if default is None else str(default))
-    if raw is None or str(raw).strip() == "":
-        raise ValueError(f"{name} is required.")
-    try:
-        return float(raw)
-    except ValueError as exc:
-        raise ValueError(f"{name} must be numeric.") from exc
 
 
 app = create_app()

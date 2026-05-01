@@ -53,17 +53,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 90.4,
+        "price": 94.3,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 95.0,
+        "price": 99.1,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 88.3,
+        "price": 91.5,
         "last_updated": "2026-04-28"
       }
     ]
@@ -122,17 +122,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 88.8,
+        "price": 88.5,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 92.4,
+        "price": 92.7,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 86.0,
+        "price": 86.5,
         "last_updated": "2026-04-28"
       }
     ]
@@ -283,17 +283,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 91.6,
+        "price": 91.5,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 95.8,
+        "price": 94.7,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 88.8,
+        "price": 89.6,
         "last_updated": "2026-04-28"
       }
     ]
@@ -306,17 +306,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 94.1,
+        "price": 91.5,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 98.7,
+        "price": 94.7,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 91.6,
+        "price": 89.6,
         "last_updated": "2026-04-28"
       }
     ]
@@ -329,17 +329,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 89.0,
+        "price": 91.5,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 92.8,
+        "price": 94.7,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 87.5,
+        "price": 89.6,
         "last_updated": "2026-04-28"
       }
     ]
@@ -352,17 +352,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 91.6,
+        "price": 91.5,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 95.8,
+        "price": 94.7,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 88.8,
+        "price": 89.6,
         "last_updated": "2026-04-28"
       }
     ]
@@ -398,17 +398,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 93.1,
+        "price": 91.3,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 97.3,
+        "price": 95.1,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 90.7,
+        "price": 88.7,
         "last_updated": "2026-04-28"
       }
     ]
@@ -421,17 +421,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 88.4,
+        "price": 91.3,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 92.7,
+        "price": 95.1,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 86.2,
+        "price": 88.7,
         "last_updated": "2026-04-28"
       }
     ]
@@ -444,17 +444,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 94.0,
+        "price": 91.3,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 97.1,
+        "price": 95.1,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 92.5,
+        "price": 88.7,
         "last_updated": "2026-04-28"
       }
     ]
@@ -467,17 +467,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 92.6,
+        "price": 91.3,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 95.7,
+        "price": 95.1,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 90.7,
+        "price": 88.7,
         "last_updated": "2026-04-28"
       }
     ]
@@ -536,17 +536,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 90.9,
+        "price": 89.8,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 95.2,
+        "price": 94.5,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 89.1,
+        "price": 87.5,
         "last_updated": "2026-04-28"
       }
     ]
@@ -559,17 +559,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 92.7,
+        "price": 89.8,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 96.1,
+        "price": 94.5,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 90.6,
+        "price": 87.5,
         "last_updated": "2026-04-28"
       }
     ]
@@ -582,7 +582,7 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 90.6,
+        "price": 89.8,
         "last_updated": "2026-04-28"
       },
       {
@@ -592,7 +592,7 @@
       },
       {
         "fuel_type": "Diesel",
-        "price": 89.2,
+        "price": 87.5,
         "last_updated": "2026-04-28"
       }
     ]
@@ -605,17 +605,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 89.2,
+        "price": 89.8,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 92.5,
+        "price": 94.5,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 87.8,
+        "price": 87.5,
         "last_updated": "2026-04-28"
       }
     ]
@@ -628,7 +628,7 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 91.0,
+        "price": 89.8,
         "last_updated": "2026-04-28"
       },
       {
@@ -638,7 +638,7 @@
       },
       {
         "fuel_type": "Diesel",
-        "price": 88.3,
+        "price": 87.5,
         "last_updated": "2026-04-28"
       }
     ]
@@ -720,17 +720,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 94.5,
+        "price": 91.0,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 97.9,
+        "price": 94.9,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 93.1,
+        "price": 88.4,
         "last_updated": "2026-04-28"
       }
     ]
@@ -743,17 +743,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 93.4,
+        "price": 91.0,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 97.7,
+        "price": 94.9,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 91.0,
+        "price": 88.4,
         "last_updated": "2026-04-28"
       }
     ]
@@ -766,17 +766,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 90.3,
+        "price": 91.0,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 95.1,
+        "price": 94.9,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 88.3,
+        "price": 88.4,
         "last_updated": "2026-04-28"
       }
     ]
@@ -835,17 +835,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 93.5,
+        "price": 93.7,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 97.0,
+        "price": 98.0,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 91.5,
+        "price": 91.1,
         "last_updated": "2026-04-28"
       }
     ]
@@ -858,17 +858,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 89.0,
+        "price": 93.7,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 92.8,
+        "price": 98.0,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 87.5,
+        "price": 91.1,
         "last_updated": "2026-04-28"
       }
     ]
@@ -927,17 +927,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 91.8,
+        "price": 91.5,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 96.4,
+        "price": 95.1,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 90.1,
+        "price": 89.1,
         "last_updated": "2026-04-28"
       }
     ]
@@ -950,17 +950,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 92.4,
+        "price": 91.5,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 97.1,
+        "price": 95.1,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 90.7,
+        "price": 89.1,
         "last_updated": "2026-04-28"
       }
     ]
@@ -973,17 +973,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 94.2,
+        "price": 91.5,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 97.4,
+        "price": 95.1,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 92.7,
+        "price": 89.1,
         "last_updated": "2026-04-28"
       }
     ]
@@ -996,17 +996,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 94.6,
+        "price": 91.5,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 97.8,
+        "price": 95.1,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 93.1,
+        "price": 89.1,
         "last_updated": "2026-04-28"
       }
     ]
@@ -1019,17 +1019,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 90.9,
+        "price": 91.5,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 94.6,
+        "price": 95.1,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 88.2,
+        "price": 89.1,
         "last_updated": "2026-04-28"
       }
     ]
@@ -1042,12 +1042,12 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 91.7,
+        "price": 91.5,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 95.5,
+        "price": 95.1,
         "last_updated": "2026-04-28"
       },
       {
@@ -1065,17 +1065,40 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 88.2,
+        "price": 91.5,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 92.5,
+        "price": 95.1,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 85.9,
+        "price": 89.1,
+        "last_updated": "2026-04-28"
+      }
+    ]
+  },
+  {
+    "name": "Petron",
+    "brand": "Petron",
+    "lat": 7.431393155190772,
+    "lng": 125.79752879782296,
+    "fuels": [
+      {
+        "fuel_type": "Unleaded 91",
+        "price": 91.5,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Premium 95",
+        "price": 95.1,
+        "last_updated": "2026-04-28"
+      },
+      {
+        "fuel_type": "Diesel",
+        "price": 89.1,
         "last_updated": "2026-04-28"
       }
     ]
@@ -1088,17 +1111,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 91.8,
+        "price": 91.5,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 95.6,
+        "price": 95.1,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 89.2,
+        "price": 89.1,
         "last_updated": "2026-04-28"
       }
     ]
@@ -1111,17 +1134,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 90.6,
+        "price": 91.5,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 95.3,
+        "price": 95.1,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 88.6,
+        "price": 89.1,
         "last_updated": "2026-04-28"
       }
     ]
@@ -1144,16 +1167,16 @@
       },
       {
         "fuel_type": "Diesel",
-        "price": 89.9,
-        "last_updated": "2026-04-28"
+        "price": 89.95,
+        "last_updated": "2026-04-30"
       }
     ]
   },
   {
-    "name": "Phoenix",
-    "brand": "Phoenix",
-    "lat": 7.431377,
-    "lng": 125.797574,
+    "name": "Petro Gazz",
+    "brand": "Independent",
+    "lat": 7.450203499714753,
+    "lng": 125.80264730206132,
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
@@ -1175,8 +1198,8 @@
   {
     "name": "Phoenix",
     "brand": "Phoenix",
-    "lat": 7.464033,
-    "lng": 125.824964,
+    "lat": 7.455421152451535,
+    "lng": 125.81630455429766,
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
@@ -1198,22 +1221,22 @@
   {
     "name": "Phoenix",
     "brand": "Phoenix",
-    "lat": 7.460264,
-    "lng": 125.820289,
+    "lat": 7.4553558767341075,
+    "lng": 125.79690023653428,
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 88.2,
+        "price": 93.7,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 92.9,
+        "price": 98.2,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 85.5,
+        "price": 92.3,
         "last_updated": "2026-04-28"
       }
     ]
@@ -1221,45 +1244,22 @@
   {
     "name": "Phoenix",
     "brand": "Phoenix",
-    "lat": 7.455428,
-    "lng": 125.816538,
+    "lat": 7.464066298734454,
+    "lng": 125.82497474018977,
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 90.7,
+        "price": 93.7,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 94.0,
+        "price": 98.2,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 88.2,
-        "last_updated": "2026-04-28"
-      }
-    ]
-  },
-  {
-    "name": "Phoenix",
-    "brand": "Phoenix",
-    "lat": 7.455308,
-    "lng": 125.796818,
-    "fuels": [
-      {
-        "fuel_type": "Unleaded 91",
-        "price": 92.9,
-        "last_updated": "2026-04-28"
-      },
-      {
-        "fuel_type": "Premium 95",
-        "price": 96.5,
-        "last_updated": "2026-04-28"
-      },
-      {
-        "fuel_type": "Diesel",
-        "price": 90.6,
+        "price": 92.3,
         "last_updated": "2026-04-28"
       }
     ]
@@ -1341,17 +1341,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 89.9,
+        "price": 94.5,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 93.7,
+        "price": 97.9,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 88.4,
+        "price": 92.8,
         "last_updated": "2026-04-28"
       }
     ]
@@ -1364,17 +1364,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 88.9,
+        "price": 94.5,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 93.5,
+        "price": 97.9,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 86.5,
+        "price": 92.8,
         "last_updated": "2026-04-28"
       }
     ]
@@ -1387,17 +1387,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 91.3,
-        "last_updated": "2026-04-28"
-      },
-      {
-        "fuel_type": "Premium 95",
         "price": 94.5,
         "last_updated": "2026-04-28"
       },
       {
+        "fuel_type": "Premium 95",
+        "price": 97.9,
+        "last_updated": "2026-04-28"
+      },
+      {
         "fuel_type": "Diesel",
-        "price": 89.1,
+        "price": 92.8,
         "last_updated": "2026-04-28"
       }
     ]
@@ -1433,17 +1433,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 89.7,
-        "last_updated": "2026-04-29"
+        "price": 93.9,
+        "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 94.2,
+        "price": 98.0,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 87.6,
+        "price": 91.5,
         "last_updated": "2026-04-28"
       }
     ]
@@ -1456,17 +1456,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 92.6,
+        "price": 93.9,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 97.3,
+        "price": 98.0,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 91.0,
+        "price": 91.5,
         "last_updated": "2026-04-28"
       }
     ]
@@ -1479,17 +1479,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 92.5,
+        "price": 93.9,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 95.6,
+        "price": 98.0,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 90.6,
+        "price": 91.5,
         "last_updated": "2026-04-28"
       }
     ]
@@ -1502,17 +1502,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 92.1,
+        "price": 93.9,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 95.2,
+        "price": 98.0,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 90.2,
+        "price": 91.5,
         "last_updated": "2026-04-28"
       }
     ]
@@ -1525,17 +1525,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 88.2,
+        "price": 93.9,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 91.7,
+        "price": 98.0,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 86.6,
+        "price": 91.5,
         "last_updated": "2026-04-28"
       }
     ]
@@ -1571,17 +1571,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 89.6,
+        "price": 91.4,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 94.1,
+        "price": 96.2,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 86.9,
+        "price": 88.9,
         "last_updated": "2026-04-28"
       }
     ]
@@ -1640,17 +1640,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 87.9,
+        "price": 92.4,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 91.4,
+        "price": 95.5,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 86.0,
+        "price": 90.2,
         "last_updated": "2026-04-28"
       }
     ]
@@ -1732,17 +1732,17 @@
     "fuels": [
       {
         "fuel_type": "Unleaded 91",
-        "price": 89.8,
+        "price": 92.2,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Premium 95",
-        "price": 93.7,
+        "price": 96.5,
         "last_updated": "2026-04-28"
       },
       {
         "fuel_type": "Diesel",
-        "price": 87.5,
+        "price": 90.2,
         "last_updated": "2026-04-28"
       }
     ]

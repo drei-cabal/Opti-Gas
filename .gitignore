@@ -1,4 +1,5 @@
 .env
+.codex/
 .tmp/
 .venv/
 .vendor/

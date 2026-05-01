@@ -46,6 +46,8 @@ Open:
 http://127.0.0.1:5000
 ```
 
+If the Map opens but recommendations do not appear, make sure the browser allowed current location access and the OpenRouteService API key is configured. For full system testing, both are required.
+
 ## 2. If `python` does not work but Python is installed
 
 Some Windows setups use `py` instead of `python`.
@@ -133,14 +135,7 @@ Or:
 py scripts\validate_stations.py
 ```
 
-Expected success output:
-
-```text
-OK: 76 stations loaded
-OK: All required fields present
-OK: All coordinates within Tagum City bounds
-OK: Duplicate station names are allowed
-```
+Expected success output should confirm that the station file loads and validates successfully. The exact station count depends on the current `data/stations/stations.json` file.
 
 ## 7. If you only want to clean temporary files
 
