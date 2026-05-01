@@ -82,6 +82,7 @@ Current map behavior notes:
 - the app requests the user's current browser geolocation on load
 - there is no landmark picker in the current product scope
 - the collapsed station sheet defaults to a compact recommendation summary
+- the recenter control stays fixed on the map, slightly above the bottom edge, and sits behind the station sheet as it rises
 - tank status lives only in the Map filter flow, not in the saved vehicle model
 
 ### 1. Candidate Filtering

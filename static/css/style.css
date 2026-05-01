@@ -338,8 +338,8 @@ input {
 .recenter-button {
   position: fixed;
   left: 16px;
-  bottom: calc(var(--nav-height) + 194px + env(safe-area-inset-bottom, 0px));
-  z-index: 9;
+  bottom: calc(var(--nav-height) + 142px + env(safe-area-inset-bottom, 0px));
+  z-index: 6;
   display: grid;
   place-items: center;
   width: 52px;
@@ -352,17 +352,6 @@ input {
 }
 
 @media (max-width: 959px) {
-  .app-shell[data-sheet-state="collapsed"] .recenter-button {
-    bottom: calc(var(--nav-height) + 194px + env(safe-area-inset-bottom, 0px));
-  }
-
-  .app-shell[data-sheet-state="half"] .recenter-button {
-    bottom: calc(var(--nav-height) + 52vh + 16px + env(safe-area-inset-bottom, 0px));
-  }
-
-  .app-shell[data-sheet-state="expanded"] .recenter-button {
-    bottom: calc(var(--nav-height) + 82vh + 16px + env(safe-area-inset-bottom, 0px));
-  }
 }
 
 .empty-state {
@@ -1582,18 +1571,6 @@ input[type="range"] {
   .empty-state {
     top: calc(72px + env(safe-area-inset-top, 0px));
     width: min(290px, calc(100vw - 32px));
-  }
-
-  .app-shell[data-sheet-state="collapsed"] .recenter-button {
-    bottom: calc(var(--nav-height) + min(148px, 30dvh) + 16px + env(safe-area-inset-bottom, 0px));
-  }
-
-  .app-shell[data-sheet-state="half"] .recenter-button {
-    bottom: calc(var(--nav-height) + min(48dvh, 360px) + 16px + env(safe-area-inset-bottom, 0px));
-  }
-
-  .app-shell[data-sheet-state="expanded"] .recenter-button {
-    bottom: calc(var(--nav-height) + min(74dvh, calc(100dvh - 132px)) + 16px + env(safe-area-inset-bottom, 0px));
   }
 }
 

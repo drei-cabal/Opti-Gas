@@ -367,9 +367,6 @@ function bindChoiceGroup(container, stateKey, attributeName) {
     const value = button.getAttribute(attributeName);
     state[stateKey] = value;
     syncFilterControls();
-    if (stateKey === "currentTankStatus" && state.userLocation) {
-      void refreshRecommendations();
-    }
   });
 }
 

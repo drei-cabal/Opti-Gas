@@ -188,6 +188,8 @@ Recommended preset values:
 
 The current Map selection is the source of truth for the current recommendation request.
 
+Inside the filter sheet, tank-status pill changes should update selection feedback immediately but should not trigger a loading state until the user taps `Apply Filters`.
+
 ## Practical Recommendation Logic
 
 The active saved vehicle should supply:
@@ -214,6 +216,7 @@ The current app theme should follow these rules:
 - muted cool blue-gray surfaces for sheets, cards, filters, and Garage
 - white reserved for highest-elevation surfaces such as modal dialogs
 - amber used for recommendation emphasis and active-state accents
+- map utility controls like `Recenter` should stay on the map, slightly above the bottom edge, and tuck behind the rising station sheet
 
 When visual styling changes materially, this document should be updated in the same task.
 
