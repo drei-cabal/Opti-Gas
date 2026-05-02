@@ -45,10 +45,77 @@ This is not automatic on shutdown. The folder is centralized so you can delete i
 - `utils/`: station loading, validation, filtering, routing, and recommendation logic
 - `templates/index.html`: single-page shell
 - `static/css/style.css`: full-screen map and overlay styles
-- `static/js/`: map, API, and UI logic
+- `static/js/ui.js`: thin browser entrypoint and app wiring
+- `static/js/features/`: feature modules for Garage, stations, filters, advisories, sheets, and directions
+- `static/js/shared/`: shared state, persistence, and formatting helpers
 - `scripts/validate_stations.py`: station data validation
 - `scripts/update_prices.py`: CLI updater for station prices
 - `tests/`: backend unit and integration tests
+
+## Build And Data Flow
+
+This diagram shows the runtime path plus the station-data maintenance path for OPTI-GAS:
+
+```mermaid
+flowchart TB
+  subgraph Browser[Browser Runtime]
+    User[User]
+    HTML[templates/index.html]
+    JS[static/js/ui.js\nfeatures/*\nshared/*]
+    Leaflet[Leaflet]
+    GoogleMaps[Google Maps]
+    User --> HTML --> JS
+    JS --> Leaflet
+    JS --> GoogleMaps
+  end
+
+  subgraph Server[Flask Server]
+    Flask[app.py]
+    Core[utils/ station_store.py\nrecommendation_pipeline.py\nrouting.py\nalgorithms.py]
+    Flask --> Core
+  end
+
+  subgraph Data[Project Data]
+    StationData[data/stations/stations.json]
+    Validate[scripts/validate_stations.py]
+    Update[scripts/update_prices.py]
+    StationData --> Validate
+    Update --> StationData
+  end
+
+  subgraph External[External Services]
+    OSM[OpenStreetMap tiles]
+    ORS[OpenRouteService]
+  end
+
+  JS --> Flask
+  Core --> StationData
+  Leaflet --> OSM
+  Core --> ORS
+```
+
+The short version:
+
+1. Flask serves the page shell and API routes.
+2. The frontend hydrates the map, filters, and Garage state in the browser.
+3. The backend reads station data, filters candidates, computes routes, and ranks recommendations.
+4. The browser hands off map rendering to Leaflet and navigation to Google Maps.
+5. Station data is validated and updated separately from the runtime request path.
+
+## Frontend Module Map
+
+The frontend is intentionally split by feature boundary:
+
+- `static/js/ui.js`: thin entrypoint that boots the app, wires events, and composes modules
+- `static/js/features/stations.js`: station list rendering, active station selection, and station actions
+- `static/js/features/garage.js`: Garage rendering, vehicle CRUD, active vehicle policy, and trip-input derivation
+- `static/js/features/filters.js`: filter UI syncing, fuel-type button rendering, and location-failure copy
+- `static/js/features/advisories.js`: advisory sheet state, announcements, and drag/close behavior
+- `static/js/features/sheets.js`: generic sheet and modal open/close plus bottom-sheet drag behavior
+- `static/js/features/directions.js`: Google Maps handoff
+- `static/js/shared/state.js`: centralized mutable state, DOM element registry, and shared constants
+- `static/js/shared/persistence.js`: local/session storage hydration and persistence
+- `static/js/shared/formatters.js`: string, date, distance, duration, and mode helpers
 
 ## Validation
 
@@ -206,7 +273,7 @@ Relevant files:
 
 - `utils/station_store.py`
 - `utils/algorithms.py`
-- `static/js/ui.js`
+- `static/js/features/stations.js`
 
 This is an identity-resolution algorithm based on location rather than name alone.
 

@@ -1,0 +1,218 @@
+export const LAST_SESSION_CACHE_KEY = "optigas:last-session";
+export const GARAGE_STORAGE_KEY = "optigas:garage";
+export const SETUP_PROMPT_SESSION_KEY = "optigas:setup-prompt-dismissed";
+export const MODE_ALIASES = {
+  shortest: "save-time",
+  cheapest: "save-money",
+};
+export const VALID_MODES = new Set(["opti-route", "save-money", "save-time", "balanced"]);
+export const MAX_SAVED_VEHICLES = 5;
+export const TANK_STATUS_FRACTIONS = {
+  empty: 0.9,
+  half: 0.5,
+  topping_up: 0.25,
+};
+export const TANK_STATUS_LABELS = {
+  empty: "Empty",
+  half: "Half",
+  topping_up: "Topping Up",
+};
+export const VEHICLE_PRESETS = {
+  motorcycle: {
+    label: "Motorcycle",
+    subtypes: {
+      scooter_auto: {
+        label: "Scooter / Automatic",
+        fuelType: "Unleaded 91",
+        tankCapacity: 5.5,
+        kmPerLiter: 45,
+      },
+      underbone_manual: {
+        label: "Underbone / Small Manual",
+        fuelType: "Unleaded 91",
+        tankCapacity: 4,
+        kmPerLiter: 50,
+      },
+      standard_motorcycle: {
+        label: "Standard Motorcycle",
+        fuelType: "Unleaded 91",
+        tankCapacity: 12,
+        kmPerLiter: 35,
+      },
+      big_bike: {
+        label: "Big Bike",
+        fuelType: "Premium 95",
+        tankCapacity: 15,
+        kmPerLiter: 20,
+      },
+    },
+  },
+  car: {
+    label: "Car",
+    subtypes: {
+      hatchback: {
+        label: "Small Car / Hatchback",
+        fuelType: "Unleaded 91",
+        tankCapacity: 40,
+        kmPerLiter: 16,
+      },
+      sedan: {
+        label: "Sedan",
+        fuelType: "Unleaded 91",
+        tankCapacity: 45,
+        kmPerLiter: 13,
+      },
+      mpv_crossover: {
+        label: "MPV / Crossover",
+        fuelType: "Unleaded 91",
+        tankCapacity: 48,
+        kmPerLiter: 11,
+      },
+      suv_pickup: {
+        label: "SUV / Pickup",
+        fuelType: "Diesel",
+        tankCapacity: 65,
+        kmPerLiter: 9.5,
+      },
+    },
+  },
+  van_utility: {
+    label: "Van / Utility",
+    subtypes: {
+      passenger_van: {
+        label: "Passenger Van",
+        fuelType: "Diesel",
+        tankCapacity: 60,
+        kmPerLiter: 10,
+      },
+      light_utility_van: {
+        label: "Light Utility Van",
+        fuelType: "Diesel",
+        tankCapacity: 55,
+        kmPerLiter: 11,
+      },
+    },
+  },
+};
+
+export const state = {
+  allStations: [],
+  candidates: [],
+  best: null,
+  activeStationId: null,
+  searchQuery: "",
+  userLocation: null,
+  locationSource: null,
+  mode: "save-time",
+  brand: "any",
+  fuelType: "Unleaded 91",
+  radiusKm: 5,
+  fallbackWarning: false,
+  isLoadingRecommendations: false,
+  isAnnouncementOpen: false,
+  activeAnnouncement: null,
+  advisoryItems: [],
+  view: "map",
+  vehicles: [],
+  activeVehicleId: null,
+  currentTankStatus: "half",
+  setupPromptDismissed: false,
+  editingVehicleId: null,
+};
+
+export const elements = {
+  appShell: document.getElementById("appShell"),
+  topBar: document.getElementById("topBar"),
+  map: document.getElementById("map"),
+  announcementButton: document.getElementById("announcementButton"),
+  advisorySheet: document.getElementById("advisorySheet"),
+  advisoryPanel: document.getElementById("advisoryPanel"),
+  advisoryHandle: document.getElementById("advisoryHandle"),
+  advisoryHeader: document.getElementById("advisoryHeader"),
+  advisoryList: document.getElementById("advisoryList"),
+  recenterButton: document.getElementById("recenterButton"),
+  stationSearchInput: document.getElementById("stationSearchInput"),
+  clearSearchButton: document.getElementById("clearSearchButton"),
+  setupPromptBackdrop: document.getElementById("setupPromptBackdrop"),
+  setupPrompt: document.getElementById("setupPrompt"),
+  openGaragePromptButton: document.getElementById("openGaragePromptButton"),
+  dismissSetupPromptButton: document.getElementById("dismissSetupPromptButton"),
+  showFiltersInline: document.getElementById("showFiltersInline"),
+  bottomSheet: document.getElementById("bottomSheet"),
+  sheetHandle: document.getElementById("sheetHandle"),
+  sheetSummary: document.querySelector(".sheet-summary"),
+  summaryBadge: document.getElementById("summaryBadge"),
+  summaryTitle: document.getElementById("summaryTitle"),
+  summaryMeta: document.getElementById("summaryMeta"),
+  summaryDirections: document.getElementById("summaryDirections"),
+  candidateList: document.getElementById("candidateList"),
+  filterSheet: document.getElementById("filterSheet"),
+  priceModal: document.getElementById("priceModal"),
+  priceModalStation: document.getElementById("priceModalStation"),
+  priceModalCurrent: document.getElementById("priceModalCurrent"),
+  priceInput: document.getElementById("priceInput"),
+  submitPriceButton: document.getElementById("submitPriceButton"),
+  radiusInput: document.getElementById("radiusInput"),
+  radiusValue: document.getElementById("radiusValue"),
+  fuelTypeButtons: document.getElementById("fuelTypeButtons"),
+  modeButtons: document.getElementById("modeButtons"),
+  modeHelpText: document.getElementById("modeHelpText"),
+  brandButtons: document.getElementById("brandButtons"),
+  applyFiltersButton: document.getElementById("applyFiltersButton"),
+  emptyState: document.getElementById("emptyState"),
+  expandRadiusButton: document.getElementById("expandRadiusButton"),
+  clearBrandButton: document.getElementById("clearBrandButton"),
+  vehicleSummaryCard: document.getElementById("vehicleSummaryCard"),
+  vehicleSummaryTitle: document.getElementById("vehicleSummaryTitle"),
+  vehicleSummaryMeta: document.getElementById("vehicleSummaryMeta"),
+  openGarageInlineButton: document.getElementById("openGarageInlineButton"),
+  tankStatusButtons: document.getElementById("tankStatusButtons"),
+  garageView: document.getElementById("garageView"),
+  vehicleCountMeta: document.getElementById("vehicleCountMeta"),
+  garageVehicleList: document.getElementById("garageVehicleList"),
+  addVehicleButton: document.getElementById("addVehicleButton"),
+  openCreditsButton: document.getElementById("openCreditsButton"),
+  vehicleModal: document.getElementById("vehicleModal"),
+  vehicleModalTitle: document.getElementById("vehicleModalTitle"),
+  vehicleNicknameInput: document.getElementById("vehicleNicknameInput"),
+  vehicleFamilySelect: document.getElementById("vehicleFamilySelect"),
+  vehicleSubtypeSelect: document.getElementById("vehicleSubtypeSelect"),
+  vehicleFuelTypeSelect: document.getElementById("vehicleFuelTypeSelect"),
+  vehicleTankCapacityInput: document.getElementById("vehicleTankCapacityInput"),
+  vehicleKmPerLiterInput: document.getElementById("vehicleKmPerLiterInput"),
+  saveVehicleButton: document.getElementById("saveVehicleButton"),
+  deleteVehicleButton: document.getElementById("deleteVehicleButton"),
+  creditsModal: document.getElementById("creditsModal"),
+  showMapViewButton: document.getElementById("showMapViewButton"),
+  showGarageViewButton: document.getElementById("showGarageViewButton"),
+};
+
+export const services = {
+  mapView: null,
+  render: null,
+  refreshRecommendations: null,
+  renderGarage: null,
+  renderSetupPrompt: null,
+  renderViewState: null,
+  syncFilterControls: null,
+  closeSheet: null,
+  openSheet: null,
+  closeById: null,
+  setSheetState: null,
+  showAnnouncement: null,
+  clearAnnouncement: null,
+  syncAdvisories: null,
+  closeAdvisorySheet: null,
+  openGarageView: null,
+  openMapView: null,
+  openDirections: null,
+  getActiveVehicle: null,
+  hasActiveVehicle: null,
+  deriveTripInputs: null,
+  isModeLocked: null,
+  handleLockedModeAttempt: null,
+};
+
+export function setServices(nextServices) {
+  Object.assign(services, nextServices);
+}
