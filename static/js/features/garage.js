@@ -1,4 +1,4 @@
-import { elements, MAX_SAVED_VEHICLES, services, state, TANK_STATUS_FRACTIONS, VEHICLE_PRESETS } from "../shared/state.js";
+import { elements, MAX_SAVED_VEHICLES, state, TANK_STATUS_FRACTIONS, VEHICLE_PRESETS } from "../shared/state.js";
 import { createVehicleId, escapeHtml, getFamilyLabel, getSubtypeLabel, normalizeMode } from "../shared/formatters.js";
 import {
   dismissSetupPrompt,
@@ -12,6 +12,20 @@ export {
   hydrateGarageState,
   readSetupPromptDismissed,
 };
+
+const deps = {
+  closeSheet: null,
+  openSheet: null,
+  refreshRecommendations: null,
+  render: null,
+  renderSetupPrompt: null,
+  showAnnouncement: null,
+  syncFilterControls: null,
+};
+
+export function configureGarage(nextDeps) {
+  Object.assign(deps, nextDeps);
+}
 
 export function renderGarage() {
   elements.vehicleCountMeta.textContent = `${state.vehicles.length} / ${MAX_SAVED_VEHICLES}`;
@@ -80,7 +94,7 @@ export function handleVehicleSubtypeChange() {
 
 export function openVehicleModal(vehicle = null) {
   if (!vehicle && state.vehicles.length >= MAX_SAVED_VEHICLES) {
-    services.showAnnouncement?.("Remove a saved vehicle before adding another one.", "info", {
+    deps.showAnnouncement?.("Remove a saved vehicle before adding another one.", "info", {
       title: "Garage is full",
       kind: "garage",
     });
@@ -107,7 +121,7 @@ export function openVehicleModal(vehicle = null) {
     elements.vehicleSubtypeSelect.selectedIndex = 0;
     applySubtypeDefaults();
   }
-  services.openSheet?.(elements.vehicleModal);
+  deps.openSheet?.(elements.vehicleModal);
 }
 
 export async function saveVehicleProfile() {
@@ -116,28 +130,28 @@ export async function saveVehicleProfile() {
   const kmPerLiter = Number(elements.vehicleKmPerLiterInput.value);
 
   if (!nickname) {
-    services.showAnnouncement?.("Give this vehicle a nickname before saving it.", "warning", {
+    deps.showAnnouncement?.("Give this vehicle a nickname before saving it.", "warning", {
       title: "Vehicle nickname required",
       kind: "garage",
     });
     return;
   }
   if (!(tankCapacity > 0)) {
-    services.showAnnouncement?.("Tank capacity must be greater than zero.", "warning", {
+    deps.showAnnouncement?.("Tank capacity must be greater than zero.", "warning", {
       title: "Invalid tank capacity",
       kind: "garage",
     });
     return;
   }
   if (!(kmPerLiter > 0)) {
-    services.showAnnouncement?.("KM per liter must be greater than zero.", "warning", {
+    deps.showAnnouncement?.("KM per liter must be greater than zero.", "warning", {
       title: "Invalid fuel economy",
       kind: "garage",
     });
     return;
   }
   if (!state.editingVehicleId && state.vehicles.length >= MAX_SAVED_VEHICLES) {
-    services.showAnnouncement?.("Remove a saved vehicle before adding another one.", "info", {
+    deps.showAnnouncement?.("Remove a saved vehicle before adding another one.", "info", {
       title: "Garage is full",
       kind: "garage",
     });
@@ -173,12 +187,12 @@ export async function saveVehicleProfile() {
   }
 
   persistGarageState();
-  services.closeSheet?.(elements.vehicleModal);
-  services.syncFilterControls?.();
+  deps.closeSheet?.(elements.vehicleModal);
+  deps.syncFilterControls?.();
   renderGarage();
-  services.render?.();
+  deps.render?.();
   if (state.userLocation) {
-    await services.refreshRecommendations?.();
+    await deps.refreshRecommendations?.();
   }
 }
 
@@ -206,12 +220,12 @@ export async function deleteVehicleProfile() {
   }
 
   persistGarageState();
-  services.closeSheet?.(elements.vehicleModal);
-  services.syncFilterControls?.();
+  deps.closeSheet?.(elements.vehicleModal);
+  deps.syncFilterControls?.();
   renderGarage();
-  services.render?.();
+  deps.render?.();
   if (state.userLocation) {
-    await services.refreshRecommendations?.();
+    await deps.refreshRecommendations?.();
   }
 }
 
@@ -229,11 +243,11 @@ export async function setActiveVehicle(vehicleId) {
   state.fuelType = nextActive.fuel_type;
   dismissSetupPrompt(true);
   persistGarageState();
-  services.syncFilterControls?.();
+  deps.syncFilterControls?.();
   renderGarage();
-  services.render?.();
+  deps.render?.();
   if (state.userLocation) {
-    await services.refreshRecommendations?.();
+    await deps.refreshRecommendations?.();
   }
 }
 
@@ -261,12 +275,12 @@ export function isModeLocked(mode) {
 }
 
 export function handleLockedModeAttempt() {
-  services.showAnnouncement?.("Add a vehicle in Garage to unlock personalized recommendations.", "info", {
+  deps.showAnnouncement?.("Add a vehicle in Garage to unlock personalized recommendations.", "info", {
     title: "Garage setup needed",
     kind: "garage",
   });
   if (state.view !== "garage" && !state.setupPromptDismissed) {
-    services.renderSetupPrompt?.();
+    deps.renderSetupPrompt?.();
   }
 }
 

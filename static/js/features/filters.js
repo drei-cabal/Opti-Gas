@@ -1,10 +1,20 @@
-import { elements, services, state, TANK_STATUS_LABELS } from "../shared/state.js";
+import { elements, state, TANK_STATUS_LABELS } from "../shared/state.js";
 import {
   escapeHtml,
   getFamilyLabel,
   getSubtypeLabel,
   normalizeMode,
 } from "../shared/formatters.js";
+
+const deps = {
+  deriveTripInputs: null,
+  getActiveVehicle: null,
+  isModeLocked: null,
+};
+
+export function configureFilters(nextDeps) {
+  Object.assign(deps, nextDeps);
+}
 
 export function bindChoiceGroup(container, stateKey, attributeName) {
   container.addEventListener("click", (event) => {
@@ -20,7 +30,7 @@ export function bindChoiceGroup(container, stateKey, attributeName) {
 }
 
 export function syncFilterControls() {
-  if (services.isModeLocked?.(state.mode)) {
+  if (deps.isModeLocked?.(state.mode)) {
     state.mode = "save-time";
   }
 
@@ -36,11 +46,11 @@ export function syncFilterControls() {
     ? "Updating..."
     : "Apply Filters";
 
-  const activeVehicle = services.getActiveVehicle?.();
+  const activeVehicle = deps.getActiveVehicle?.();
   elements.modeHelpText.classList.toggle("hidden", Boolean(activeVehicle));
   elements.modeButtons.querySelectorAll("button").forEach((button) => {
     const mode = normalizeMode(button.dataset.mode);
-    const locked = services.isModeLocked?.(mode);
+    const locked = deps.isModeLocked?.(mode);
     button.classList.toggle("choice-pill--locked", locked);
     button.setAttribute("aria-disabled", locked ? "true" : "false");
     button.title = locked
@@ -49,7 +59,7 @@ export function syncFilterControls() {
   });
 
   if (activeVehicle) {
-    const tripInputs = services.deriveTripInputs?.(activeVehicle, state.currentTankStatus);
+    const tripInputs = deps.deriveTripInputs?.(activeVehicle, state.currentTankStatus);
     elements.vehicleSummaryTitle.textContent = activeVehicle.nickname;
     elements.vehicleSummaryMeta.textContent = `${getFamilyLabel(
       activeVehicle.vehicle_family

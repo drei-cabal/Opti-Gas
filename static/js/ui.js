@@ -12,13 +12,13 @@ import {
 import { openDirections } from "./features/directions.js";
 import {
   deleteVehicleProfile,
+  configureGarage,
   deriveTripInputs,
   dismissSetupPrompt,
   getActiveVehicle,
   handleLockedModeAttempt,
   handleVehicleFamilyChange,
   handleVehicleSubtypeChange,
-  hasActiveVehicle,
   hydrateGarageState,
   isModeLocked,
   openVehicleModal,
@@ -29,12 +29,14 @@ import {
 } from "./features/garage.js";
 import {
   bindChoiceGroup,
+  configureFilters,
   renderFuelTypeButtons,
   resolveLocationFailureMessage,
   syncFilterControls,
 } from "./features/filters.js";
 import {
   bindSheetDrag,
+  configureSheets,
   closeById,
   closeSheet,
   openSheet,
@@ -43,6 +45,7 @@ import {
 import {
   buildSummaryBadge,
   buildSummaryMeta,
+  configureStations,
   getDisplayStationById,
   getPrimaryStation,
   getVisibleStations,
@@ -50,13 +53,15 @@ import {
   renderCandidates,
   submitPriceUpdate,
 } from "./features/stations.js";
-import { normalizeMode } from "./shared/formatters.js";
 import {
-  elements,
-  services,
-  setServices,
-  state,
-} from "./shared/state.js";
+  configureView,
+  openGarageView as setGarageView,
+  openMapView as setMapView,
+  renderSetupPrompt,
+  renderViewState,
+} from "./features/view.js";
+import { normalizeMode } from "./shared/formatters.js";
+import { elements, state } from "./shared/state.js";
 import {
   hydrateCachedSession,
   persistCachedSession,
@@ -71,30 +76,40 @@ const mapView = createMapView({
   },
 });
 
-setServices({
+configureFilters({
+  deriveTripInputs,
+  getActiveVehicle,
+  isModeLocked,
+});
+
+configureSheets({
+  closeAdvisorySheet,
+});
+
+configureStations({
+  closeSheet,
+  getActiveVehicle,
   mapView,
-  render,
+  openDirections: (station) => openDirections(station, state.userLocation),
+  openSheet,
   refreshRecommendations,
-  renderGarage,
-  renderSetupPrompt,
-  renderViewState,
-  syncFilterControls,
+  render,
+  showAnnouncement,
+});
+
+configureGarage({
   closeSheet,
   openSheet,
-  closeById,
-  setSheetState,
+  refreshRecommendations,
+  render,
+  renderSetupPrompt,
   showAnnouncement,
-  clearAnnouncement,
-  syncAdvisories,
-  closeAdvisorySheet,
-  openGarageView,
-  openMapView,
-  openDirections: (station) => openDirections(station, state.userLocation),
+  syncFilterControls,
+});
+
+configureView({
+  closeSheet,
   getActiveVehicle,
-  hasActiveVehicle,
-  deriveTripInputs,
-  isModeLocked,
-  handleLockedModeAttempt,
 });
 
 bootstrap();
@@ -387,52 +402,10 @@ function render() {
   );
 }
 
-function renderSetupPrompt() {
-  const showPrompt =
-    state.view === "map" && !getActiveVehicle() && !state.setupPromptDismissed;
-  elements.setupPromptBackdrop.classList.toggle("hidden", !showPrompt);
-  elements.setupPrompt.classList.toggle("hidden", !showPrompt);
-}
-
-function renderViewState() {
-  const isGarageView = state.view === "garage";
-  elements.appShell.dataset.view = state.view;
-  const mapElements = [
-    elements.topBar,
-    elements.map,
-    elements.recenterButton,
-    elements.bottomSheet,
-    elements.emptyState,
-  ];
-
-  mapElements.forEach((element) => {
-    element.classList.toggle("hidden", isGarageView);
-  });
-  elements.setupPromptBackdrop.classList.toggle(
-    "hidden",
-    isGarageView || state.setupPromptDismissed || hasActiveVehicle()
-  );
-  elements.setupPrompt.classList.toggle(
-    "hidden",
-    isGarageView || state.setupPromptDismissed || hasActiveVehicle()
-  );
-  elements.garageView.classList.toggle("hidden", !isGarageView);
-  elements.showMapViewButton.classList.toggle("app-nav__button--active", !isGarageView);
-  elements.showGarageViewButton.classList.toggle("app-nav__button--active", isGarageView);
-
-  if (isGarageView) {
-    closeSheet(elements.filterSheet);
-    closeSheet(elements.priceModal);
-    closeSheet(elements.creditsModal);
-  }
-}
-
 function openMapView() {
-  state.view = "map";
-  render();
+  setMapView(render);
 }
 
 function openGarageView() {
-  state.view = "garage";
-  render();
+  setGarageView(render);
 }

@@ -1,4 +1,12 @@
-import { elements, services } from "../shared/state.js";
+import { elements } from "../shared/state.js";
+
+const deps = {
+  closeAdvisorySheet: null,
+};
+
+export function configureSheets(nextDeps) {
+  Object.assign(deps, nextDeps);
+}
 
 let dragStartY = null;
 let dragStartState = null;
@@ -59,7 +67,7 @@ export function closeById(sheetId) {
     return;
   }
   if (sheetId === "advisorySheet") {
-    services.closeAdvisorySheet?.();
+    deps.closeAdvisorySheet?.();
     return;
   }
   closeSheet(element);

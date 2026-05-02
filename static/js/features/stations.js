@@ -1,5 +1,5 @@
 import { updatePrice } from "../api.js";
-import { elements, services, state } from "../shared/state.js";
+import { elements, state } from "../shared/state.js";
 import {
   escapeHtml,
   formatDate,
@@ -7,6 +7,21 @@ import {
   formatDuration,
   normalizeMode,
 } from "../shared/formatters.js";
+
+const deps = {
+  closeSheet: null,
+  getActiveVehicle: null,
+  mapView: null,
+  openDirections: null,
+  openSheet: null,
+  refreshRecommendations: null,
+  render: null,
+  showAnnouncement: null,
+};
+
+export function configureStations(nextDeps) {
+  Object.assign(deps, nextDeps);
+}
 
 export function renderCandidates() {
   if (state.isLoadingRecommendations) {
@@ -32,7 +47,7 @@ export function renderCandidates() {
 
   elements.candidateList.querySelectorAll("[data-action='directions']").forEach((button) => {
     button.addEventListener("click", () => {
-      services.openDirections?.(getDisplayStationById(button.dataset.stationId));
+      deps.openDirections?.(getDisplayStationById(button.dataset.stationId));
     });
   });
 
@@ -64,13 +79,13 @@ export async function submitPriceUpdate() {
     state.allStations = state.allStations.map((item) =>
       item.station_id === updatedStation.station_id ? updatedStation : item
     );
-    services.closeSheet?.(elements.priceModal);
-    await services.refreshRecommendations?.();
+    deps.closeSheet?.(elements.priceModal);
+    await deps.refreshRecommendations?.();
     if (!state.userLocation) {
-      services.render?.();
+      deps.render?.();
     }
   } catch (error) {
-    services.showAnnouncement?.(error.message || "Unable to update the price.", "warning", {
+    deps.showAnnouncement?.(error.message || "Unable to update the price.", "warning", {
       title: "Price update failed",
       kind: "system",
     });
@@ -198,7 +213,7 @@ function renderStationDetail(station) {
         .map((reason) => `<p class="detail-card__meta">${escapeHtml(reason)}</p>`)
         .join("")
     : "";
-  const showPersonalizedCost = Boolean(services.getActiveVehicle?.());
+  const showPersonalizedCost = Boolean(deps.getActiveVehicle?.());
 
   return `
     <div class="candidate-detail">
@@ -254,7 +269,7 @@ function openPriceModal(station) {
     station.last_updated
   )}`;
   elements.priceInput.value = station.price.toFixed(2);
-  services.openSheet?.(elements.priceModal);
+  deps.openSheet?.(elements.priceModal);
 }
 
 function sortStationsForSearch(left, right) {
@@ -270,7 +285,7 @@ export function buildSummaryBadge(station) {
   if (!state.userLocation) {
     return "Awaiting location";
   }
-  if (!services.getActiveVehicle?.() && normalizeMode(state.mode) === "save-time") {
+  if (!deps.getActiveVehicle?.() && normalizeMode(state.mode) === "save-time") {
     return "Quickest option";
   }
   return state.searchQuery ? "Station match" : "Best station";
@@ -367,7 +382,7 @@ function animateStationToggle(stationId) {
     }
     window.setTimeout(() => {
       state.activeStationId = null;
-      services.render?.();
+      deps.render?.();
     }, 220);
     return;
   }
@@ -377,8 +392,8 @@ function animateStationToggle(stationId) {
     currentCard.classList.remove("active");
     window.setTimeout(() => {
       state.activeStationId = stationId;
-      services.render?.();
-      services.mapView?.focusStation(getDisplayStationById(stationId));
+      deps.render?.();
+      deps.mapView?.focusStation(getDisplayStationById(stationId));
       expandRenderedCard(stationId);
       scrollToStationCard(stationId);
     }, 220);
@@ -386,8 +401,8 @@ function animateStationToggle(stationId) {
   }
 
   state.activeStationId = stationId;
-  services.render?.();
-  services.mapView?.focusStation(getDisplayStationById(stationId));
+  deps.render?.();
+  deps.mapView?.focusStation(getDisplayStationById(stationId));
   expandRenderedCard(stationId);
   scrollToStationCard(stationId);
 }

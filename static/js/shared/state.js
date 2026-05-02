@@ -186,33 +186,3 @@ export const elements = {
   showMapViewButton: document.getElementById("showMapViewButton"),
   showGarageViewButton: document.getElementById("showGarageViewButton"),
 };
-
-export const services = {
-  mapView: null,
-  render: null,
-  refreshRecommendations: null,
-  renderGarage: null,
-  renderSetupPrompt: null,
-  renderViewState: null,
-  syncFilterControls: null,
-  closeSheet: null,
-  openSheet: null,
-  closeById: null,
-  setSheetState: null,
-  showAnnouncement: null,
-  clearAnnouncement: null,
-  syncAdvisories: null,
-  closeAdvisorySheet: null,
-  openGarageView: null,
-  openMapView: null,
-  openDirections: null,
-  getActiveVehicle: null,
-  hasActiveVehicle: null,
-  deriveTripInputs: null,
-  isModeLocked: null,
-  handleLockedModeAttempt: null,
-};
-
-export function setServices(nextServices) {
-  Object.assign(services, nextServices);
-}

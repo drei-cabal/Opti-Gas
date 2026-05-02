@@ -5,39 +5,11 @@ OPTI-GAS is a mobile-first Flask + Leaflet web app for Tagum City drivers. It op
 ## Stack
 
 - Backend: Flask
-- Frontend: HTML, CSS, vanilla JavaScript, Leaflet.js
+- Frontend: HTML, CSS, vanilla JavaScript, Leaflet.js 
 - Data: `data/stations/stations.json`
 - Routing: OpenRouteService with Haversine fallback
 
-## Quick Start
 
-```bash
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
-copy .env.example .env
-python app.py
-```
-
-Open `http://127.0.0.1:5000`.
-
-## Temporary Files
-
-The project now routes most Python and pytest temporary files into `.tmp/` so generated clutter stays in one place.
-
-Main folders:
-
-- `.tmp/runtime`: Python temporary files
-- `.tmp/pycache`: Python bytecode caches
-- `.tmp/pytest`: pytest cache and temp runs
-
-Cleanup:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\cleanup.ps1
-```
-
-This is not automatic on shutdown. The folder is centralized so you can delete it safely after the app or tests stop running.
 
 ## Project Layout
 
@@ -54,53 +26,71 @@ This is not automatic on shutdown. The folder is centralized so you can delete i
 
 ## Build And Data Flow
 
-This diagram shows the runtime path plus the station-data maintenance path for OPTI-GAS:
+This section is split into two diagrams:
+
+1. how the app runs when a user opens Opti-Gas
+2. how station data is validated and updated outside the live request path
+
+### 1. App Runtime Flow
 
 ```mermaid
-flowchart TB
-  subgraph Browser[Browser Runtime]
-    User[User]
-    HTML[templates/index.html]
-    JS[static/js/ui.js\nfeatures/*\nshared/*]
-    Leaflet[Leaflet]
-    GoogleMaps[Google Maps]
-    User --> HTML --> JS
-    JS --> Leaflet
-    JS --> GoogleMaps
-  end
+flowchart LR
+  User[User]
+  HTML[templates/index.html]
+  UI[static/js/ui.js]
+  Shared[static/js/shared/*]
+  Features[static/js/features/*]
+  Flask[app.py]
+  RequestNorm[utils/recommendation_request.py]
+  Pipeline[utils/recommendation_pipeline.py]
+  Store[utils/station_store.py]
+  Routing[utils/routing.py]
+  Algorithms[utils/algorithms.py]
+  StationData[data/stations/stations.json]
+  Leaflet[Leaflet]
+  GoogleMaps[Google Maps]
+  OSM[OpenStreetMap tiles]
+  ORS[OpenRouteService]
 
-  subgraph Server[Flask Server]
-    Flask[app.py]
-    Core[utils/ station_store.py\nrecommendation_pipeline.py\nrouting.py\nalgorithms.py]
-    Flask --> Core
-  end
+  User --> HTML --> UI
+  UI --> Shared
+  UI --> Features
+  Features --> Flask
 
-  subgraph Data[Project Data]
-    StationData[data/stations/stations.json]
-    Validate[scripts/validate_stations.py]
-    Update[scripts/update_prices.py]
-    StationData --> Validate
-    Update --> StationData
-  end
+  Flask --> RequestNorm --> Pipeline
+  Pipeline --> Store --> StationData
+  Pipeline --> Routing --> ORS
+  Pipeline --> Algorithms
 
-  subgraph External[External Services]
-    OSM[OpenStreetMap tiles]
-    ORS[OpenRouteService]
-  end
-
-  JS --> Flask
-  Core --> StationData
-  Leaflet --> OSM
-  Core --> ORS
+  Features --> Leaflet --> OSM
+  Features --> GoogleMaps
 ```
 
-The short version:
+How to read it:
 
 1. Flask serves the page shell and API routes.
-2. The frontend hydrates the map, filters, and Garage state in the browser.
-3. The backend reads station data, filters candidates, computes routes, and ranks recommendations.
-4. The browser hands off map rendering to Leaflet and navigation to Google Maps.
-5. Station data is validated and updated separately from the runtime request path.
+2. `static/js/ui.js` boots the browser app and composes shared and feature modules.
+3. Feature modules render the map, filters, Garage, and Google Maps handoff in the browser.
+4. The backend normalizes requests, reads station data, computes routes, and ranks recommendations.
+5. Leaflet handles map rendering and OpenStreetMap tiles, while Google Maps handles navigation.
+
+### 2. Station Data Maintenance
+
+```mermaid
+flowchart LR
+  Update[scripts/update_prices.py]
+  Validate[scripts/validate_stations.py]
+  StationData[data/stations/stations.json]
+
+  Update --> StationData
+  Validate -. checks .-> StationData
+```
+
+How to read it:
+
+1. `scripts/update_prices.py` writes approved station price changes back to `data/stations/stations.json`.
+2. `scripts/validate_stations.py` checks station data before it is treated as valid.
+3. The maintenance flow is separate from the live app request path.
 
 ## Frontend Module Map
 
@@ -113,6 +103,7 @@ The frontend is intentionally split by feature boundary:
 - `static/js/features/advisories.js`: advisory sheet state, announcements, and drag/close behavior
 - `static/js/features/sheets.js`: generic sheet and modal open/close plus bottom-sheet drag behavior
 - `static/js/features/directions.js`: Google Maps handoff
+- `static/js/features/view.js`: Map-vs-Garage view state and setup-prompt rendering
 - `static/js/shared/state.js`: centralized mutable state, DOM element registry, and shared constants
 - `static/js/shared/persistence.js`: local/session storage hydration and persistence
 - `static/js/shared/formatters.js`: string, date, distance, duration, and mode helpers
@@ -134,23 +125,7 @@ For the current Map + Garage product interaction, saved-vehicle behavior, and fi
 
 For repo-local UI design engineering guidance used for this mobile map experience, see `skills/opti-gas-ui-design-engineering/SKILL.md`.
 
-## Current UI Notes
-
-The current frontend direction is:
-
-- map-first mobile layout
-- dark chrome for search, advisory, prompts, and bottom navigation
-- muted cool blue-gray surfaces for sheets, cards, filters, and Garage
-- white reserved for highest-elevation surfaces such as modals
-- amber reserved for recommendation and active-state emphasis
-
-Current map behavior notes:
-
-- the app requests the user's current browser geolocation on load
-- there is no landmark picker in the current product scope
-- the collapsed station sheet defaults to a compact recommendation summary
-- the recenter control stays fixed on the map, slightly above the bottom edge, and sits behind the station sheet as it rises
-- tank status lives only in the Map filter flow, not in the saved vehicle model
+## Implementation Details
 
 ### 1. Candidate Filtering
 
@@ -305,19 +280,6 @@ Where:
 - `n` = total number of stations
 - `k` = number of stations remaining after filtering
 
-### Why This Fits a Complexities and Algorithms Project
-
-This project demonstrates:
-
-- linear filtering algorithms
-- heuristic fallback estimation
-- multi-criteria ranking
-- sorting-based decision making
-- identity resolution for ambiguous duplicate station names
-- practical tradeoffs between accuracy, performance, and system resilience
-
-In other words, the web app is the interface, but the core system behavior is driven by algorithm selection, complexity tradeoffs, and structured decision logic.
-
 ## Seed From OSM
 
 To pull Tagum fuel-station candidates from OpenStreetMap into a review file:
@@ -384,11 +346,6 @@ Each station now stores one location with multiple fuel records in `data/station
 ```
 
 ## Credits And Attributions
-
-OPTI-GAS should keep credits in two places:
-
-- this `README.md` for maintainers and reviewers
-- the in-app `Garage -> Credits and Attributions` entry for end users
 
 Current attributions:
 
