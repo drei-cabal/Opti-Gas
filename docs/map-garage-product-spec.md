@@ -30,7 +30,7 @@ It should:
 - request current browser geolocation immediately
 - show nearby stations
 - support fuel-type, brand, and radius filtering
-- show price, distance, and ETA
+- show price, distance, and travel time
 - allow navigation handoff with `Get Directions`
 
 The Map must remain useful even before a vehicle profile is created.
@@ -137,7 +137,7 @@ If no saved vehicle exists yet:
 
 - the map remains usable
 - station browsing remains available
-- fuel price, distance, and ETA remain available
+- fuel price, distance, and travel time remain available
 - `Get Directions` remains available
 
 Cost-based presets should not be fully available.

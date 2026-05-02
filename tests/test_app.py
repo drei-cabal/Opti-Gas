@@ -130,3 +130,34 @@ def test_api_update_price(tmp_path):
         fuel for fuel in payload["station"]["fuels"] if fuel["fuel_type"] == "Diesel"
     )
     assert updated_fuel["price"] == 93.45
+
+
+def test_api_update_price_then_recommend_reflects_change(tmp_path):
+    stations_path, landmarks_path = write_fixture_files(tmp_path)
+    app = create_app(
+        {
+            "TESTING": True,
+            "STATIONS_PATH": stations_path,
+            "LANDMARKS_PATH": landmarks_path,
+        }
+    )
+    client = app.test_client()
+
+    update_response = client.post(
+        "/api/update-price",
+        json={
+            "station_name": "Petron Apokon",
+            "station_id": "7.452300,125.814200",
+            "fuel_type": "Diesel",
+            "new_price": 97.5,
+        },
+    )
+    assert update_response.status_code == 200
+
+    recommend_response = client.get(
+        "/api/recommend?lat=7.4478&lng=125.8079&mode=balanced&brand=any&fuel_type=Diesel&radius_km=5"
+    )
+    assert recommend_response.status_code == 200
+    payload = recommend_response.get_json()
+    assert payload["best"]["fuel_type"] == "Diesel"
+    assert payload["best"]["price"] == 97.5

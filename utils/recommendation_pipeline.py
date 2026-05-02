@@ -23,6 +23,7 @@ MAX_ROUTE_WORKERS = 6
 RouteGetter = Callable[[tuple[float, float], dict, str | None], dict]
 
 
+# Run the full recommendation flow from filtering through scoring and response shaping.
 def recommend_stations_result(
     *,
     stations: list[dict],
@@ -36,7 +37,8 @@ def recommend_stations_result(
     km_per_liter: float,
     liters_to_fill: float,
 ) -> dict:
-    filtered = _filter_candidate_stations(stations, origin, brand, radius_km)
+    filtered = filter_by_brand(stations, brand)
+    filtered = filter_by_radius(filtered, origin, radius_km)
     routed_candidates = _build_routed_candidates(
         filtered,
         origin,
@@ -49,11 +51,17 @@ def recommend_stations_result(
     )
 
     if not routed_candidates:
-        return _empty_result(
-            preset=preset,
-            fallback_warning=fallback_warning,
-            reason="No stations match the current filters.",
-        )
+        return {
+            "best": None,
+            "candidates": [],
+            "candidate_count": 0,
+            "scoring_mode": "no-option",
+            "preset_used": preset,
+            "reference_price_source": None,
+            "reference_price_used": None,
+            "fallback_warning": fallback_warning,
+            "reason": "No stations match the current filters.",
+        }
 
     reference_price, reference_price_source = calculate_reference_price(
         routed_candidates,
@@ -61,49 +69,109 @@ def recommend_stations_result(
         fuel_type,
     )
     if reference_price is None or reference_price_source is None:
-        return _empty_result(
-            preset=preset,
-            fallback_warning=fallback_warning,
-            reason="Unable to compute reference price for selected fuel type from station data.",
+        return {
+            "best": None,
+            "candidates": [],
+            "candidate_count": 0,
+            "scoring_mode": "no-option",
+            "preset_used": preset,
+            "reference_price_source": None,
+            "reference_price_used": None,
+            "fallback_warning": fallback_warning,
+            "reason": "Unable to compute reference price for selected fuel type from station data.",
+        }
+
+    rounded_reference_price = round(reference_price, 2)
+    for candidate in routed_candidates:
+        economics = calculate_economic_cost(
+            distance_km=candidate["_distance_km_raw"],
+            km_per_liter=km_per_liter,
+            liters_to_fill=liters_to_fill,
+            station_price=candidate["price"],
+            reference_price=reference_price,
+        )
+        candidate.update(economics)
+        candidate["preset_used"] = preset
+        candidate["reference_price_used"] = rounded_reference_price
+        candidate["reference_price_source"] = reference_price_source
+
+    if len(routed_candidates) == 1:
+        candidate = routed_candidates[0]
+        candidate["norm_cost"] = 0.0
+        candidate["norm_time"] = 0.0
+        candidate["norm_distance"] = 0.0
+        candidate["final_score"] = None
+        candidate["primary_reason"] = PRIMARY_REASON_SINGLE
+        candidate["secondary_reasons"] = ["Only matching station in the current filter set."]
+        scoring_mode = "single-option"
+    else:
+        cost_norms = normalize_metric(
+            [candidate["economic_cost"] for candidate in routed_candidates]
+        )
+        time_norms = normalize_metric(
+            [candidate["_duration_min_raw"] for candidate in routed_candidates]
+        )
+        distance_norms = normalize_metric(
+            [candidate["_distance_km_raw"] for candidate in routed_candidates]
         )
 
-    scored_candidates = _score_candidates(
-        routed_candidates,
-        preset=preset,
-        reference_price=reference_price,
-        reference_price_source=reference_price_source,
-        km_per_liter=km_per_liter,
-        liters_to_fill=liters_to_fill,
-    )
+        for index, candidate in enumerate(routed_candidates):
+            candidate["norm_cost"] = cost_norms[index]
+            candidate["norm_time"] = time_norms[index]
+            candidate["norm_distance"] = distance_norms[index]
+            candidate["final_score"] = round(compute_final_score(candidate, preset), 4)
+        scoring_mode = "comparative"
 
-    scoring_mode = "single-option" if len(scored_candidates) == 1 else "comparative"
-    describe_candidates(scored_candidates, preset, scoring_mode)
-    scored_candidates.sort(key=build_sort_key)
-    best = scored_candidates[0]
+    describe_candidates(routed_candidates, preset, scoring_mode)
+    routed_candidates.sort(key=build_sort_key)
 
-    public_candidates = [_strip_internal_fields(candidate) for candidate in scored_candidates]
+    public_candidates = []
+    for candidate in routed_candidates:
+        public_candidates.append(
+            {
+                "station_id": candidate["station_id"],
+                "name": candidate["name"],
+                "brand": candidate["brand"],
+                "lat": candidate["lat"],
+                "lng": candidate["lng"],
+                "fuel_type": candidate["fuel_type"],
+                "price": candidate["price"],
+                "available_fuel_types": candidate["available_fuel_types"],
+                "distance_km": candidate["distance_km"],
+                "duration_min": candidate["duration_min"],
+                "economic_cost": round_economic_cost(candidate["economic_cost"]),
+                "trip_cost": round_economic_cost(candidate["economic_cost"]),
+                "travel_liters": round(candidate["travel_liters"], 3),
+                "purchase_cost": round(candidate["purchase_cost"], 2),
+                "travel_fuel_cost": round(candidate["travel_fuel_cost"], 2),
+                "norm_cost": candidate["norm_cost"],
+                "norm_time": candidate["norm_time"],
+                "norm_distance": candidate["norm_distance"],
+                "final_score": candidate["final_score"],
+                "distance_source": candidate["distance_source"],
+                "preset_used": candidate["preset_used"],
+                "reference_price_used": candidate["reference_price_used"],
+                "reference_price_source": candidate["reference_price_source"],
+                "primary_reason": candidate["primary_reason"],
+                "secondary_reasons": candidate["secondary_reasons"],
+                "last_updated": candidate["last_updated"],
+            }
+        )
+
+    best = public_candidates[0]
     return {
-        "best": _strip_internal_fields(best),
+        "best": best,
         "candidates": public_candidates,
         "candidate_count": len(public_candidates),
         "scoring_mode": scoring_mode,
         "preset_used": preset,
         "reference_price_source": reference_price_source,
-        "reference_price_used": round(reference_price, 2),
+        "reference_price_used": rounded_reference_price,
         "fallback_warning": fallback_warning,
     }
 
 
-def _filter_candidate_stations(
-    stations: list[dict],
-    origin: tuple[float, float],
-    brand: str,
-    radius_km: float,
-) -> list[dict]:
-    filtered = filter_by_brand(stations, brand)
-    return filter_by_radius(filtered, origin, radius_km)
-
-
+# Build candidate recommendation records with route data for all matching stations.
 def _build_routed_candidates(
     stations: list[dict],
     origin: tuple[float, float],
@@ -138,10 +206,11 @@ def _build_routed_candidates(
                 ),
                 stations,
             )
-        )
+    )
     return [candidate for candidate in built_candidates if candidate is not None]
 
 
+# Build one candidate record for a station and selected fuel type.
 def _build_routed_candidate(
     station: dict,
     origin: tuple[float, float],
@@ -172,100 +241,7 @@ def _build_routed_candidate(
     }
 
 
-def _score_candidates(
-    routed_candidates: list[dict],
-    *,
-    preset: str,
-    reference_price: float,
-    reference_price_source: str,
-    km_per_liter: float,
-    liters_to_fill: float,
-) -> list[dict]:
-    for candidate in routed_candidates:
-        economics = calculate_economic_cost(
-            distance_km=candidate["_distance_km_raw"],
-            km_per_liter=km_per_liter,
-            liters_to_fill=liters_to_fill,
-            station_price=candidate["price"],
-            reference_price=reference_price,
-        )
-        candidate.update(economics)
-        candidate["preset_used"] = preset
-        candidate["reference_price_used"] = round(reference_price, 2)
-        candidate["reference_price_source"] = reference_price_source
-
-    if len(routed_candidates) == 1:
-        candidate = routed_candidates[0]
-        candidate["norm_cost"] = 0.0
-        candidate["norm_time"] = 0.0
-        candidate["norm_distance"] = 0.0
-        candidate["final_score"] = None
-        candidate["primary_reason"] = PRIMARY_REASON_SINGLE
-        candidate["secondary_reasons"] = ["Only matching station in the current filter set."]
-        return routed_candidates
-
-    cost_norms = normalize_metric([candidate["economic_cost"] for candidate in routed_candidates])
-    time_norms = normalize_metric([candidate["_duration_min_raw"] for candidate in routed_candidates])
-    distance_norms = normalize_metric(
-        [candidate["_distance_km_raw"] for candidate in routed_candidates]
-    )
-
-    for index, candidate in enumerate(routed_candidates):
-        candidate["norm_cost"] = cost_norms[index]
-        candidate["norm_time"] = time_norms[index]
-        candidate["norm_distance"] = distance_norms[index]
-        candidate["final_score"] = round(compute_final_score(candidate, preset), 4)
-
-    return routed_candidates
-
-
-def _strip_internal_fields(candidate: dict | None) -> dict | None:
-    if candidate is None:
-        return None
-    return {
-        "station_id": candidate["station_id"],
-        "name": candidate["name"],
-        "brand": candidate["brand"],
-        "lat": candidate["lat"],
-        "lng": candidate["lng"],
-        "fuel_type": candidate["fuel_type"],
-        "price": candidate["price"],
-        "available_fuel_types": candidate["available_fuel_types"],
-        "distance_km": candidate["distance_km"],
-        "duration_min": candidate["duration_min"],
-        "economic_cost": round_economic_cost(candidate["economic_cost"]),
-        "trip_cost": round_economic_cost(candidate["economic_cost"]),
-        "travel_liters": round(candidate["travel_liters"], 3),
-        "purchase_cost": round(candidate["purchase_cost"], 2),
-        "travel_fuel_cost": round(candidate["travel_fuel_cost"], 2),
-        "norm_cost": candidate["norm_cost"],
-        "norm_time": candidate["norm_time"],
-        "norm_distance": candidate["norm_distance"],
-        "final_score": candidate["final_score"],
-        "distance_source": candidate["distance_source"],
-        "preset_used": candidate["preset_used"],
-        "reference_price_used": candidate["reference_price_used"],
-        "reference_price_source": candidate["reference_price_source"],
-        "primary_reason": candidate["primary_reason"],
-        "secondary_reasons": candidate["secondary_reasons"],
-        "last_updated": candidate["last_updated"],
-    }
-
-
-def _empty_result(*, preset: str, fallback_warning: bool, reason: str) -> dict:
-    return {
-        "best": None,
-        "candidates": [],
-        "candidate_count": 0,
-        "scoring_mode": "no-option",
-        "preset_used": preset,
-        "reference_price_source": None,
-        "reference_price_used": None,
-        "fallback_warning": fallback_warning,
-        "reason": reason,
-    }
-
-
+# Find the fuel entry on a station that matches the requested fuel type.
 def _find_station_fuel(station: dict, fuel_type: str) -> dict | None:
     for fuel in station["fuels"]:
         if fuel["fuel_type"] == fuel_type:

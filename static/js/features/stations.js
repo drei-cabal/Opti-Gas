@@ -270,6 +270,10 @@ function openPriceModal(station) {
   )}`;
   elements.priceInput.value = station.price.toFixed(2);
   deps.openSheet?.(elements.priceModal);
+  requestAnimationFrame(() => {
+    elements.priceInput.focus({ preventScroll: true });
+    elements.priceInput.scrollIntoView({ block: "center", inline: "nearest", behavior: "smooth" });
+  });
 }
 
 function sortStationsForSearch(left, right) {
@@ -315,15 +319,15 @@ function buildRowMeta(station) {
 
 function buildRouteSourceNote(station) {
   if (station.distance_source === "ors") {
-    return "ETA based on OpenRouteService road routing.";
+    return "Travel time based on OpenRouteService road routing.";
   }
   if (station.distance_source === "osrm") {
-    return "ETA based on OSRM road routing.";
+    return "Travel time based on OSRM road routing.";
   }
   if (station.distance_source === "haversine") {
-    return "ETA estimated from local fallback routing when road-route data is unavailable.";
+    return "Travel time estimated from local fallback routing when road-route data is unavailable.";
   }
-  return "ETA source unavailable.";
+  return "Travel time source unavailable.";
 }
 
 function getEmptyListMessage() {

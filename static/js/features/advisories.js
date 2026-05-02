@@ -113,6 +113,15 @@ function buildAdvisoryItems() {
   }
 
   items.push({
+    badge: "Info",
+    tone: "info",
+    date: new Date().toISOString().slice(0, 10),
+    title: "Estimate advisory",
+    body:
+      "Prices, travel times, and route costs are estimates. They can change after live routing, traffic, or station updates.",
+  });
+
+  items.push({
     badge: "Guide",
     tone: "guide",
     date: "2026-05-01",

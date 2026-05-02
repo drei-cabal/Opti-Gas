@@ -6,6 +6,7 @@ from math import asin, cos, radians, sin, sqrt
 EARTH_RADIUS_KM = 6371.0
 
 
+# Compute straight-line distance between two coordinates using the haversine formula.
 def haversine_distance_km(
     origin_lat: float,
     origin_lng: float,
@@ -24,6 +25,7 @@ def haversine_distance_km(
     return 2 * EARTH_RADIUS_KM * asin(sqrt(haversine))
 
 
+# Estimate trip duration in minutes using short-distance city driving heuristics.
 def estimate_duration_min(distance_km: float, average_speed_kmh: float = 35.0) -> float:
     if average_speed_kmh <= 0:
         raise ValueError("average_speed_kmh must be positive.")
@@ -38,11 +40,13 @@ def estimate_duration_min(distance_km: float, average_speed_kmh: float = 35.0) -
     return fixed_delay_min + (distance_km / effective_speed_kmh) * 60.0
 
 
+# Turn a straight-line distance into a fallback trip duration estimate.
 def estimate_fallback_duration_min(straight_line_distance_km: float) -> float:
     adjusted_distance_km = estimate_road_distance_km(straight_line_distance_km)
     return estimate_duration_min(adjusted_distance_km)
 
 
+# Approximate road distance from straight-line distance with distance-based multipliers.
 def estimate_road_distance_km(straight_line_distance_km: float) -> float:
     if straight_line_distance_km < 0:
         raise ValueError("straight_line_distance_km cannot be negative.")
@@ -59,6 +63,7 @@ def estimate_road_distance_km(straight_line_distance_km: float) -> float:
     return straight_line_distance_km * multiplier
 
 
+# Choose a more realistic urban driving speed for the fallback duration model.
 def _estimate_urban_speed_kmh(distance_km: float) -> float:
     if distance_km <= 1:
         return 14.0
@@ -69,5 +74,6 @@ def _estimate_urban_speed_kmh(distance_km: float) -> float:
     return max(average_speed_floor_kmh(), 30.0)
 
 
+# Define the minimum speed floor used by the urban fallback estimator.
 def average_speed_floor_kmh() -> float:
     return 22.0

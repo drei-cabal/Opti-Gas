@@ -3,6 +3,7 @@ from __future__ import annotations
 from utils.location import haversine_distance_km
 
 
+# Keep only stations that match the requested brand unless the request is unrestricted.
 def filter_by_brand(stations: list[dict], brand: str) -> list[dict]:
     if not brand or brand.lower() == "any":
         return list(stations)
@@ -10,6 +11,7 @@ def filter_by_brand(stations: list[dict], brand: str) -> list[dict]:
     return [station for station in stations if station["brand"].lower() == expected]
 
 
+# Keep only stations that fall within the requested radius from the user origin.
 def filter_by_radius(
     stations: list[dict],
     origin: tuple[float, float],

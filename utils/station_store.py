@@ -37,6 +37,7 @@ class StationValidationError(ValueError):
     """Raised when station data fails validation."""
 
 
+# Load, normalize, validate, and cache the public station collection from disk.
 def load_stations(path: str | Path) -> list[dict]:
     path = Path(path)
     stat = path.stat()
@@ -60,6 +61,7 @@ def load_stations(path: str | Path) -> list[dict]:
     return public_stations
 
 
+# Load and cache landmarks from disk after verifying the file shape.
 def load_landmarks(path: str | Path) -> list[dict]:
     path = Path(path)
     stat = path.stat()
@@ -82,6 +84,7 @@ def load_landmarks(path: str | Path) -> list[dict]:
     return payload
 
 
+# Validate that every record in the station collection matches the expected schema.
 def validate_station_collection(stations: list[dict]) -> None:
     if not isinstance(stations, list):
         raise StationValidationError("Station data must be a JSON array.")
@@ -89,6 +92,7 @@ def validate_station_collection(stations: list[dict]) -> None:
         validate_station_record(station)
 
 
+# Validate one station record, including required fields, bounds, and required fuel set.
 def validate_station_record(station: dict) -> None:
     if not isinstance(station, dict):
         raise StationValidationError("Each station entry must be an object.")
@@ -135,6 +139,7 @@ def validate_station_record(station: dict) -> None:
         )
 
 
+# Validate one fuel record and track duplicates when validating a full station.
 def validate_fuel_record(
     station_name: str,
     fuel: dict,
@@ -175,6 +180,7 @@ def validate_fuel_record(
         ) from exc
 
 
+# Update one station fuel price, then validate and persist the entire station file atomically.
 def update_station_price(
     path: str | Path,
     station_name: str,
@@ -219,17 +225,20 @@ def update_station_price(
         return updated_station
 
 
+# Flag prices whose last update date is older than the configured staleness threshold.
 def is_stale_price(last_updated: str, threshold_days: int = 7, today: date | None = None) -> bool:
     today = today or date.today()
     updated_on = datetime.strptime(last_updated, "%Y-%m-%d").date()
     return (today - updated_on).days > threshold_days
 
 
+# Read one JSON file from disk using UTF-8.
 def _load_json(path: str | Path):
     with Path(path).open("r", encoding="utf-8") as handle:
         return json.load(handle)
 
 
+# Check whether a cached file entry still matches the current file metadata.
 def _matches_cache_entry(cache_entry: dict, cache_key: dict) -> bool:
     return (
         cache_entry.get("mtime_ns") == cache_key["mtime_ns"]
@@ -237,12 +246,14 @@ def _matches_cache_entry(cache_entry: dict, cache_key: dict) -> bool:
     )
 
 
+# Normalize the raw station collection into the runtime station shape.
 def normalize_station_collection(stations: list[dict]) -> list[dict]:
     if not isinstance(stations, list):
         raise StationValidationError("Station data must be a JSON array.")
     return [normalize_station_record(station) for station in stations]
 
 
+# Normalize one raw station record, including legacy single-fuel compatibility.
 def normalize_station_record(station: dict) -> dict:
     if not isinstance(station, dict):
         raise StationValidationError("Each station entry must be an object.")
@@ -272,6 +283,7 @@ def normalize_station_record(station: dict) -> dict:
     return normalized
 
 
+# Normalize one raw fuel object into the runtime fuel shape.
 def normalize_fuel_record(fuel: dict) -> dict:
     if not isinstance(fuel, dict):
         raise StationValidationError("Fuel entry must be an object.")
@@ -282,6 +294,7 @@ def normalize_fuel_record(fuel: dict) -> dict:
     }
 
 
+# Write JSON to disk safely by replacing the target file with a temporary file.
 def _atomic_write_json(path: Path, payload) -> None:
     with tempfile.NamedTemporaryFile(
         "w",
@@ -296,10 +309,12 @@ def _atomic_write_json(path: Path, payload) -> None:
     temp_path.replace(path)
 
 
+# Build the stable coordinate-based station identifier used across the app.
 def get_station_id(station: dict) -> str:
     return f"{float(station['lat']):.6f},{float(station['lng']):.6f}"
 
 
+# Convert a runtime station back into the persisted JSON shape.
 def _serialize_station(station: dict) -> dict:
     return {
         "name": station["name"],
@@ -317,6 +332,7 @@ def _serialize_station(station: dict) -> dict:
     }
 
 
+# Remove internal normalization markers before returning station data to callers.
 def _strip_runtime_metadata(station: dict) -> dict:
     cleaned = dict(station)
     cleaned.pop("_legacy_single_fuel", None)

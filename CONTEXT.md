@@ -21,7 +21,7 @@ Opti-Gas is a mobile-first Flask plus Leaflet app for Tagum City drivers. It rec
 - `app.py` is the HTTP seam.
 - `utils/recommendation_request.py` owns recommendation query normalization and defaults.
 - `utils/recommendation_pipeline.py` owns recommendation pipeline orchestration.
-- `utils/routing.py` owns route provider selection and route cache behavior.
+- `utils/routing.py` owns route provider selection and in-memory route cache behavior.
 - `utils/station_store.py` owns station collection normalization, validation, station identity, and station price update flow.
 - `static/js/ui.js` is now the thin frontend entrypoint and composition seam.
 - `static/js/features/` owns feature-local browser behavior such as the Garage, station collection presentation, filters, advisories, sheets, and directions handoff.

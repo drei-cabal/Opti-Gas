@@ -165,7 +165,7 @@ What to do:
 - wait for location access to finish
 - make sure internet is working
 - refresh once after the first successful load
-- keep the server running so route cache can help
+- keep the server running so the in-memory route cache can help
 
 ## 9. If the page does not reflect code changes
 

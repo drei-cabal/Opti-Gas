@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-import json
 import threading
 import time
-from pathlib import Path
 
 import requests
 
@@ -20,11 +18,11 @@ ROUTE_CACHE_TTL_SEC = 300
 ROUTE_SOURCE_ORS = "ors"
 ROUTE_SOURCE_OSRM = "osrm"
 ROUTE_SOURCE_FALLBACK = "haversine"
-ROUTE_CACHE_PATH = Path(__file__).resolve().parents[1] / ".tmp" / "route_cache.json"
 _route_cache: dict[tuple[float, float, float, float], dict] = {}
 _cache_lock = threading.Lock()
 
 
+# Resolve a route for one station using cache first and provider fallbacks second.
 def get_route(
     origin: tuple[float, float],
     station: dict,
@@ -42,6 +40,7 @@ def get_route(
     return route
 
 
+# Try each routing provider in order before falling back to the local estimate.
 def _resolve_route(
     origin: tuple[float, float],
     station: dict,
@@ -56,6 +55,7 @@ def _resolve_route(
     return _build_haversine_route(origin, station)
 
 
+# Build the ordered list of route providers available for the current request.
 def _build_route_providers(
     origin: tuple[float, float],
     station: dict,
@@ -71,6 +71,7 @@ def _build_route_providers(
     return providers
 
 
+# Build the cache key used to reuse route results for near-identical origin and station pairs.
 def _build_cache_key(
     origin: tuple[float, float],
     station_lat: float,
@@ -84,6 +85,7 @@ def _build_cache_key(
     )
 
 
+# Return a cached route if it is still fresh enough to reuse.
 def _get_cached_route(cache_key: tuple[float, float, float, float]) -> dict | None:
     now = time.time()
     with _cache_lock:
@@ -92,17 +94,17 @@ def _get_cached_route(cache_key: tuple[float, float, float, float]) -> dict | No
             return None
         if now - entry["cached_at"] > ROUTE_CACHE_TTL_SEC:
             _route_cache.pop(cache_key, None)
-            _persist_route_cache_unlocked()
             return None
         return dict(entry["route"])
 
 
+# Store a fresh route result in the in-memory cache.
 def _set_cached_route(cache_key: tuple[float, float, float, float], route: dict) -> None:
     with _cache_lock:
         _route_cache[cache_key] = {"cached_at": time.time(), "route": dict(route)}
-        _persist_route_cache_unlocked()
 
 
+# Fetch road distance and duration from OpenRouteService when an API key is configured.
 def _fetch_ors_route(
     origin: tuple[float, float],
     station: dict,
@@ -137,6 +139,7 @@ def _fetch_ors_route(
     )
 
 
+# Build the local haversine-based route estimate used when remote providers fail.
 def _build_haversine_route(origin: tuple[float, float], station: dict) -> dict:
     straight_line_distance_km = haversine_distance_km(
         origin[0], origin[1], station["lat"], station["lng"]
@@ -149,6 +152,7 @@ def _build_haversine_route(origin: tuple[float, float], station: dict) -> dict:
     )
 
 
+# Fetch road distance and duration from the public OSRM service.
 def _fetch_osrm_route(
     origin: tuple[float, float],
     station: dict,
@@ -179,64 +183,10 @@ def _fetch_osrm_route(
     )
 
 
+# Standardize the route payload shape returned by all providers.
 def _build_route_result(distance_km: float, duration_min: float, source: str) -> dict:
     return {
         "distance_km": distance_km,
         "duration_min": duration_min,
         "source": source,
     }
-
-
-def _persist_route_cache_unlocked() -> None:
-    try:
-        ROUTE_CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
-        payload = {
-            _cache_key_to_string(cache_key): value
-            for cache_key, value in _route_cache.items()
-        }
-        ROUTE_CACHE_PATH.write_text(json.dumps(payload), encoding="utf-8")
-    except OSError:
-        return
-
-
-def _load_persistent_route_cache() -> None:
-    if not ROUTE_CACHE_PATH.exists():
-        return
-
-    try:
-        payload = json.loads(ROUTE_CACHE_PATH.read_text(encoding="utf-8"))
-    except (OSError, ValueError):
-        return
-
-    now = time.time()
-    for cache_key_text, entry in payload.items():
-        cache_key = _cache_key_from_string(cache_key_text)
-        if cache_key is None or not isinstance(entry, dict):
-            continue
-        cached_at = entry.get("cached_at")
-        route = entry.get("route")
-        if not isinstance(cached_at, (int, float)) or not isinstance(route, dict):
-            continue
-        if now - cached_at > ROUTE_CACHE_TTL_SEC:
-            continue
-        _route_cache[cache_key] = {"cached_at": cached_at, "route": route}
-
-
-def _cache_key_to_string(cache_key: tuple[float, float, float, float]) -> str:
-    return "|".join(str(part) for part in cache_key)
-
-
-def _cache_key_from_string(cache_key_text: str) -> tuple[float, float, float, float] | None:
-    try:
-        origin_lat, origin_lng, station_lat, station_lng = cache_key_text.split("|")
-        return (
-            float(origin_lat),
-            float(origin_lng),
-            float(station_lat),
-            float(station_lng),
-        )
-    except (TypeError, ValueError):
-        return None
-
-
-_load_persistent_route_cache()

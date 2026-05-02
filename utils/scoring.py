@@ -24,6 +24,7 @@ DISTANCE_MARGIN_THRESHOLD = 0.10
 TIME_MARGIN_THRESHOLD = 0.10
 
 
+# Compute the total expected fuel spend for reaching and filling up at a station.
 def calculate_economic_cost(
     *,
     distance_km: float,
@@ -44,6 +45,7 @@ def calculate_economic_cost(
     }
 
 
+# Choose the fuel price baseline used for travel-cost estimation.
 def calculate_reference_price(
     candidates: list[dict],
     all_stations: list[dict],
@@ -69,6 +71,7 @@ def calculate_reference_price(
     return None, None
 
 
+# Normalize a metric list into comparable 0..1 values for weighted scoring.
 def normalize_metric(values: list[float]) -> list[float]:
     if not values:
         return []
@@ -79,6 +82,7 @@ def normalize_metric(values: list[float]) -> list[float]:
     return [(value - lower) / (upper - lower) for value in values]
 
 
+# Compute the weighted final score for one candidate under the selected preset.
 def compute_final_score(candidate: dict, preset: str) -> float:
     weights = PRESET_WEIGHTS[preset]
     return (
@@ -88,6 +92,7 @@ def compute_final_score(candidate: dict, preset: str) -> float:
     )
 
 
+# Build the deterministic sort key used to rank recommendation candidates.
 def build_sort_key(candidate: dict) -> tuple:
     final_score = candidate["final_score"]
     if final_score is None:
@@ -102,6 +107,7 @@ def build_sort_key(candidate: dict) -> tuple:
     )
 
 
+# Attach user-facing primary and secondary reasons to each ranked candidate.
 def describe_candidates(candidates: list[dict], preset: str, scoring_mode: str) -> None:
     if not candidates:
         return
@@ -143,18 +149,22 @@ def describe_candidates(candidates: list[dict], preset: str, scoring_mode: str) 
             )
 
 
+# Round displayed route distance into the compact value shown in the UI.
 def round_distance(distance_km: float) -> float:
     return max(0.1, round(distance_km))
 
 
+# Round displayed trip duration into the compact minute value shown in the UI.
 def round_duration(duration_min: float) -> float:
     return max(1, round(duration_min))
 
 
+# Round economic cost into the coarse display bucket used in the recommendation UI.
 def round_economic_cost(economic_cost: float) -> int:
     return int(round(economic_cost / 10.0) * 10)
 
 
+# Pick the strongest headline reason for why the winning station ranked first.
 def _primary_reason_for_winner(
     *,
     winner: dict,
@@ -171,6 +181,7 @@ def _primary_reason_for_winner(
     return PRIMARY_REASON_BALANCED
 
 
+# Build supporting notes for the winning station based on its comparative advantages.
 def _secondary_reasons_for_winner(
     *,
     winner: dict,
@@ -193,6 +204,7 @@ def _secondary_reasons_for_winner(
     return notes[:2]
 
 
+# Explain how a non-winning candidate compares against the best option.
 def _secondary_reasons_for_alternative(*, candidate: dict, best: dict) -> list[str]:
     notes = []
     if candidate["economic_cost"] > best["economic_cost"]:
@@ -204,6 +216,7 @@ def _secondary_reasons_for_alternative(*, candidate: dict, best: dict) -> list[s
     return notes[:2] or ["Valid option in the current filter set."]
 
 
+# Return the preset-specific note used in recommendation explanations.
 def _preset_supporting_note(preset: str) -> str:
     if preset == "save-money":
         return "Prioritizes lower expected fuel spending."
@@ -214,6 +227,7 @@ def _preset_supporting_note(preset: str) -> str:
     return "Best overall tradeoff for this filter set."
 
 
+# Check whether the winner has a meaningful lead over the next-best candidate on one metric.
 def _has_clear_advantage(
     winner: dict,
     ordered_candidates: list[dict],

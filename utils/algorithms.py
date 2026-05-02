@@ -8,6 +8,7 @@ from utils.scoring import (
 )
 
 
+# Preserve the existing public recommendation entrypoint while delegating to the pipeline seam.
 def recommend_stations(
     stations: list[dict],
     origin: tuple[float, float],

@@ -350,7 +350,7 @@ Each station now stores one location with multiple fuel records in `data/station
 Current attributions:
 
 - OpenStreetMap: map data source; © OpenStreetMap contributors
-- OpenRouteService: road-routing and ETA provider
+- OpenRouteService: road-routing and travel-time provider
 - Google Maps: external navigation handoff target for `Get Directions`
 
 If map providers, routing providers, seeded data sources, or major framework dependencies change, this section and the in-app credits should be updated in the same task.

@@ -14,6 +14,7 @@ PRESET_ALIASES = {
 }
 
 
+# Parse and validate recommendation query parameters into normalized backend inputs.
 def parse_recommendation_request(query_args: Mapping[str, str]) -> dict:
     lat = _parse_float_arg(query_args, "lat")
     lng = _parse_float_arg(query_args, "lng")
@@ -55,11 +56,13 @@ def parse_recommendation_request(query_args: Mapping[str, str]) -> dict:
     }
 
 
+# Normalize preset aliases and fall back to the default recommendation mode.
 def normalize_preset(value: str) -> str:
     normalized = PRESET_ALIASES.get(str(value).strip().lower(), str(value).strip().lower())
     return normalized or "opti-route"
 
 
+# Parse one numeric query parameter and raise a request-friendly validation error when invalid.
 def _parse_float_arg(
     query_args: Mapping[str, str],
     name: str,
