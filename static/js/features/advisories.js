@@ -118,7 +118,7 @@ function buildAdvisoryItems() {
     date: new Date().toISOString().slice(0, 10),
     title: "Estimate advisory",
     body:
-      "Prices, travel times, and route costs are estimates. They can change after live routing, traffic, or station updates.",
+      "Prices, travel times, and trip costs are estimates. They can change after live routing, traffic, or station updates.",
   });
 
   items.push({
@@ -127,7 +127,7 @@ function buildAdvisoryItems() {
     date: "2026-05-01",
     title: "Quick advisory guide",
     body:
-      "Use Garage to save a vehicle, then return to Map for personalized cost-based recommendations.",
+      "Use Garage to save a vehicle, then return to Map for personalized recommendations.",
   });
 
   return items;

@@ -301,7 +301,7 @@ export function buildSummaryMeta(station, activeVehicle) {
       station.distance_km
     )} km - ~${formatDuration(station.duration_min)} min`;
     if (!activeVehicle) {
-      return `${base}. Add a vehicle in Garage to unlock personalized cost-based presets.`;
+      return `${base}. Add a vehicle in Garage to unlock personalized recommendations.`;
     }
     return `${base}${station.distance_source === "haversine" ? " estimate" : ""}`;
   }
@@ -319,13 +319,13 @@ function buildRowMeta(station) {
 
 function buildRouteSourceNote(station) {
   if (station.distance_source === "ors") {
-    return "Travel time based on OpenRouteService road routing.";
+    return "Travel time uses live road routing.";
   }
   if (station.distance_source === "osrm") {
-    return "Travel time based on OSRM road routing.";
+    return "Travel time uses live road routing.";
   }
   if (station.distance_source === "haversine") {
-    return "Travel time estimated from local fallback routing when road-route data is unavailable.";
+    return "Travel time uses a map-based estimate when live route data is unavailable.";
   }
   return "Travel time source unavailable.";
 }
@@ -337,7 +337,7 @@ function getEmptyListMessage() {
   if (!state.userLocation) {
     return "Search for a gas station or enable location to see nearby recommendations.";
   }
-  return "Candidate stations appear here after location is set.";
+  return "Stations appear here after location is set.";
 }
 
 function renderCandidateLoadingState() {
