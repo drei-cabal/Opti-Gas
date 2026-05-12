@@ -1,0 +1,3 @@
+/* Main stylesheet that imports split CSS parts */
+@import "base/base.css";
+@import "style.css";
