@@ -26,6 +26,7 @@ def create_app(test_config: dict | None = None) -> Flask:
     app = Flask(__name__)
     app.config.update(
         ORS_API_KEY=os.getenv("ORS_API_KEY", "").strip(),
+        PRICE_UPDATE_TOKEN=os.getenv("PRICE_UPDATE_TOKEN", "").strip(),
         STATIONS_PATH=BASE_DIR / "data" / "stations" / "stations.json",
         LANDMARKS_PATH=BASE_DIR / "data" / "landmarks.json",
     )
