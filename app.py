@@ -20,6 +20,8 @@ from utils.station_store import (
 
 BASE_DIR = Path(__file__).resolve().parent
 PRICE_UPDATE_TOKEN_HEADER = "X-Price-Update-Token"
+MIN_DEMO_FUEL_PRICE = 20.0
+MAX_DEMO_FUEL_PRICE = 200.0
 
 
 def create_app(test_config: dict | None = None) -> Flask:
