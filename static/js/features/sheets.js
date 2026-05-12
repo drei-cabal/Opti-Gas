@@ -2,6 +2,7 @@ import { elements } from "../shared/state.js";
 
 const deps = {
   closeAdvisorySheet: null,
+  onSheetClose: null,
 };
 
 export function configureSheets(nextDeps) {
@@ -59,6 +60,7 @@ export function openSheet(element) {
 
 export function closeSheet(element) {
   element.classList.add("hidden");
+  deps.onSheetClose?.(element);
 }
 
 export function closeById(sheetId) {

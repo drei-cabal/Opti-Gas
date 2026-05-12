@@ -45,6 +45,7 @@ import {
 import {
   buildSummaryBadge,
   buildSummaryMeta,
+  clearPriceModalTarget,
   configureStations,
   getDisplayStationById,
   getPrimaryStation,
@@ -84,6 +85,11 @@ configureFilters({
 
 configureSheets({
   closeAdvisorySheet,
+  onSheetClose: (element) => {
+    if (element === elements.priceModal) {
+      clearPriceModalTarget();
+    }
+  },
 });
 
 configureStations({

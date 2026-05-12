@@ -62,10 +62,13 @@ export function renderCandidates() {
 }
 
 export async function submitPriceUpdate() {
-  const station = getActiveStation();
-  if (!station) {
+  const station = state.priceUpdateStation;
+  if (!station || state.isUpdatingPrice) {
     return;
   }
+
+  setPriceUpdateError("");
+  setPriceUpdateBusy(true);
 
   try {
     const response = await updatePrice({
@@ -89,6 +92,9 @@ export async function submitPriceUpdate() {
       title: "Price update failed",
       kind: "system",
     });
+    setPriceUpdateError(error.message || "Unable to update the price.");
+  } finally {
+    setPriceUpdateBusy(false);
   }
 }
 
@@ -264,6 +270,9 @@ function renderStationDetail(station) {
 }
 
 function openPriceModal(station) {
+  state.priceUpdateStation = createPriceUpdateTarget(station);
+  setPriceUpdateError("");
+  setPriceUpdateBusy(false);
   elements.priceModalStation.textContent = `${station.name} - ${station.fuel_type}`;
   elements.priceModalCurrent.textContent = `Current: P${station.price.toFixed(2)} - Reported ${formatDate(
     station.last_updated
@@ -274,6 +283,35 @@ function openPriceModal(station) {
     elements.priceInput.focus({ preventScroll: true });
     elements.priceInput.scrollIntoView({ block: "center", inline: "nearest", behavior: "smooth" });
   });
+}
+
+export function clearPriceModalTarget() {
+  state.priceUpdateStation = null;
+  setPriceUpdateError("");
+  setPriceUpdateBusy(false);
+}
+
+function createPriceUpdateTarget(station) {
+  return {
+    name: station.name,
+    station_id: station.station_id,
+    fuel_type: station.fuel_type,
+  };
+}
+
+function setPriceUpdateBusy(isBusy) {
+  state.isUpdatingPrice = isBusy;
+  elements.submitPriceButton.disabled = isBusy;
+  elements.submitPriceButton.textContent = isBusy ? "Updating..." : "Submit";
+  elements.priceInput.disabled = isBusy;
+}
+
+function setPriceUpdateError(message) {
+  if (!elements.priceModalError) {
+    return;
+  }
+  elements.priceModalError.textContent = message;
+  elements.priceModalError.classList.toggle("hidden", !message);
 }
 
 function sortStationsForSearch(left, right) {

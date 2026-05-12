@@ -1067,6 +1067,14 @@ input[type="range"] {
   font-size: 12px;
 }
 
+.modal__error {
+  margin: 10px 0 0;
+  color: var(--color-danger);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
 .modal__actions {
   display: flex;
   justify-content: flex-end;
