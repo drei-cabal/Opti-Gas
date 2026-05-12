@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hmac
 import os
 from pathlib import Path
 
@@ -18,6 +19,7 @@ from utils.station_store import (
 
 
 BASE_DIR = Path(__file__).resolve().parent
+PRICE_UPDATE_TOKEN_HEADER = "X-Price-Update-Token"
 
 
 def create_app(test_config: dict | None = None) -> Flask:
@@ -79,6 +81,12 @@ def create_app(test_config: dict | None = None) -> Flask:
 
     @app.post("/api/update-price")
     def api_update_price():
+        if not _is_price_update_authorized(
+            app.config["PRICE_UPDATE_TOKEN"],
+            request.headers.get(PRICE_UPDATE_TOKEN_HEADER),
+        ):
+            return jsonify({"error": "Invalid price update token."}), 401
+
         payload = request.get_json(silent=True) or {}
         station_id = str(payload.get("station_id", "")).strip()
         station_name = str(payload.get("station_name", "")).strip()
@@ -127,6 +135,15 @@ def create_app(test_config: dict | None = None) -> Flask:
         )
 
     return app
+
+
+def _is_price_update_authorized(
+    configured_token: str | None,
+    provided_token: str | None,
+) -> bool:
+    if not configured_token:
+        return True
+    return hmac.compare_digest(provided_token or "", configured_token)
 
 
 app = create_app()
