@@ -1,4 +1,5 @@
 /* Main stylesheet that imports split CSS parts */
 @import "base/base.css";
 @import "components/controls.css";
+@import "layout/shell.css";
 @import "style.css";
