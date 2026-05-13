@@ -18,6 +18,7 @@ const deps = {
   render: null,
   showAnnouncement: null,
 };
+let stationSelectionToken = 0;
 
 export function configureStations(nextDeps) {
   Object.assign(deps, nextDeps);
@@ -183,6 +184,41 @@ export function rebindCachedStation(station) {
   const currentStation =
     state.allStations.find((item) => item.station_id === station.station_id) || null;
   return buildDisplayStation(currentStation, station);
+}
+
+export function selectStationCard(stationId, { focusMap = true, scroll = true } = {}) {
+  if (!stationId) {
+    return;
+  }
+
+  const selectionToken = ++stationSelectionToken;
+
+  if (state.activeStationId === stationId) {
+    deps.render?.();
+    if (focusMap) {
+      deps.mapView?.focusStation(getDisplayStationById(stationId));
+    }
+    expandRenderedCard(stationId);
+    if (scroll) {
+      scrollToStationCard(stationId);
+    }
+    return;
+  }
+
+  const currentCard = getStationCardElement(state.activeStationId);
+  if (currentCard) {
+    currentCard.dataset.expanded = "false";
+    currentCard.classList.remove("active");
+    window.setTimeout(() => {
+      if (selectionToken !== stationSelectionToken) {
+        return;
+      }
+      commitStationSelection(stationId, { focusMap, scroll });
+    }, 220);
+    return;
+  }
+
+  commitStationSelection(stationId, { focusMap, scroll });
 }
 
 function renderStationCard(station) {
@@ -418,6 +454,7 @@ function animateStationToggle(stationId) {
   const currentCard = getStationCardElement(state.activeStationId);
 
   if (state.activeStationId === stationId) {
+    stationSelectionToken += 1;
     if (currentCard) {
       currentCard.dataset.expanded = "false";
       currentCard.classList.remove("active");
@@ -429,24 +466,19 @@ function animateStationToggle(stationId) {
     return;
   }
 
-  if (currentCard) {
-    currentCard.dataset.expanded = "false";
-    currentCard.classList.remove("active");
-    window.setTimeout(() => {
-      state.activeStationId = stationId;
-      deps.render?.();
-      deps.mapView?.focusStation(getDisplayStationById(stationId));
-      expandRenderedCard(stationId);
-      scrollToStationCard(stationId);
-    }, 220);
-    return;
-  }
+  selectStationCard(stationId);
+}
 
+function commitStationSelection(stationId, { focusMap, scroll }) {
   state.activeStationId = stationId;
   deps.render?.();
-  deps.mapView?.focusStation(getDisplayStationById(stationId));
+  if (focusMap) {
+    deps.mapView?.focusStation(getDisplayStationById(stationId));
+  }
   expandRenderedCard(stationId);
-  scrollToStationCard(stationId);
+  if (scroll) {
+    scrollToStationCard(stationId);
+  }
 }
 
 function expandRenderedCard(stationId) {
@@ -468,8 +500,23 @@ function getStationCardElement(stationId) {
   return elements.candidateList.querySelector(`[data-station-card="${cssEscape(stationId)}"]`);
 }
 
-function scrollToStationCard() {
-  return;
+function scrollToStationCard(stationId) {
+  const card = getStationCardElement(stationId);
+  if (!card) {
+    return;
+  }
+
+  const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+  window.setTimeout(() => {
+    if (state.activeStationId !== stationId) {
+      return;
+    }
+    getStationCardElement(stationId)?.scrollIntoView({
+      block: "nearest",
+      inline: "nearest",
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+    });
+  }, 240);
 }
 
 function cssEscape(value) {
