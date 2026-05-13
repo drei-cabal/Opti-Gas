@@ -107,6 +107,15 @@ def create_app(test_config: dict | None = None) -> Flask:
 
         if new_price <= 0:
             return jsonify({"error": "new_price must be positive."}), 400
+        if not (MIN_DEMO_FUEL_PRICE <= new_price <= MAX_DEMO_FUEL_PRICE):
+            return jsonify(
+                {
+                    "error": (
+                        f"new_price must be between {MIN_DEMO_FUEL_PRICE:.2f} "
+                        f"and {MAX_DEMO_FUEL_PRICE:.2f}."
+                    )
+                }
+            ), 400
 
         try:
             updated_station = update_station_price(
