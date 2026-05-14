@@ -125,6 +125,8 @@ For the current Map + Garage product interaction, saved-vehicle behavior, and fi
 
 For repo-local UI design engineering guidance used for this mobile map experience, see `skills/opti-gas-ui-design-engineering/SKILL.md`.
 
+For team contribution assignments, folder ownership, and review criteria, see `docs/CONTRIBUTION_TASKS.md`.
+
 ## Implementation Details
 
 ### 1. Candidate Filtering
