@@ -16,7 +16,7 @@ OPTI-GAS is a mobile-first Flask + Leaflet web app for Tagum City drivers. It op
 - `app.py`: Flask entrypoint and API routes
 - `utils/`: station loading, validation, filtering, routing, and recommendation logic
 - `templates/index.html`: single-page shell
-- `static/css/style.css`: full-screen map and overlay styles
+- `static/css/main.css`: stylesheet entrypoint for modular map, overlay, layout, and component styles
 - `static/js/ui.js`: thin browser entrypoint and app wiring
 - `static/js/features/`: feature modules for Garage, stations, filters, advisories, sheets, and directions
 - `static/js/shared/`: shared state, persistence, and formatting helpers
@@ -126,6 +126,8 @@ For the current Map + Garage product interaction, saved-vehicle behavior, and fi
 For repo-local UI design engineering guidance used for this mobile map experience, see `skills/opti-gas-ui-design-engineering/SKILL.md`.
 
 For team contribution assignments, folder ownership, and review criteria, see `docs/CONTRIBUTION_TASKS.md`.
+
+For demo security measures, threat-model decisions, and security QA checks, see `docs/SECURITY_MEASURES.md`.
 
 ## Implementation Details
 

@@ -181,7 +181,7 @@ Split the current single CSS file into readable feature-based CSS files without 
 
 ### Why This Matters
 
-`static/css/style.css` is currently one large file with about 1,600 lines. This makes future UI changes harder to review and increases merge conflicts.
+The original single `static/css/style.css` file has been replaced by modular CSS files. Future UI changes should stay in the matching feature, layout, component, or base stylesheet instead of recreating a large catch-all file.
 
 ### Assigned Folder Organization
 
@@ -217,7 +217,6 @@ Primary files:
 
 ```text
 templates/index.html
-static/css/style.css
 static/css/main.css
 docs/CONTRIBUTION_TASKS.md
 docs/RUNNING_APP.md
@@ -226,11 +225,11 @@ docs/RUNNING_APP.md
 ### Required Code Changes
 
 1. Create the new CSS folder structure.
-2. Move related CSS blocks out of `style.css` into feature and component files.
+2. Keep related CSS blocks in feature and component files.
 3. Replace the template stylesheet reference with `static/css/main.css`.
 4. Import the split CSS files from `main.css`.
 5. Keep class names and visual behavior unchanged.
-6. Remove or reduce `style.css` only after the split is working.
+6. Do not recreate `style.css`; use `main.css` as the stylesheet entrypoint.
 
 ### Documentation Changes
 
