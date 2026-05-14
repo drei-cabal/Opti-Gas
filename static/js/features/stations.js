@@ -18,6 +18,7 @@ const deps = {
   render: null,
   showAnnouncement: null,
 };
+let stationSelectionToken = 0;
 
 export function configureStations(nextDeps) {
   Object.assign(deps, nextDeps);
@@ -62,10 +63,13 @@ export function renderCandidates() {
 }
 
 export async function submitPriceUpdate() {
-  const station = getActiveStation();
-  if (!station) {
+  const station = state.priceUpdateStation;
+  if (!station || state.isUpdatingPrice) {
     return;
   }
+
+  setPriceUpdateError("");
+  setPriceUpdateBusy(true);
 
   try {
     const response = await updatePrice({
@@ -89,6 +93,9 @@ export async function submitPriceUpdate() {
       title: "Price update failed",
       kind: "system",
     });
+    setPriceUpdateError(error.message || "Unable to update the price.");
+  } finally {
+    setPriceUpdateBusy(false);
   }
 }
 
@@ -179,6 +186,41 @@ export function rebindCachedStation(station) {
   return buildDisplayStation(currentStation, station);
 }
 
+export function selectStationCard(stationId, { focusMap = true, scroll = true } = {}) {
+  if (!stationId) {
+    return;
+  }
+
+  const selectionToken = ++stationSelectionToken;
+
+  if (state.activeStationId === stationId) {
+    deps.render?.();
+    if (focusMap) {
+      deps.mapView?.focusStation(getDisplayStationById(stationId));
+    }
+    expandRenderedCard(stationId);
+    if (scroll) {
+      scrollToStationCard(stationId);
+    }
+    return;
+  }
+
+  const currentCard = getStationCardElement(state.activeStationId);
+  if (currentCard) {
+    currentCard.dataset.expanded = "false";
+    currentCard.classList.remove("active");
+    window.setTimeout(() => {
+      if (selectionToken !== stationSelectionToken) {
+        return;
+      }
+      commitStationSelection(stationId, { focusMap, scroll });
+    }, 220);
+    return;
+  }
+
+  commitStationSelection(stationId, { focusMap, scroll });
+}
+
 function renderStationCard(station) {
   const isActive = station.station_id === state.activeStationId;
 
@@ -264,6 +306,9 @@ function renderStationDetail(station) {
 }
 
 function openPriceModal(station) {
+  state.priceUpdateStation = createPriceUpdateTarget(station);
+  setPriceUpdateError("");
+  setPriceUpdateBusy(false);
   elements.priceModalStation.textContent = `${station.name} - ${station.fuel_type}`;
   elements.priceModalCurrent.textContent = `Current: P${station.price.toFixed(2)} - Reported ${formatDate(
     station.last_updated
@@ -274,6 +319,35 @@ function openPriceModal(station) {
     elements.priceInput.focus({ preventScroll: true });
     elements.priceInput.scrollIntoView({ block: "center", inline: "nearest", behavior: "smooth" });
   });
+}
+
+export function clearPriceModalTarget() {
+  state.priceUpdateStation = null;
+  setPriceUpdateError("");
+  setPriceUpdateBusy(false);
+}
+
+function createPriceUpdateTarget(station) {
+  return {
+    name: station.name,
+    station_id: station.station_id,
+    fuel_type: station.fuel_type,
+  };
+}
+
+function setPriceUpdateBusy(isBusy) {
+  state.isUpdatingPrice = isBusy;
+  elements.submitPriceButton.disabled = isBusy;
+  elements.submitPriceButton.textContent = isBusy ? "Updating..." : "Submit";
+  elements.priceInput.disabled = isBusy;
+}
+
+function setPriceUpdateError(message) {
+  if (!elements.priceModalError) {
+    return;
+  }
+  elements.priceModalError.textContent = message;
+  elements.priceModalError.classList.toggle("hidden", !message);
 }
 
 function sortStationsForSearch(left, right) {
@@ -380,6 +454,7 @@ function animateStationToggle(stationId) {
   const currentCard = getStationCardElement(state.activeStationId);
 
   if (state.activeStationId === stationId) {
+    stationSelectionToken += 1;
     if (currentCard) {
       currentCard.dataset.expanded = "false";
       currentCard.classList.remove("active");
@@ -391,24 +466,19 @@ function animateStationToggle(stationId) {
     return;
   }
 
-  if (currentCard) {
-    currentCard.dataset.expanded = "false";
-    currentCard.classList.remove("active");
-    window.setTimeout(() => {
-      state.activeStationId = stationId;
-      deps.render?.();
-      deps.mapView?.focusStation(getDisplayStationById(stationId));
-      expandRenderedCard(stationId);
-      scrollToStationCard(stationId);
-    }, 220);
-    return;
-  }
+  selectStationCard(stationId);
+}
 
+function commitStationSelection(stationId, { focusMap, scroll }) {
   state.activeStationId = stationId;
   deps.render?.();
-  deps.mapView?.focusStation(getDisplayStationById(stationId));
+  if (focusMap) {
+    deps.mapView?.focusStation(getDisplayStationById(stationId));
+  }
   expandRenderedCard(stationId);
-  scrollToStationCard(stationId);
+  if (scroll) {
+    scrollToStationCard(stationId);
+  }
 }
 
 function expandRenderedCard(stationId) {
@@ -430,8 +500,23 @@ function getStationCardElement(stationId) {
   return elements.candidateList.querySelector(`[data-station-card="${cssEscape(stationId)}"]`);
 }
 
-function scrollToStationCard() {
-  return;
+function scrollToStationCard(stationId) {
+  const card = getStationCardElement(stationId);
+  if (!card) {
+    return;
+  }
+
+  const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+  window.setTimeout(() => {
+    if (state.activeStationId !== stationId) {
+      return;
+    }
+    getStationCardElement(stationId)?.scrollIntoView({
+      block: "nearest",
+      inline: "nearest",
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+    });
+  }, 240);
 }
 
 function cssEscape(value) {

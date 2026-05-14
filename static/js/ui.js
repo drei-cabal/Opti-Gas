@@ -45,12 +45,13 @@ import {
 import {
   buildSummaryBadge,
   buildSummaryMeta,
+  clearPriceModalTarget,
   configureStations,
-  getDisplayStationById,
   getPrimaryStation,
   getVisibleStations,
   rebindCachedStation,
   renderCandidates,
+  selectStationCard,
   submitPriceUpdate,
 } from "./features/stations.js";
 import {
@@ -69,10 +70,8 @@ import {
 
 const mapView = createMapView({
   onStationSelect: (stationId) => {
-    state.activeStationId = stationId;
     setSheetState("expanded");
-    render();
-    mapView.focusStation(getDisplayStationById(stationId));
+    selectStationCard(stationId);
   },
 });
 
@@ -84,6 +83,11 @@ configureFilters({
 
 configureSheets({
   closeAdvisorySheet,
+  onSheetClose: (element) => {
+    if (element === elements.priceModal) {
+      clearPriceModalTarget();
+    }
+  },
 });
 
 configureStations({
