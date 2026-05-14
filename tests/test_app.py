@@ -46,6 +46,14 @@ def write_fixture_files(tmp_path):
     return stations_path, landmarks_path
 
 
+def diesel_price_from_file(stations_path):
+    stations = json.loads(stations_path.read_text(encoding="utf-8"))
+    diesel = next(
+        fuel for fuel in stations[0]["fuels"] if fuel["fuel_type"] == "Diesel"
+    )
+    return diesel["price"]
+
+
 def test_api_stations(tmp_path):
     stations_path, landmarks_path = write_fixture_files(tmp_path)
     app = create_app(
@@ -104,7 +112,7 @@ def test_api_recommend_returns_selected_fuel(tmp_path):
     assert "norm_distance" in payload["best"]
 
 
-def test_api_update_price(tmp_path):
+def test_api_update_price_without_configured_token_allows_valid_update(tmp_path):
     stations_path, landmarks_path = write_fixture_files(tmp_path)
     app = create_app(
         {
@@ -126,6 +134,164 @@ def test_api_update_price(tmp_path):
     assert response.status_code == 200
     payload = response.get_json()
     assert payload["station"]["station_id"] == "7.452300,125.814200"
+    updated_fuel = next(
+        fuel for fuel in payload["station"]["fuels"] if fuel["fuel_type"] == "Diesel"
+    )
+    assert updated_fuel["price"] == 93.45
+
+
+def test_api_update_price_rejects_price_below_demo_minimum(tmp_path):
+    stations_path, landmarks_path = write_fixture_files(tmp_path)
+    app = create_app(
+        {
+            "TESTING": True,
+            "STATIONS_PATH": stations_path,
+            "LANDMARKS_PATH": landmarks_path,
+        }
+    )
+
+    response = app.test_client().post(
+        "/api/update-price",
+        json={
+            "station_name": "Petron Apokon",
+            "station_id": "7.452300,125.814200",
+            "fuel_type": "Diesel",
+            "new_price": 1,
+        },
+    )
+
+    assert response.status_code == 400
+    assert response.get_json() == {
+        "error": "new_price must be between 20.00 and 200.00."
+    }
+
+
+def test_api_update_price_rejects_price_above_demo_maximum(tmp_path):
+    stations_path, landmarks_path = write_fixture_files(tmp_path)
+    app = create_app(
+        {
+            "TESTING": True,
+            "STATIONS_PATH": stations_path,
+            "LANDMARKS_PATH": landmarks_path,
+        }
+    )
+
+    response = app.test_client().post(
+        "/api/update-price",
+        json={
+            "station_name": "Petron Apokon",
+            "station_id": "7.452300,125.814200",
+            "fuel_type": "Diesel",
+            "new_price": 999,
+        },
+    )
+
+    assert response.status_code == 400
+    assert response.get_json() == {
+        "error": "new_price must be between 20.00 and 200.00."
+    }
+
+
+def test_api_update_price_validation_failure_does_not_mutate_file(tmp_path):
+    stations_path, landmarks_path = write_fixture_files(tmp_path)
+    app = create_app(
+        {
+            "TESTING": True,
+            "STATIONS_PATH": stations_path,
+            "LANDMARKS_PATH": landmarks_path,
+        }
+    )
+    original_price = diesel_price_from_file(stations_path)
+
+    response = app.test_client().post(
+        "/api/update-price",
+        json={
+            "station_name": "Petron Apokon",
+            "station_id": "7.452300,125.814200",
+            "fuel_type": "Diesel",
+            "new_price": 999,
+        },
+    )
+
+    assert response.status_code == 400
+    assert diesel_price_from_file(stations_path) == original_price
+
+
+def test_api_update_price_with_configured_token_requires_header(tmp_path):
+    stations_path, landmarks_path = write_fixture_files(tmp_path)
+    app = create_app(
+        {
+            "TESTING": True,
+            "PRICE_UPDATE_TOKEN": "test-token",
+            "STATIONS_PATH": stations_path,
+            "LANDMARKS_PATH": landmarks_path,
+        }
+    )
+
+    response = app.test_client().post(
+        "/api/update-price",
+        json={
+            "station_name": "Petron Apokon",
+            "station_id": "7.452300,125.814200",
+            "fuel_type": "Diesel",
+            "new_price": 93.45,
+        },
+    )
+
+    assert response.status_code == 401
+    assert response.get_json() == {"error": "Invalid price update token."}
+
+
+def test_api_update_price_with_configured_token_rejects_wrong_header(tmp_path):
+    stations_path, landmarks_path = write_fixture_files(tmp_path)
+    app = create_app(
+        {
+            "TESTING": True,
+            "PRICE_UPDATE_TOKEN": "test-token",
+            "STATIONS_PATH": stations_path,
+            "LANDMARKS_PATH": landmarks_path,
+        }
+    )
+
+    response = app.test_client().post(
+        "/api/update-price",
+        headers={"X-Price-Update-Token": "wrong-token"},
+        json={
+            "station_name": "Petron Apokon",
+            "station_id": "7.452300,125.814200",
+            "fuel_type": "Diesel",
+            "new_price": 93.45,
+        },
+    )
+
+    assert response.status_code == 401
+    assert response.get_json() == {"error": "Invalid price update token."}
+
+
+def test_api_update_price_with_configured_token_accepts_matching_header(tmp_path):
+    stations_path, landmarks_path = write_fixture_files(tmp_path)
+    app = create_app(
+        {
+            "TESTING": True,
+            "PRICE_UPDATE_TOKEN": "test-token",
+            "STATIONS_PATH": stations_path,
+            "LANDMARKS_PATH": landmarks_path,
+        }
+    )
+
+    response = app.test_client().post(
+        "/api/update-price",
+        headers={"X-Price-Update-Token": "test-token"},
+        json={
+            "station_name": "Petron Apokon",
+            "station_id": "7.452300,125.814200",
+            "fuel_type": "Diesel",
+            "new_price": 93.45,
+        },
+    )
+
+    assert response.status_code == 200
+    payload = response.get_json()
     updated_fuel = next(
         fuel for fuel in payload["station"]["fuels"] if fuel["fuel_type"] == "Diesel"
     )

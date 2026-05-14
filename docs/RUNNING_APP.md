@@ -34,6 +34,16 @@ Create your environment file if needed:
 copy .env.example .env
 ```
 
+### Optional price update protection
+
+The station price update endpoint can be protected for demos with a shared token:
+
+```env
+PRICE_UPDATE_TOKEN=change-this-demo-token
+```
+
+When `PRICE_UPDATE_TOKEN` is empty or unset, local demo price updates remain open so the app is easy to run on a fresh machine. When `PRICE_UPDATE_TOKEN` is configured, every `POST /api/update-price` request must include the same value in the `X-Price-Update-Token` header. Requests with a missing or incorrect token should be rejected with a JSON authorization error before `data/stations/stations.json` is changed.
+
 Run the app:
 
 ```powershell

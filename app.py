@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hmac
 import os
 from pathlib import Path
 
@@ -18,6 +19,9 @@ from utils.station_store import (
 
 
 BASE_DIR = Path(__file__).resolve().parent
+PRICE_UPDATE_TOKEN_HEADER = "X-Price-Update-Token"
+MIN_DEMO_FUEL_PRICE = 20.0
+MAX_DEMO_FUEL_PRICE = 200.0
 
 
 def create_app(test_config: dict | None = None) -> Flask:
@@ -26,6 +30,7 @@ def create_app(test_config: dict | None = None) -> Flask:
     app = Flask(__name__)
     app.config.update(
         ORS_API_KEY=os.getenv("ORS_API_KEY", "").strip(),
+        PRICE_UPDATE_TOKEN=os.getenv("PRICE_UPDATE_TOKEN", "").strip(),
         STATIONS_PATH=BASE_DIR / "data" / "stations" / "stations.json",
         LANDMARKS_PATH=BASE_DIR / "data" / "landmarks.json",
     )
@@ -78,6 +83,12 @@ def create_app(test_config: dict | None = None) -> Flask:
 
     @app.post("/api/update-price")
     def api_update_price():
+        if not _is_price_update_authorized(
+            app.config["PRICE_UPDATE_TOKEN"],
+            request.headers.get(PRICE_UPDATE_TOKEN_HEADER),
+        ):
+            return jsonify({"error": "Invalid price update token."}), 401
+
         payload = request.get_json(silent=True) or {}
         station_id = str(payload.get("station_id", "")).strip()
         station_name = str(payload.get("station_name", "")).strip()
@@ -96,6 +107,15 @@ def create_app(test_config: dict | None = None) -> Flask:
 
         if new_price <= 0:
             return jsonify({"error": "new_price must be positive."}), 400
+        if not (MIN_DEMO_FUEL_PRICE <= new_price <= MAX_DEMO_FUEL_PRICE):
+            return jsonify(
+                {
+                    "error": (
+                        f"new_price must be between {MIN_DEMO_FUEL_PRICE:.2f} "
+                        f"and {MAX_DEMO_FUEL_PRICE:.2f}."
+                    )
+                }
+            ), 400
 
         try:
             updated_station = update_station_price(
@@ -126,6 +146,15 @@ def create_app(test_config: dict | None = None) -> Flask:
         )
 
     return app
+
+
+def _is_price_update_authorized(
+    configured_token: str | None,
+    provided_token: str | None,
+) -> bool:
+    if not configured_token:
+        return True
+    return hmac.compare_digest(provided_token or "", configured_token)
 
 
 app = create_app()
