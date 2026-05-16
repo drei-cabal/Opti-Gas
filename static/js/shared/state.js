@@ -178,6 +178,7 @@ export const elements = {
   vehicleModal: document.getElementById("vehicleModal"),
   vehicleModalTitle: document.getElementById("vehicleModalTitle"),
   vehicleNicknameInput: document.getElementById("vehicleNicknameInput"),
+  vehiclePlateNumberInput: document.getElementById("vehiclePlateNumberInput"),
   vehicleFamilySelect: document.getElementById("vehicleFamilySelect"),
   vehicleSubtypeSelect: document.getElementById("vehicleSubtypeSelect"),
   vehicleFuelTypeSelect: document.getElementById("vehicleFuelTypeSelect"),

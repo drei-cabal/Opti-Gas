@@ -107,6 +107,7 @@ export function openVehicleModal(vehicle = null) {
 
   if (vehicle) {
     elements.vehicleNicknameInput.value = vehicle.nickname;
+    elements.vehiclePlateNumberInput.value = vehicle.plate_number || "";
     elements.vehicleFamilySelect.value = vehicle.vehicle_family;
     populateVehicleSubtypeOptions(vehicle.vehicle_family);
     elements.vehicleSubtypeSelect.value = vehicle.vehicle_subtype;
@@ -115,6 +116,7 @@ export function openVehicleModal(vehicle = null) {
     elements.vehicleKmPerLiterInput.value = String(vehicle.km_per_liter);
   } else {
     elements.vehicleNicknameInput.value = "";
+    elements.vehiclePlateNumberInput.value = "";
     const [defaultFamilyKey] = Object.keys(VEHICLE_PRESETS);
     elements.vehicleFamilySelect.value = defaultFamilyKey;
     populateVehicleSubtypeOptions(defaultFamilyKey);
@@ -126,6 +128,7 @@ export function openVehicleModal(vehicle = null) {
 
 export async function saveVehicleProfile() {
   const nickname = elements.vehicleNicknameInput.value.trim();
+  const plateNumber = elements.vehiclePlateNumberInput.value.trim();
   const tankCapacity = Number(elements.vehicleTankCapacityInput.value);
   const kmPerLiter = Number(elements.vehicleKmPerLiterInput.value);
 
@@ -162,6 +165,7 @@ export async function saveVehicleProfile() {
   const vehicle = {
     id: existing?.id || createVehicleId(),
     nickname,
+    plate_number: plateNumber,
     vehicle_family: elements.vehicleFamilySelect.value,
     vehicle_subtype: elements.vehicleSubtypeSelect.value,
     fuel_type: elements.vehicleFuelTypeSelect.value,
@@ -286,6 +290,9 @@ export function handleLockedModeAttempt() {
 
 function renderGarageVehicleCard(vehicle) {
   const active = vehicle.id === state.activeVehicleId;
+  const plateLine = vehicle.plate_number
+    ? `<p class="garage-card__line">Plate ${escapeHtml(vehicle.plate_number)}</p>`
+    : "";
   return `
     <article class="garage-card${active ? " garage-card--active" : ""}">
       <div class="garage-card__top">
@@ -298,6 +305,7 @@ function renderGarageVehicleCard(vehicle) {
       <p class="garage-card__line">${escapeHtml(getFamilyLabel(vehicle.vehicle_family))} - ${escapeHtml(
         getSubtypeLabel(vehicle.vehicle_family, vehicle.vehicle_subtype)
       )}</p>
+      ${plateLine}
       <p class="garage-card__line">${escapeHtml(vehicle.fuel_type)} - ${vehicle.km_per_liter.toFixed(
         1
       )} km/L - ${vehicle.tank_capacity_l.toFixed(1)} L tank</p>
