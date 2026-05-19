@@ -75,6 +75,16 @@ const mapView = createMapView({
   },
 });
 
+const LOCATION_OPTIONS = {
+  enableHighAccuracy: true,
+  timeout: 10000,
+  maximumAge: 5000,
+};
+const LOCATION_REFRESH_DISTANCE_METERS = 75;
+
+let locationWatchId = null;
+let lastRecommendationLocation = null;
+
 configureFilters({
   deriveTripInputs,
   getActiveVehicle,
@@ -135,11 +145,9 @@ async function bootstrap() {
     render();
 
     if (state.userLocation) {
-      mapView.setUserLocation(state.userLocation.lat, state.userLocation.lng);
-      void refreshRecommendations({ silent: true });
-    } else {
-      requestLocation();
+      mapView.setUserLocation(state.userLocation.lat, state.userLocation.lng, { fly: false });
     }
+    requestLocation({ forceRetry: Boolean(state.userLocation) });
   } catch (error) {
     showAnnouncement(error.message || "Unable to load stations.", "warning", {
       title: "Station data unavailable",
@@ -271,30 +279,69 @@ async function requestLocation({ forceRetry = false } = {}) {
     }
   }
 
-  navigator.geolocation.getCurrentPosition(
-    async (position) => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-      state.userLocation = { lat, lng };
-      state.locationSource = "gps";
-      clearAnnouncement();
-      mapView.setUserLocation(lat, lng);
-      await refreshRecommendations();
+  if (locationWatchId !== null) {
+    navigator.geolocation.clearWatch(locationWatchId);
+  }
+
+  locationWatchId = navigator.geolocation.watchPosition(
+    (position) => {
+      void handleLocationSuccess(position);
     },
     (error) => handleLocationFailure({ error }),
-    {
-      enableHighAccuracy: true,
-      timeout: 5000,
-      maximumAge: 60000,
-    }
+    LOCATION_OPTIONS
   );
+}
+
+async function handleLocationSuccess(position) {
+  const lat = position.coords.latitude;
+  const lng = position.coords.longitude;
+  const nextLocation = { lat, lng };
+  const previousLocation = state.userLocation;
+  const shouldRefresh = shouldRefreshForLocation(nextLocation);
+
+  state.userLocation = nextLocation;
+  state.locationSource = "gps";
+  clearAnnouncement();
+  mapView.setUserLocation(lat, lng, { fly: !previousLocation || shouldRefresh });
+
+  if (shouldRefresh) {
+    await refreshRecommendations({ silent: Boolean(state.candidates.length) });
+  } else {
+    render();
+  }
 }
 
 function handleLocationFailure({ reason = null, error = null } = {}) {
   state.userLocation = null;
   state.locationSource = null;
+  lastRecommendationLocation = null;
   applyLocationFailureMessage(resolveLocationFailureMessage(reason, error));
   mapView.centerMap(DEFAULT_CENTER.lat, DEFAULT_CENTER.lng, DEFAULT_CENTER.zoom);
+}
+
+function shouldRefreshForLocation(nextLocation) {
+  if (!lastRecommendationLocation) {
+    return true;
+  }
+  return (
+    getDistanceMeters(lastRecommendationLocation, nextLocation) >= LOCATION_REFRESH_DISTANCE_METERS
+  );
+}
+
+function getDistanceMeters(origin, destination) {
+  const earthRadiusMeters = 6371000;
+  const originLat = toRadians(origin.lat);
+  const destinationLat = toRadians(destination.lat);
+  const latDelta = toRadians(destination.lat - origin.lat);
+  const lngDelta = toRadians(destination.lng - origin.lng);
+  const a =
+    Math.sin(latDelta / 2) ** 2 +
+    Math.cos(originLat) * Math.cos(destinationLat) * Math.sin(lngDelta / 2) ** 2;
+  return earthRadiusMeters * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function toRadians(value) {
+  return (value * Math.PI) / 180;
 }
 
 async function refreshRecommendations({ silent = false } = {}) {
@@ -335,6 +382,7 @@ async function refreshRecommendations({ silent = false } = {}) {
     state.best = response.best;
     state.candidates = response.candidates;
     state.fallbackWarning = response.fallback_warning;
+    lastRecommendationLocation = { ...state.userLocation };
 
     const visibleStations = getVisibleStations();
     if (

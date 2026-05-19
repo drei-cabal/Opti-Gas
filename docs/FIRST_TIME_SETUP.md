@@ -156,6 +156,8 @@ This is machine-specific and should not be treated as the standard setup for oth
 
 For the best Map experience, the browser will ask for current location on first load. If location is blocked, the app still runs, but the team will not be able to fully test live Map recommendations until permission is granted.
 
+After permission is granted, the Map keeps watching GPS while the page is open. When the user moves far enough to matter for station choice, the blue location marker should recalibrate and the recommendation list should refresh from the new position. If it does not, confirm that device location services are enabled and that the browser still allows location for `http://127.0.0.1:5000`.
+
 ## 12. Common first-time issues
 
 ### `python` not found

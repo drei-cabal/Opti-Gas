@@ -58,6 +58,8 @@ http://127.0.0.1:5000
 
 If the Map opens but recommendations do not appear, make sure the browser allowed current location access and the OpenRouteService API key is configured. For full system testing, both are required.
 
+The Map starts a live browser geolocation watch after load. A cached last location may appear briefly, but the app should recalibrate to the current GPS fix and refresh recommendations after meaningful movement. If you physically move and the map does not update, check device location services, browser site permission, and whether the page is still open in the foreground.
+
 ## 2. If `python` does not work but Python is installed
 
 Some Windows setups use `py` instead of `python`.
