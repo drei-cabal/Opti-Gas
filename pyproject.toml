@@ -1,0 +1,21 @@
+[tool.ruff]
+line-length = 100
+target-version = "py314"
+exclude = [
+  ".git",
+  ".tmp",
+  ".venv",
+  ".vendor",
+  "__pycache__",
+  "archive",
+  "node_modules",
+  "pytest-cache-files-*",
+  "tmp*",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"scripts/*.py" = ["E402"]

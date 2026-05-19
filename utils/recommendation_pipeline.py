@@ -1,21 +1,18 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
-from typing import Callable
 
-from utils.filters import filter_by_brand, filter_by_radius
-from utils.scoring import (
-    PRIMARY_REASON_SINGLE,
-    build_sort_key,
-    calculate_economic_cost,
-    calculate_reference_price,
-    compute_final_score,
-    describe_candidates,
-    normalize_metric,
+from utils.product_rules.cost import calculate_economic_cost, calculate_reference_price
+from utils.product_rules.display import (
     round_distance,
     round_duration,
     round_economic_cost,
 )
+from utils.product_rules.explanations import PRIMARY_REASON_SINGLE, describe_candidates
+from utils.product_rules.filters import filter_by_brand, filter_by_radius
+from utils.product_rules.normalization import normalize_metric
+from utils.product_rules.ranking import build_sort_key, compute_final_score
 from utils.station_store import get_station_id
 
 MAX_ROUTE_WORKERS = 6

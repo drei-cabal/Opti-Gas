@@ -5,7 +5,6 @@ import sys
 import tempfile
 from pathlib import Path
 
-
 ROOT_DIR = Path(__file__).resolve().parent
 TMP_DIR = ROOT_DIR / ".tmp"
 RUNTIME_TMP_DIR = TMP_DIR / "runtime"

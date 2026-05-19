@@ -62,7 +62,19 @@ Set-ExecutionPolicy -Scope Process Bypass
 ## 4. Install project dependencies
 
 ```powershell
-pip install -r requirements.txt
+pip install -r libraries/python.txt
+```
+
+If you will run tests, linting, or dependency audits, also install the development dependencies:
+
+```powershell
+pip install -r libraries/python-dev.txt
+```
+
+If you will edit CSS or run CSS linting, install Node.js and then install the Node development tools:
+
+```powershell
+npm install
 ```
 
 ## 5. Create the environment file
@@ -73,9 +85,13 @@ Copy the sample file:
 copy .env.example .env
 ```
 
+The app reads runtime settings from `.env`. `.env.example` is only a starter template for creating that local file.
+
 ## 6. Get an OpenRouteService API key
 
-For full system testing, this project requires an OpenRouteService key so the team can verify the intended route calculation flow.
+For fast local demos, the app can use estimated routing without an OpenRouteService key.
+
+For full live-route testing, this project requires an OpenRouteService key so the team can verify the intended route calculation flow.
 
 Create an account on the OpenRouteService website:
 
@@ -97,7 +113,10 @@ Open `.env` and set:
 
 ```env
 ORS_API_KEY=your_real_api_key_here
+ROUTING_MODE=live
 ```
+
+Keep `ROUTING_MODE=estimate` in `.env` when you want faster local filter changes and do not need live road-routing checks.
 
 You may also keep or adjust these if needed:
 
@@ -172,17 +191,17 @@ or reinstall Python with PATH enabled.
 
 ### API key missing
 
-If `ORS_API_KEY` is empty, the app can still run, but routing may fall back to OSRM or local estimates instead of ORS.
+If `ORS_API_KEY` is empty, the app can still run with `ROUTING_MODE=estimate`. Live ORS routing requires both `ORS_API_KEY` and `ROUTING_MODE=live`.
 
 ### Slow first load
 
 The first load may be slower because of:
 
 - browser geolocation
-- first route calculations
-- network latency to routing services
+- first route calculations when `ROUTING_MODE=live`
+- network latency to routing services when live routing is enabled
 
-Later refreshes should be faster because of browser-side session reuse and backend route caching.
+For normal local demos, use `ROUTING_MODE=estimate` so filters do not wait for ORS or OSRM. Later live-routing refreshes should be faster because of browser-side session reuse and backend route caching.
 
 ### Port already in use
 
@@ -206,7 +225,8 @@ git clone https://github.com/drei-cabal/Opti-Gas.git
 cd Opti-Gas
 python -m venv .venv
 .venv\Scripts\Activate.ps1
-pip install -r requirements.txt
+pip install -r libraries/python.txt
+npm install
 copy .env.example .env
 python app.py
 ```

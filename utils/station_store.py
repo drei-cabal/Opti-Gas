@@ -7,19 +7,14 @@ import threading
 from datetime import date, datetime
 from pathlib import Path
 
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    ValidationError,
+    ValidationInfo,
+    field_validator,
+)
 
-REQUIRED_STATION_FIELDS = {
-    "name": str,
-    "brand": str,
-    "lat": (float, int),
-    "lng": (float, int),
-    "fuels": list,
-}
-REQUIRED_FUEL_FIELDS = {
-    "fuel_type": str,
-    "price": (float, int),
-    "last_updated": str,
-}
 REQUIRED_FUEL_TYPES = {
     "Unleaded 91",
     "Premium 95",
@@ -35,6 +30,89 @@ _landmark_cache: dict[Path, dict] = {}
 
 class StationValidationError(ValueError):
     """Raised when station data fails validation."""
+
+
+class FuelRecordModel(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
+    fuel_type: str
+    price: float
+    last_updated: str
+
+    @field_validator("fuel_type", "last_updated", mode="before")
+    @classmethod
+    def _require_text(cls, value: object, info: ValidationInfo) -> str:
+        if not isinstance(value, str):
+            raise ValueError(f"Invalid fuel field type: {info.field_name}")
+        return value.strip()
+
+    @field_validator("fuel_type")
+    @classmethod
+    def _validate_fuel_type(cls, value: str) -> str:
+        if not value:
+            raise ValueError("fuel_type cannot be empty.")
+        return value
+
+    @field_validator("price", mode="before")
+    @classmethod
+    def _require_numeric_price(cls, value: object) -> float:
+        if not isinstance(value, (float, int)):
+            raise ValueError("Invalid fuel field type: price")
+        return float(value)
+
+    @field_validator("price")
+    @classmethod
+    def _validate_price(cls, value: float) -> float:
+        if value <= 0:
+            raise ValueError("Price must be positive.")
+        return value
+
+    @field_validator("last_updated")
+    @classmethod
+    def _validate_last_updated(cls, value: str) -> str:
+        try:
+            datetime.strptime(value, "%Y-%m-%d")
+        except ValueError as exc:
+            raise ValueError("last_updated must be YYYY-MM-DD.") from exc
+        return value
+
+
+class StationRecordModel(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
+    name: str
+    brand: str
+    lat: float
+    lng: float
+    fuels: list[FuelRecordModel]
+
+    @field_validator("name", "brand", mode="before")
+    @classmethod
+    def _require_text(cls, value: object, info: ValidationInfo) -> str:
+        if not isinstance(value, str):
+            raise ValueError(f"Invalid type for field: {info.field_name}")
+        return value.strip()
+
+    @field_validator("lat", "lng", mode="before")
+    @classmethod
+    def _require_numeric_coordinate(cls, value: object, info: ValidationInfo) -> float:
+        if not isinstance(value, (float, int)):
+            raise ValueError(f"Invalid type for field: {info.field_name}")
+        return float(value)
+
+    @field_validator("name")
+    @classmethod
+    def _validate_name(cls, value: str) -> str:
+        if not value:
+            raise ValueError("Station name cannot be empty.")
+        return value
+
+    @field_validator("fuels")
+    @classmethod
+    def _validate_fuels(cls, value: list[FuelRecordModel]) -> list[FuelRecordModel]:
+        if not value:
+            raise ValueError("Station must have at least one fuel type.")
+        return value
 
 
 # Load, normalize, validate, and cache the public station collection from disk.
@@ -97,30 +175,18 @@ def validate_station_record(station: dict) -> None:
     if not isinstance(station, dict):
         raise StationValidationError("Each station entry must be an object.")
 
-    for field_name, expected_type in REQUIRED_STATION_FIELDS.items():
-        if field_name not in station:
-            raise StationValidationError(f"Missing required field: {field_name}")
-        if not isinstance(station[field_name], expected_type):
-            raise StationValidationError(f"Invalid type for field: {field_name}")
-
-    name = station["name"].strip()
-    if not name:
-        raise StationValidationError("Station name cannot be empty.")
-
-    lat = float(station["lat"])
-    lng = float(station["lng"])
+    model = _validate_station_model(station)
+    name = model.name
+    lat = model.lat
+    lng = model.lng
     if not (TAGUM_LAT_RANGE[0] <= lat <= TAGUM_LAT_RANGE[1]):
         raise StationValidationError(f"Latitude out of Tagum bounds: {name}")
     if not (TAGUM_LNG_RANGE[0] <= lng <= TAGUM_LNG_RANGE[1]):
         raise StationValidationError(f"Longitude out of Tagum bounds: {name}")
 
-    fuels = station["fuels"]
-    if not fuels:
-        raise StationValidationError(f"Station must have at least one fuel type: {name}")
-
     seen_fuel_types: set[str] = set()
-    for fuel in fuels:
-        validate_fuel_record(name, fuel, seen_fuel_types)
+    for fuel_model in model.fuels:
+        validate_fuel_record(name, fuel_model.model_dump(), seen_fuel_types)
 
     if station.get("_legacy_single_fuel"):
         return
@@ -148,36 +214,14 @@ def validate_fuel_record(
     if not isinstance(fuel, dict):
         raise StationValidationError(f"Fuel entry must be an object: {station_name}")
 
-    for field_name, expected_type in REQUIRED_FUEL_FIELDS.items():
-        if field_name not in fuel:
-            raise StationValidationError(
-                f"Missing required fuel field: {field_name} ({station_name})"
-            )
-        if not isinstance(fuel[field_name], expected_type):
-            raise StationValidationError(
-                f"Invalid fuel field type: {field_name} ({station_name})"
-            )
-
-    fuel_type = fuel["fuel_type"].strip()
-    if not fuel_type:
-        raise StationValidationError(f"fuel_type cannot be empty: {station_name}")
+    fuel_model = _validate_fuel_model(fuel, station_name)
+    fuel_type = fuel_model.fuel_type
     if seen_fuel_types is not None:
         if fuel_type in seen_fuel_types:
             raise StationValidationError(
                 f"Duplicate fuel type for station {station_name}: {fuel_type}"
             )
         seen_fuel_types.add(fuel_type)
-
-    price = float(fuel["price"])
-    if price <= 0:
-        raise StationValidationError(f"Price must be positive: {station_name} ({fuel_type})")
-
-    try:
-        datetime.strptime(fuel["last_updated"], "%Y-%m-%d")
-    except ValueError as exc:
-        raise StationValidationError(
-            f"last_updated must be YYYY-MM-DD: {station_name} ({fuel_type})"
-        ) from exc
 
 
 # Update one station fuel price, then validate and persist the entire station file atomically.
@@ -244,6 +288,33 @@ def _matches_cache_entry(cache_entry: dict, cache_key: dict) -> bool:
         cache_entry.get("mtime_ns") == cache_key["mtime_ns"]
         and cache_entry.get("size") == cache_key["size"]
     )
+
+
+# Validate one station through the Pydantic-backed station record model.
+def _validate_station_model(station: dict) -> StationRecordModel:
+    try:
+        return StationRecordModel.model_validate(station)
+    except ValidationError as exc:
+        raise StationValidationError(_format_validation_error(exc)) from exc
+
+
+# Validate one fuel through the Pydantic-backed fuel record model.
+def _validate_fuel_model(fuel: dict, station_name: str) -> FuelRecordModel:
+    try:
+        return FuelRecordModel.model_validate(fuel)
+    except ValidationError as exc:
+        message = _format_validation_error(exc)
+        raise StationValidationError(f"{message}: {station_name}") from exc
+
+
+# Return a stable station-data validation message from Pydantic validation details.
+def _format_validation_error(exc: ValidationError) -> str:
+    error = exc.errors()[0]
+    loc = error["loc"]
+    field_name = str(loc[-1]) if loc else "value"
+    if error["type"] == "missing":
+        return f"Missing required field: {field_name}"
+    return str(error["msg"]).removeprefix("Value error, ")
 
 
 # Normalize the raw station collection into the runtime station shape.

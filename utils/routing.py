@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import threading
-import time
 
+import openrouteservice
 import requests
+from cachetools import TTLCache
+from openrouteservice import exceptions as ors_exceptions
 
 from utils.location import (
     estimate_fallback_duration_min,
@@ -11,15 +13,23 @@ from utils.location import (
     haversine_distance_km,
 )
 
-
-ORS_DIRECTIONS_URL = "https://api.openrouteservice.org/v2/directions/driving-car/json"
 OSRM_DIRECTIONS_URL = "https://router.project-osrm.org/route/v1/driving"
 ROUTE_CACHE_TTL_SEC = 300
+ROUTE_CACHE_MAXSIZE = 512
 ROUTE_SOURCE_ORS = "ors"
 ROUTE_SOURCE_OSRM = "osrm"
 ROUTE_SOURCE_FALLBACK = "haversine"
-_route_cache: dict[tuple[float, float, float, float], dict] = {}
+_route_cache: TTLCache = TTLCache(maxsize=ROUTE_CACHE_MAXSIZE, ttl=ROUTE_CACHE_TTL_SEC)
 _cache_lock = threading.Lock()
+ORS_ROUTE_ERRORS = (
+    KeyError,
+    IndexError,
+    TypeError,
+    ValueError,
+    ors_exceptions.ApiError,
+    ors_exceptions.HTTPError,
+    ors_exceptions.Timeout,
+)
 
 
 # Resolve a route for one station using cache first and provider fallbacks second.
@@ -38,6 +48,14 @@ def get_route(
 
     _set_cached_route(cache_key, route)
     return route
+
+
+def get_estimated_route(
+    origin: tuple[float, float],
+    station: dict,
+    ors_api_key: str | None = None,
+) -> dict:
+    return _build_haversine_route(origin, station)
 
 
 # Try each routing provider in order before falling back to the local estimate.
@@ -87,21 +105,17 @@ def _build_cache_key(
 
 # Return a cached route if it is still fresh enough to reuse.
 def _get_cached_route(cache_key: tuple[float, float, float, float]) -> dict | None:
-    now = time.time()
     with _cache_lock:
-        entry = _route_cache.get(cache_key)
-        if not entry:
+        route = _route_cache.get(cache_key)
+        if route is None:
             return None
-        if now - entry["cached_at"] > ROUTE_CACHE_TTL_SEC:
-            _route_cache.pop(cache_key, None)
-            return None
-        return dict(entry["route"])
+        return dict(route)
 
 
 # Store a fresh route result in the in-memory cache.
 def _set_cached_route(cache_key: tuple[float, float, float, float], route: dict) -> None:
     with _cache_lock:
-        _route_cache[cache_key] = {"cached_at": time.time(), "route": dict(route)}
+        _route_cache[cache_key] = dict(route)
 
 
 # Fetch road distance and duration from OpenRouteService when an API key is configured.
@@ -112,24 +126,17 @@ def _fetch_ors_route(
     timeout_sec: float,
 ) -> dict | None:
     try:
-        response = requests.post(
-            ORS_DIRECTIONS_URL,
-            headers={
-                "Authorization": ors_api_key,
-                "Content-Type": "application/json",
-            },
-            json={
-                "coordinates": [
-                    [origin[1], origin[0]],
-                    [station["lng"], station["lat"]],
-                ]
-            },
-            timeout=timeout_sec,
+        client = openrouteservice.Client(key=ors_api_key, timeout=timeout_sec)
+        payload = client.directions(
+            coordinates=[
+                [origin[1], origin[0]],
+                [station["lng"], station["lat"]],
+            ],
+            profile="driving-car",
+            format="json",
         )
-        response.raise_for_status()
-        payload = response.json()
         summary = payload["routes"][0]["summary"]
-    except (KeyError, IndexError, requests.RequestException, ValueError):
+    except ORS_ROUTE_ERRORS:
         return None
 
     return _build_route_result(

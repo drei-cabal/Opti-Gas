@@ -1,0 +1,9 @@
+[
+  {
+    "name": "DOMPurify",
+    "src": "https://unpkg.com/dompurify@3.4.3/dist/purify.min.js",
+    "integrity": "sha384-eCz05P6PHhVK1N9YlA/YY0JLOp3wc37jUGRWexbZ3VZj66h7exte7mtRSD6QoOgZ",
+    "crossorigin": "anonymous",
+    "referrerpolicy": "no-referrer"
+  }
+]

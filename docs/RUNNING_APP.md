@@ -25,7 +25,19 @@ Activate it:
 Install dependencies:
 
 ```powershell
-pip install -r requirements.txt
+pip install -r libraries/python.txt
+```
+
+For security audit tooling such as `pip-audit`, install the development requirements:
+
+```powershell
+pip install -r libraries/python-dev.txt
+```
+
+If you will edit CSS or run frontend lint checks, install the Node development tools too:
+
+```powershell
+npm install
 ```
 
 Create your environment file if needed:
@@ -33,6 +45,8 @@ Create your environment file if needed:
 ```powershell
 copy .env.example .env
 ```
+
+The app reads runtime settings from `.env`. `.env.example` is only a template for creating that local file.
 
 ### Optional price update protection
 
@@ -43,6 +57,52 @@ PRICE_UPDATE_TOKEN=change-this-demo-token
 ```
 
 When `PRICE_UPDATE_TOKEN` is empty or unset, local demo price updates remain open so the app is easy to run on a fresh machine. When `PRICE_UPDATE_TOKEN` is configured, every `POST /api/update-price` request must include the same value in the `X-Price-Update-Token` header. Requests with a missing or incorrect token should be rejected with a JSON authorization error before `data/stations/stations.json` is changed.
+
+### Recommendation rate limiting
+
+The recommendation endpoint is rate limited per client IP to reduce accidental or abusive ORS usage:
+
+```env
+RECOMMEND_RATE_LIMIT_COUNT=60
+RECOMMEND_RATE_LIMIT_WINDOW_SEC=60
+```
+
+The default allows 60 `GET /api/recommend` requests per client IP per 60-second window. Set `RECOMMEND_RATE_LIMIT_COUNT=0` only for controlled local testing where rate limiting must be disabled.
+
+Opti-Gas uses `Flask-Limiter` for runtime rate limiting:
+
+```env
+RATELIMIT_STORAGE_URI=memory://
+```
+
+`memory://` is fine for this single-process app. If the app is deployed with multiple workers, use a shared limiter store such as Redis and enforce rate limits at the reverse proxy as well.
+
+### Routing mode
+
+Local demo runs default to fast estimated routing:
+
+```env
+ROUTING_MODE=estimate
+```
+
+Set this in `.env`. This uses the app's Haversine-based road-distance estimate, so filters and first-load recommendations do not wait on ORS or OSRM network calls.
+
+For full live-route testing, configure an ORS key and switch routing mode:
+
+```env
+ORS_API_KEY=your_real_api_key_here
+ROUTING_MODE=live
+```
+
+### Security headers
+
+Opti-Gas uses `Flask-Talisman` to add browser security headers and a Content Security Policy. Local development keeps HTTPS forcing off:
+
+```env
+SECURITY_FORCE_HTTPS=0
+```
+
+Set `SECURITY_FORCE_HTTPS=1` only when the app is served through HTTPS. Do not enable it for plain local `http://127.0.0.1:5000` testing.
 
 Run the app:
 
@@ -79,7 +139,7 @@ Activate it:
 Install dependencies:
 
 ```powershell
-py -m pip install -r requirements.txt
+py -m pip install -r libraries/python.txt
 ```
 
 Run the app:
@@ -123,7 +183,7 @@ Open the integrated terminal and run:
 ```powershell
 python -m venv .venv
 .venv\Scripts\Activate.ps1
-pip install -r requirements.txt
+pip install -r libraries/python.txt
 python app.py
 ```
 
@@ -159,23 +219,27 @@ powershell -ExecutionPolicy Bypass -File .\scripts\cleanup.ps1
 
 This removes repo temp/cache clutter such as:
 
-- `.tmp`
+- `.tmp\pytest-cache`
+- `.tmp\pytest-current`
 - `__pycache__`
 - `pytest-cache-files-*`
 - `tmp*`
+
+Pytest is configured to create new cache and temporary test output under `.tmp`. Older `pytest-cache-files-*` or `tmp*` folders can be permission-locked by Windows; if cleanup reports warnings for them, they are stale untracked local folders.
 
 ## 8. If the app opens but the station cards load slowly
 
 This is usually caused by one or more of these:
 
 - browser geolocation delay
-- slow internet for ORS or OSRM routing
-- first-time route calculation for many stations
+- live routing mode waiting on ORS or OSRM
+- first-time route calculation for many stations when `ROUTING_MODE=live`
 
 What to do:
 
 - wait for location access to finish
 - make sure internet is working
+- use `ROUTING_MODE=estimate` for fast local demos
 - refresh once after the first successful load
 - keep the server running so the in-memory route cache can help
 
@@ -193,14 +257,14 @@ Try upgrading pip first:
 
 ```powershell
 python -m pip install --upgrade pip
-pip install -r requirements.txt
+pip install -r libraries/python.txt
 ```
 
 Or with `py`:
 
 ```powershell
 py -m pip install --upgrade pip
-py -m pip install -r requirements.txt
+py -m pip install -r libraries/python.txt
 ```
 
 ## 11. If port `5000` is already in use
@@ -253,4 +317,16 @@ Clean temp files:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\cleanup.ps1
+```
+
+Run Python lint:
+
+```powershell
+python -m ruff check .
+```
+
+Run CSS lint:
+
+```powershell
+npm run lint:css
 ```

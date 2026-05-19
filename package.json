@@ -1,0 +1,12 @@
+{
+  "name": "opti-gas",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint:css": "stylelint \"static/css/**/*.css\""
+  },
+  "devDependencies": {
+    "stylelint": "17.11.1",
+    "stylelint-config-standard": "40.0.0"
+  }
+}

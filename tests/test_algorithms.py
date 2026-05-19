@@ -64,6 +64,38 @@ def test_recommend_stations_uses_weighted_presets(monkeypatch):
     assert save_money["best"]["preset_used"] == "save-money"
 
 
+def test_recommend_stations_ranks_by_raw_distance_not_display_distance(monkeypatch):
+    stations = [
+        build_station("Closer Raw", "Shell", 7.45, 125.81, 90.0),
+        build_station("Farther Raw", "Petron", 7.46, 125.82, 90.0),
+    ]
+
+    routes = {
+        "Closer Raw": {"distance_km": 1.123, "duration_min": 5.0, "source": "ors"},
+        "Farther Raw": {"distance_km": 1.124, "duration_min": 5.0, "source": "ors"},
+    }
+
+    monkeypatch.setattr(
+        algorithms,
+        "get_route",
+        lambda origin, station, ors_api_key=None: routes[station["name"]],
+    )
+
+    result = algorithms.recommend_stations(
+        stations=stations,
+        origin=(7.44, 125.8),
+        preset="save-time",
+        brand="any",
+        fuel_type="Unleaded 91",
+        radius_km=10,
+        ors_api_key="test-key",
+    )
+
+    assert result["best"]["name"] == "Closer Raw"
+    assert result["candidates"][0]["distance_km"] == 1.12
+    assert result["candidates"][1]["distance_km"] == 1.12
+
+
 def test_recommend_stations_flags_single_option(monkeypatch):
     stations = [build_station("Only Option", "Petron", 7.45, 125.81, 90.0)]
 
@@ -131,3 +163,26 @@ def test_recommend_stations_returns_no_option_when_fuel_missing(monkeypatch):
     assert result["candidates"] == []
     assert result["scoring_mode"] == "no-option"
     assert result["reason"] == "No stations match the current filters."
+
+
+def test_recommend_stations_estimate_mode_skips_live_routing(monkeypatch):
+    stations = [build_station("Estimate Only", "Petron", 7.45, 125.81, 90.0)]
+
+    def fail_live_route(origin, station, ors_api_key=None):
+        raise AssertionError("live routing should not run in estimate mode")
+
+    monkeypatch.setattr(algorithms, "get_route", fail_live_route)
+
+    result = algorithms.recommend_stations(
+        stations=stations,
+        origin=(7.44, 125.8),
+        preset="balanced",
+        brand="Petron",
+        fuel_type="Unleaded 91",
+        radius_km=10,
+        ors_api_key="test-key",
+        routing_mode="estimate",
+    )
+
+    assert result["candidate_count"] == 1
+    assert result["best"]["distance_source"] == "haversine"

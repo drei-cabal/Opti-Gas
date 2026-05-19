@@ -1,28 +1,20 @@
 from __future__ import annotations
 
-from math import asin, cos, radians, sin, sqrt
+from haversine import Unit, haversine
 
 
-EARTH_RADIUS_KM = 6371.0
-
-
-# Compute straight-line distance between two coordinates using the haversine formula.
+# Compute straight-line distance between two coordinates using the library-backed Haversine formula.
 def haversine_distance_km(
     origin_lat: float,
     origin_lng: float,
     destination_lat: float,
     destination_lng: float,
 ) -> float:
-    lat_delta = radians(destination_lat - origin_lat)
-    lng_delta = radians(destination_lng - origin_lng)
-    origin_lat_rad = radians(origin_lat)
-    destination_lat_rad = radians(destination_lat)
-
-    haversine = (
-        sin(lat_delta / 2) ** 2
-        + cos(origin_lat_rad) * cos(destination_lat_rad) * sin(lng_delta / 2) ** 2
+    return haversine(
+        (origin_lat, origin_lng),
+        (destination_lat, destination_lng),
+        unit=Unit.KILOMETERS,
     )
-    return 2 * EARTH_RADIUS_KM * asin(sqrt(haversine))
 
 
 # Estimate trip duration in minutes using short-distance city driving heuristics.

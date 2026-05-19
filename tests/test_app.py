@@ -71,6 +71,46 @@ def test_api_stations(tmp_path):
     assert payload[0]["station_id"] == "7.452300,125.814200"
 
 
+def test_index_sets_security_headers(tmp_path):
+    stations_path, landmarks_path = write_fixture_files(tmp_path)
+    browser_libraries_path = tmp_path / "browser.json"
+    browser_libraries_path.write_text(
+        json.dumps(
+            [
+                {
+                    "name": "DOMPurify",
+                    "src": "https://unpkg.com/dompurify@3.4.3/dist/purify.min.js",
+                    "integrity": (
+                        "sha384-eCz05P6PHhVK1N9YlA/YY0JLOp3wc37jUGRWexbZ3VZj66h7exte7mtRSD6QoOgZ"
+                    ),
+                    "crossorigin": "anonymous",
+                    "referrerpolicy": "no-referrer",
+                }
+            ]
+        ),
+        encoding="utf-8",
+    )
+    app = create_app(
+        {
+            "TESTING": True,
+            "RECOMMEND_RATE_LIMIT_COUNT": 0,
+            "STATIONS_PATH": stations_path,
+            "LANDMARKS_PATH": landmarks_path,
+            "BROWSER_LIBRARIES_PATH": browser_libraries_path,
+        }
+    )
+
+    response = app.test_client().get("/")
+
+    assert response.status_code == 200
+    assert response.headers["X-Content-Type-Options"] == "nosniff"
+    assert response.headers["Referrer-Policy"] == "strict-origin-when-cross-origin"
+    assert "default-src 'self'" in response.headers["Content-Security-Policy"]
+    html = response.get_data(as_text=True)
+    assert "https://unpkg.com/dompurify@3.4.3/dist/purify.min.js" in html
+    assert "sha384-eCz05P6PHhVK1N9YlA/YY0JLOp3wc37jUGRWexbZ3VZj66h7exte7mtRSD6QoOgZ" in html
+
+
 def test_api_recommend_requires_numeric_inputs(tmp_path):
     stations_path, landmarks_path = write_fixture_files(tmp_path)
     app = create_app(
@@ -110,6 +150,54 @@ def test_api_recommend_returns_selected_fuel(tmp_path):
     assert "travel_liters" in payload["best"]
     assert "purchase_cost" in payload["best"]
     assert "norm_distance" in payload["best"]
+
+
+def test_api_recommend_rate_limit_blocks_excess_requests(tmp_path):
+    stations_path, landmarks_path = write_fixture_files(tmp_path)
+    app = create_app(
+        {
+            "TESTING": True,
+            "RECOMMEND_RATE_LIMIT_COUNT": 2,
+            "RECOMMEND_RATE_LIMIT_WINDOW_SEC": 60,
+            "STATIONS_PATH": stations_path,
+            "LANDMARKS_PATH": landmarks_path,
+        }
+    )
+    client = app.test_client()
+    path = (
+        "/api/recommend?lat=7.4478&lng=125.8079&mode=balanced"
+        "&brand=any&fuel_type=Diesel&radius_km=5"
+    )
+
+    assert client.get(path).status_code == 200
+    assert client.get(path).status_code == 200
+
+    response = client.get(path)
+
+    assert response.status_code == 429
+    assert response.headers["Retry-After"].isdigit()
+    assert response.get_json()["error"].startswith("Too many recommendation requests.")
+
+
+def test_api_recommend_rate_limit_can_be_disabled(tmp_path):
+    stations_path, landmarks_path = write_fixture_files(tmp_path)
+    app = create_app(
+        {
+            "TESTING": True,
+            "RECOMMEND_RATE_LIMIT_COUNT": 0,
+            "STATIONS_PATH": stations_path,
+            "LANDMARKS_PATH": landmarks_path,
+        }
+    )
+    client = app.test_client()
+    path = (
+        "/api/recommend?lat=7.4478&lng=125.8079&mode=balanced"
+        "&brand=any&fuel_type=Diesel&radius_km=5"
+    )
+
+    responses = [client.get(path) for _ in range(3)]
+
+    assert [response.status_code for response in responses] == [200, 200, 200]
 
 
 def test_api_update_price_without_configured_token_allows_valid_update(tmp_path):

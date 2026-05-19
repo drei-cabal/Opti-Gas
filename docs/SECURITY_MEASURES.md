@@ -2,6 +2,8 @@
 
 This guide defines the security measures that should be taken for the Opti-Gas system. The app is a Flask + Leaflet web app with local JSON station data, browser-side Garage state, and external routing through OpenRouteService or OSRM.
 
+For the latest local breach and attack simulation report, see `docs/SECURITY_ATTACK_SIMULATION_REPORT.md`.
+
 ## Grill-Me Decision
 
 Question: Is this system being secured as a simple local/team demo, or should it follow a production-like security posture?
@@ -128,7 +130,37 @@ Required measures:
 3. Return clear JSON errors for invalid API input.
 4. Add tests for every new validation rule.
 
-### 6. Protect JSON File Integrity
+### 6. Rate Limit Recommendation Requests
+
+Status: implemented with `Flask-Limiter`.
+
+Current behavior:
+
+- `GET /api/recommend` is limited per client IP.
+- default limit is 60 requests per 60 seconds.
+- blocked requests return `429` with a `Retry-After` header.
+
+Required measures:
+
+1. Keep `RECOMMEND_RATE_LIMIT_COUNT` set in shared environments.
+2. Keep `RECOMMEND_RATE_LIMIT_WINDOW_SEC` set to a clear window size.
+3. Use `RECOMMEND_RATE_LIMIT_COUNT=0` only for controlled local testing.
+4. Add reverse-proxy rate limiting if the app is deployed with multiple workers or exposed publicly.
+5. Do not log exact user coordinates while troubleshooting rate limits.
+
+Configuration:
+
+```env
+RECOMMEND_RATE_LIMIT_COUNT=60
+RECOMMEND_RATE_LIMIT_WINDOW_SEC=60
+RATELIMIT_STORAGE_URI=memory://
+```
+
+Limitation:
+
+- `memory://` protects this Flask process only. A production deployment with multiple workers should use a shared limiter store such as Redis and enforce the same or stricter limit at the reverse proxy or gateway layer.
+
+### 7. Protect JSON File Integrity
 
 Status: required because there is no database.
 
@@ -148,7 +180,7 @@ Required measures:
 
 ## Medium Priority Measures
 
-### 7. Limit Browser Storage Risk
+### 8. Limit Browser Storage Risk
 
 Current behavior:
 
@@ -162,7 +194,7 @@ Required measures:
 3. Add a clear-reset option if privacy becomes a user-facing requirement.
 4. Document that browser storage persists on the device.
 
-### 8. Control Route Cache Retention
+### 9. Control Route Cache Retention
 
 Current behavior:
 
@@ -174,15 +206,16 @@ Required measures:
 2. Avoid persisting exact user coordinates unless there is a clear product need.
 3. If persistent caching is added later, document retention and provide cleanup.
 
-### 9. Keep Dependencies Updated
+### 10. Keep Dependencies Updated
 
 Current dependencies:
 
 ```text
 Flask
+Flask-Limiter
+flask-talisman
 python-dotenv
 requests
-pytest
 ```
 
 Required measures:
@@ -190,15 +223,18 @@ Required measures:
 1. Periodically run dependency freshness checks.
 2. Separate "newer version exists" from "confirmed vulnerability."
 3. Update pinned versions only after tests pass.
-4. Keep `requirements.txt` minimal.
+4. Keep runtime libraries in `libraries/python.txt`.
+5. Keep development and audit tools in `libraries/python-dev.txt`.
 
 Suggested command:
 
 ```powershell
+python -m pip install -r libraries/python-dev.txt
 python -m pip list --outdated --format=json
+python -m pip_audit
 ```
 
-### 10. Add Security-Oriented QA Checks
+### 11. Add Security-Oriented QA Checks
 
 Required manual checks:
 
@@ -210,6 +246,7 @@ Required manual checks:
 6. Confirm debug mode is off before any shared demo.
 7. Confirm the public browser bundle does not contain `PRICE_UPDATE_TOKEN` or `ORS_API_KEY`.
 8. Confirm station JSON remains valid after any allowed update.
+9. Confirm repeated `/api/recommend` requests eventually return `429`.
 
 Suggested automated checks:
 
@@ -220,17 +257,43 @@ Suggested automated checks:
 
 ## Lower Priority Measures
 
-### 11. Add Basic Security Headers
+### 12. Add Basic Security Headers
 
-Recommended headers for future hardening:
+Status: implemented with `Flask-Talisman`.
+
+Current headers and policies include:
 
 - `X-Content-Type-Options: nosniff`
 - `Referrer-Policy: strict-origin-when-cross-origin`
-- `Content-Security-Policy` once inline styles/scripts are reviewed
+- `Content-Security-Policy`
+- HTTPS forcing can be enabled with `SECURITY_FORCE_HTTPS=1`
 
-Apply only after checking that the policy does not break Leaflet, Google Fonts, external map tiles, or CDN assets.
+The Content Security Policy allows the current app dependencies:
 
-### 12. Rate Limit Write Endpoints
+- app scripts and styles from `self`
+- Leaflet from `unpkg.com`
+- Google Fonts
+- Carto map tiles
+
+Keep `SECURITY_FORCE_HTTPS=0` for plain local `http://127.0.0.1:5000` testing. Set it to `1` only when the app is actually served through HTTPS.
+
+### 13. Sanitize Browser HTML With DOMPurify
+
+Status: implemented for Leaflet marker HTML.
+
+Current behavior:
+
+- `DOMPurify` is loaded from the pinned URL declared in `libraries/browser.json`.
+- marker HTML in `static/js/map.js` is sanitized before passing it to `L.divIcon`.
+- a small HTML-escape fallback remains if the library fails to load.
+
+Required measures:
+
+1. Use DOMPurify for future dynamic HTML insertion.
+2. Do not bypass DOMPurify for station names, fuel names, or any imported station data.
+3. Keep the pinned DOMPurify version and SRI hash updated during dependency/security reviews.
+
+### 14. Rate Limit Write Endpoints
 
 Recommended if the app is exposed beyond localhost:
 
@@ -252,6 +315,7 @@ Recommended because `stations.json` is mutable:
 
 - enforce and document `PRICE_UPDATE_TOKEN`
 - ensure token-protected mode is the required mode outside localhost
+- maintain `/api/recommend` rate limiting and tests
 - keep price validation tests passing
 - add any missing API validation tests
 - add or verify atomic station JSON writes
@@ -287,7 +351,8 @@ The system is acceptable for a production-like demo without login or a database 
 4. Flask debug mode is off by default.
 5. `.env` remains untracked.
 6. marker label escaping is addressed before importing untrusted station data.
-7. station JSON writes are validated and recoverable.
-8. tests and manual QA pass before final presentation.
+7. `/api/recommend` is rate limited to protect ORS quota.
+8. station JSON writes are validated and recoverable.
+9. tests and manual QA pass before final presentation.
 
 It is still not fully production-ready without real authentication, authorization, durable persistence, rate limiting, deployment hardening, and formal secret management. Those are intentionally outside the current project constraints.

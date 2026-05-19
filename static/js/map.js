@@ -124,9 +124,10 @@ function resolveMarkerState(stationId, candidateIds, bestStationId, activeStatio
 
 function createStationIcon(stationName, markerState) {
   const label = getStationLabel(stationName);
+  const markerHtml = buildSafeMarkerHtml(label, markerState);
   return L.divIcon({
     className: "station-marker-icon",
-    html: `<span class="station-marker station-marker--${markerState}">${label}</span>`,
+    html: markerHtml,
     iconSize: null,
   });
 }
@@ -140,6 +141,26 @@ function getStationLabel(stationName) {
     return "Gas";
   }
   return firstWord.slice(0, 4);
+}
+
+function buildSafeMarkerHtml(label, markerState) {
+  const markerHtml = `<span class="station-marker station-marker--${markerState}">${label}</span>`;
+  if (window.DOMPurify) {
+    return window.DOMPurify.sanitize(markerHtml, {
+      ALLOWED_TAGS: ["span"],
+      ALLOWED_ATTR: ["class"],
+    });
+  }
+  return `<span class="station-marker station-marker--${markerState}">${escapeHtml(label)}</span>`;
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 function clampToTagum(lat, lng) {

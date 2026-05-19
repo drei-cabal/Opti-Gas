@@ -19,7 +19,7 @@ export function formatAdvisoryDate(value) {
 }
 
 export function formatDistance(value) {
-  return Number(value).toFixed(1).replace(/\.0$/, "");
+  return Number(value).toFixed(2);
 }
 
 export function formatDuration(value) {

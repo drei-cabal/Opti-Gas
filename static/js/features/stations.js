@@ -1,3 +1,5 @@
+import Fuse from "https://unpkg.com/fuse.js@7.3.0/dist/fuse.mjs";
+
 import { updatePrice } from "../api.js";
 import { elements, state } from "../shared/state.js";
 import {
@@ -19,6 +21,10 @@ const deps = {
   showAnnouncement: null,
 };
 let stationSelectionToken = 0;
+const stationSearchIndex = {
+  source: null,
+  index: null,
+};
 
 export function configureStations(nextDeps) {
   Object.assign(deps, nextDeps);
@@ -124,18 +130,18 @@ export function getDisplayStationById(stationId) {
 export function getVisibleStations() {
   const query = state.searchQuery.trim().toLowerCase();
   if (query) {
-    return state.allStations
-      .filter((station) => {
-        const haystack = `${station.name} ${station.brand}`.toLowerCase();
-        return haystack.includes(query);
-      })
-      .map((station) => {
+    const searchMatches = searchStations(query);
+    const rankByStationId = new Map(
+      searchMatches.map(({ station }, index) => [station.station_id, index])
+    );
+    return searchMatches
+      .map(({ station }) => {
         const recommendation =
           state.candidates.find((item) => item.station_id === station.station_id) ||
           (state.best?.station_id === station.station_id ? state.best : null);
         return buildDisplayStation(station, recommendation);
       })
-      .sort(sortStationsForSearch);
+      .sort((left, right) => sortStationsForSearch(left, right, rankByStationId));
   }
 
   if (state.candidates.length) {
@@ -275,7 +281,7 @@ function renderStationDetail(station) {
       <div class="detail-card__stats">
         <div class="stat-card">
           <span>Drive</span>
-          <strong>${station.distance_km != null ? `~${formatDistance(station.distance_km)} km - ~${formatDuration(station.duration_min)} min` : "Set location to estimate"}</strong>
+          <strong>${station.distance_km != null ? `~${formatDistance(station.distance_km)}km - ~${formatDuration(station.duration_min)} min` : "Set location to estimate"}</strong>
         </div>
         <div class="stat-card">
           <span>${showPersonalizedCost ? "Est. total cost" : "Personalized cost"}</span>
@@ -350,11 +356,40 @@ function setPriceUpdateError(message) {
   elements.priceModalError.classList.toggle("hidden", !message);
 }
 
-function sortStationsForSearch(left, right) {
+function searchStations(query) {
+  return getStationSearchIndex()
+    .search(query)
+    .map((result) => ({ station: result.item }));
+}
+
+function getStationSearchIndex() {
+  if (stationSearchIndex.source !== state.allStations) {
+    stationSearchIndex.source = state.allStations;
+    stationSearchIndex.index = new Fuse(state.allStations, {
+      keys: [
+        { name: "name", weight: 0.55 },
+        { name: "brand", weight: 0.3 },
+        { name: "fuels.fuel_type", weight: 0.15 },
+      ],
+      threshold: 0.35,
+      ignoreLocation: true,
+      minMatchCharLength: 1,
+    });
+  }
+  return stationSearchIndex.index;
+}
+
+function sortStationsForSearch(left, right, rankByStationId) {
   const leftIsCandidate = state.candidates.some((station) => station.station_id === left.station_id);
   const rightIsCandidate = state.candidates.some((station) => station.station_id === right.station_id);
   if (leftIsCandidate !== rightIsCandidate) {
     return leftIsCandidate ? -1 : 1;
+  }
+  if (rankByStationId) {
+    return (
+      (rankByStationId.get(left.station_id) ?? Number.MAX_SAFE_INTEGER) -
+      (rankByStationId.get(right.station_id) ?? Number.MAX_SAFE_INTEGER)
+    );
   }
   return left.station_id.localeCompare(right.station_id);
 }
@@ -373,7 +408,7 @@ export function buildSummaryMeta(station, activeVehicle) {
   if (station.distance_km != null) {
     const base = `P${station.price.toFixed(2)} per liter - ~${formatDistance(
       station.distance_km
-    )} km - ~${formatDuration(station.duration_min)} min`;
+    )}km - ~${formatDuration(station.duration_min)} min`;
     if (!activeVehicle) {
       return `${base}. Add a vehicle in Garage to unlock personalized recommendations.`;
     }
@@ -384,7 +419,7 @@ export function buildSummaryMeta(station, activeVehicle) {
 
 function buildRowMeta(station) {
   if (station.distance_km != null) {
-    return `${station.brand} - ~${formatDistance(station.distance_km)} km - ~${formatDuration(
+    return `${station.brand} - ~${formatDistance(station.distance_km)}km - ~${formatDuration(
       station.duration_min
     )} min${station.distance_source === "haversine" ? " estimate" : ""}`;
   }

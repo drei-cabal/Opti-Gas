@@ -3,11 +3,15 @@ from __future__ import annotations
 import argparse
 import csv
 import json
-import math
+import sys
 from pathlib import Path
 
-
 ROOT_DIR = Path(__file__).resolve().parents[1]
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
+
+from utils.location import haversine_distance_km
+
 DEFAULT_INPUT = ROOT_DIR / "data" / "stations" / "stations.osm.seed.json"
 DEFAULT_OUTPUT = ROOT_DIR / "data" / "stations" / "stations.osm.audit.csv"
 DEFAULT_DUPLICATE_DISTANCE_M = 150.0
@@ -221,18 +225,7 @@ def haversine_distance_m(
     lat2: float,
     lng2: float,
 ) -> float:
-    radius_m = 6371000.0
-    lat1_rad = math.radians(lat1)
-    lat2_rad = math.radians(lat2)
-    delta_lat = math.radians(lat2 - lat1)
-    delta_lng = math.radians(lng2 - lng1)
-
-    a = (
-        math.sin(delta_lat / 2) ** 2
-        + math.cos(lat1_rad) * math.cos(lat2_rad) * math.sin(delta_lng / 2) ** 2
-    )
-    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-    return radius_m * c
+    return haversine_distance_km(lat1, lng1, lat2, lng2) * 1000.0
 
 
 if __name__ == "__main__":

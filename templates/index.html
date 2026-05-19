@@ -365,6 +365,14 @@
       integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
       crossorigin=""
     ></script>
+    {% for library in browser_libraries %}
+    <script
+      src="{{ library.src }}"
+      {% if library.integrity %}integrity="{{ library.integrity }}"{% endif %}
+      {% if library.crossorigin %}crossorigin="{{ library.crossorigin }}"{% endif %}
+      {% if library.referrerpolicy %}referrerpolicy="{{ library.referrerpolicy }}"{% endif %}
+    ></script>
+    {% endfor %}
     <script type="module" src="{{ url_for('static', filename='js/ui.js') }}"></script>
   </body>
 </html>

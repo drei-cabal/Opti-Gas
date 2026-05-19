@@ -14,7 +14,7 @@ OPTI-GAS is a mobile-first Flask + Leaflet web app for Tagum City drivers. It op
 ## Project Layout
 
 - `app.py`: Flask entrypoint and API routes
-- `utils/`: station loading, validation, filtering, routing, and recommendation logic
+- `utils/`: station loading, validation, routing, recommendation orchestration, and product rules
 - `templates/index.html`: single-page shell
 - `static/css/main.css`: stylesheet entrypoint for modular map, overlay, layout, and component styles
 - `static/js/ui.js`: thin browser entrypoint and app wiring
@@ -43,6 +43,7 @@ flowchart LR
   Flask[app.py]
   RequestNorm[utils/recommendation_request.py]
   Pipeline[utils/recommendation_pipeline.py]
+  Rules[utils/product_rules/*]
   Store[utils/station_store.py]
   Routing[utils/routing.py]
   Algorithms[utils/algorithms.py]
@@ -58,6 +59,7 @@ flowchart LR
   Features --> Flask
 
   Flask --> RequestNorm --> Pipeline
+  Pipeline --> Rules
   Pipeline --> Store --> StationData
   Pipeline --> Routing --> ORS
   Pipeline --> Algorithms
@@ -121,13 +123,21 @@ This project is not only a Flask + Leaflet application. Its core behavior is dri
 
 For the current Opti-Route redesign specification, see `docs/opti-route-formula-spec.md`.
 
+For the backend folder that contains the executable recommendation formulas and product rules, see `docs/PRODUCT_RULES.md`.
+
 For the current Map + Garage product interaction, saved-vehicle behavior, and first-run gating rules, see `docs/map-garage-product-spec.md`.
 
 For repo-local UI design engineering guidance used for this mobile map experience, see `skills/opti-gas-ui-design-engineering/SKILL.md`.
 
 For team contribution assignments, folder ownership, and review criteria, see `docs/CONTRIBUTION_TASKS.md`.
 
+For when to run each maintenance script, see `docs/SCRIPT_WORKFLOWS.md`.
+
 For demo security measures, threat-model decisions, and security QA checks, see `docs/SECURITY_MEASURES.md`.
+
+For the latest local breach and attack simulation report, see `docs/SECURITY_ATTACK_SIMULATION_REPORT.md`.
+
+For the third-party library inventory and repo locations, see `docs/THIRD_PARTY_LIBRARIES.md`.
 
 ## Implementation Details
 
@@ -143,8 +153,8 @@ Filtering steps:
 
 Relevant files:
 
-- `utils/filters.py`
-- `utils/algorithms.py`
+- `utils/product_rules/filters.py`
+- `utils/recommendation_pipeline.py`
 
 Pseudocode:
 
@@ -222,9 +232,18 @@ final_score =
 
 Trip assumptions are now sourced from the active saved vehicle in `Garage` plus the current Map tank-status override, rather than from always-visible manual sliders.
 
+Ranking uses raw route distance internally. Station cards display `distance_km`
+to two decimal places, such as `1.02km`, but rounded display distance never
+decides the winning station.
+
 Relevant file:
 
-- `utils/algorithms.py`
+- `utils/product_rules/presets.py`
+- `utils/product_rules/cost.py`
+- `utils/product_rules/normalization.py`
+- `utils/product_rules/ranking.py`
+- `utils/product_rules/explanations.py`
+- `utils/recommendation_pipeline.py`
 
 Pseudocode:
 

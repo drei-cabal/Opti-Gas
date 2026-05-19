@@ -3,13 +3,11 @@ from __future__ import annotations
 import argparse
 import json
 import re
-import sys
 from collections import OrderedDict
 from datetime import date
 from pathlib import Path
 
 import requests
-
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT = ROOT_DIR / "data" / "stations" / "stations.osm.seed.json"
