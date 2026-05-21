@@ -107,8 +107,14 @@ export async function submitPriceUpdate() {
 
 export function getPrimaryStation() {
   const visibleStations = getVisibleStations();
+  // Keep the summary card aligned with the station the user selected on the map.
+  const activeStation = getDisplayStationById(state.activeStationId);
+  if (activeStation) {
+    return activeStation;
+  }
+
   if (state.searchQuery) {
-    return getDisplayStationById(state.activeStationId) || visibleStations[0] || null;
+    return visibleStations[0] || null;
   }
   return state.best || visibleStations[0] || null;
 }
@@ -398,6 +404,9 @@ export function buildSummaryBadge(station) {
   if (!state.userLocation) {
     return "Awaiting location";
   }
+  if (station.station_id === state.activeStationId && station.station_id !== state.best?.station_id) {
+    return "Selected station";
+  }
   if (!deps.getActiveVehicle?.() && normalizeMode(state.mode) === "save-time") {
     return "Quickest option";
   }
@@ -475,8 +484,16 @@ function prioritizeActiveStation(stations) {
   }
 
   const activeIndex = stations.findIndex((station) => station.station_id === state.activeStationId);
-  if (activeIndex <= 0) {
+  if (activeIndex === 0) {
     return stations;
+  }
+
+  if (activeIndex === -1) {
+    // Show marker-selected stations even when they are outside the current recommendation list.
+    const activeStation = buildDisplayStation(
+      state.allStations.find((station) => station.station_id === state.activeStationId)
+    );
+    return activeStation ? [activeStation, ...stations] : stations;
   }
 
   const ordered = stations.slice();

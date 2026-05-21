@@ -246,6 +246,7 @@
 
 .sheet-summary {
   display: flex;
+  position: relative;
   gap: 12px;
   align-items: flex-start;
   justify-content: space-between;
@@ -253,7 +254,22 @@
   touch-action: none;
 }
 
+.sheet-summary--loading {
+  overflow: hidden;
+}
+
+.sheet-summary--loading::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.62), transparent);
+  animation: candidate-skeleton-shimmer 1.1s infinite;
+  pointer-events: none;
+}
+
 .sheet-summary__text {
+  flex: 1 1 auto;
   min-width: 0;
 }
 
@@ -277,6 +293,27 @@
   margin: 0 0 4px;
   font-size: 17px;
   line-height: 1.2;
+}
+
+.sheet-summary--loading .summary-badge,
+.sheet-summary--loading h1,
+.sheet-summary--loading .summary-meta {
+  max-width: 100%;
+  border-radius: 999px;
+  color: transparent;
+  background: linear-gradient(180deg, rgba(221, 229, 239, 0.95), rgba(241, 245, 251, 0.95));
+}
+
+.sheet-summary--loading .summary-badge {
+  width: 74px;
+}
+
+.sheet-summary--loading h1 {
+  width: min(100%, 230px);
+}
+
+.sheet-summary--loading .summary-meta {
+  width: min(100%, 290px);
 }
 
 .sheet-body {

@@ -411,6 +411,8 @@ async function refreshRecommendations({ silent = false } = {}) {
 }
 
 function render() {
+  renderSummaryLoadingState();
+
   const primary = getPrimaryStation();
   const hasSearch = Boolean(state.searchQuery);
   const activeVehicle = getActiveVehicle();
@@ -451,6 +453,15 @@ function render() {
   elements.emptyState.classList.toggle(
     "hidden",
     !(state.userLocation && state.candidates.length === 0)
+  );
+}
+
+function renderSummaryLoadingState() {
+  // Mirror the recommendation refresh state in the main summary card.
+  elements.sheetSummary.classList.toggle("sheet-summary--loading", state.isLoadingRecommendations);
+  elements.sheetSummary.setAttribute(
+    "aria-busy",
+    state.isLoadingRecommendations ? "true" : "false"
   );
 }
 

@@ -120,6 +120,10 @@ If the Map opens but recommendations do not appear, make sure the browser allowe
 
 The Map starts a live browser geolocation watch after load. A cached last location may appear briefly, but the app should recalibrate to the current GPS fix and refresh recommendations after meaningful movement. If you physically move and the map does not update, check device location services, browser site permission, and whether the page is still open in the foreground.
 
+Clicking a gas station marker selects that station, expands the station sheet, updates the main summary card, and shows that station's detail card at the top of the list. Filters still refresh the recommendation candidate list from `/api/recommend`.
+
+When filters trigger a recommendation refresh, the main summary card enters a loading shimmer state until the updated recommendations return.
+
 ## 2. If `python` does not work but Python is installed
 
 Some Windows setups use `py` instead of `python`.
