@@ -7,8 +7,8 @@ import requests
 from cachetools import TTLCache
 from openrouteservice import exceptions as ors_exceptions
 
-from utils.location import (
-    estimate_fallback_duration_min,
+from utils.geo.location import (
+    estimate_duration_min,
     estimate_road_distance_km,
     haversine_distance_km,
 )
@@ -154,7 +154,7 @@ def _build_haversine_route(origin: tuple[float, float], station: dict) -> dict:
     distance_km = estimate_road_distance_km(straight_line_distance_km)
     return _build_route_result(
         distance_km=distance_km,
-        duration_min=estimate_fallback_duration_min(straight_line_distance_km),
+        duration_min=estimate_duration_min(distance_km),
         source=ROUTE_SOURCE_FALLBACK,
     )
 

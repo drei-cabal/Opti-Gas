@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from utils import algorithms
+from utils.recommendations.engine import algorithms
 
 
 def build_station(name: str, brand: str, lat: float, lng: float, price: float) -> dict:

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from utils.product_rules.presets import PRESET_WEIGHTS
+from utils.recommendations.product_rules.presets import PRESET_WEIGHTS
 
 
 # Compute the weighted final score for one candidate under the selected preset.
@@ -26,4 +26,3 @@ def build_sort_key(candidate: dict) -> tuple:
         candidate["price"],
         candidate["station_id"],
     )
-

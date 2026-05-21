@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from statistics import fmean
 
-from utils.product_rules.presets import CANDIDATE_AVERAGE_MIN_COUNT
+from utils.recommendations.product_rules.presets import CANDIDATE_AVERAGE_MIN_COUNT
 
 
 # Compute the total expected fuel spend for reaching and filling up at a station.
@@ -50,4 +50,3 @@ def calculate_reference_price(
         return fmean(citywide_prices), "citywide-average"
 
     return None, None
-

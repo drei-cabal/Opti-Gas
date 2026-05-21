@@ -19,15 +19,15 @@ from pydantic import (
     model_validator,
 )
 
-from utils.algorithms import recommend_stations
-from utils.recommendation_request import parse_recommendation_request
-from utils.station_store import (
+from utils.data.station_store import (
     StationValidationError,
     get_station_id,
     load_landmarks,
     load_stations,
     update_station_price,
 )
+from utils.recommendations.engine.algorithms import recommend_stations
+from utils.recommendations.requests.parser import parse_recommendation_request
 
 BASE_DIR = Path(__file__).resolve().parent
 PRICE_UPDATE_TOKEN_HEADER = "X-Price-Update-Token"

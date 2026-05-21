@@ -10,7 +10,7 @@ ROOT_DIR = Path(__file__).resolve().parents[1]
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
-from utils.location import haversine_distance_km
+from utils.geo.location import haversine_distance_km
 
 DEFAULT_INPUT = ROOT_DIR / "data" / "stations" / "stations.osm.seed.json"
 DEFAULT_OUTPUT = ROOT_DIR / "data" / "stations" / "stations.osm.audit.csv"

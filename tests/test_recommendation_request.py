@@ -2,7 +2,10 @@ from __future__ import annotations
 
 import pytest
 
-from utils.recommendation_request import normalize_preset, parse_recommendation_request
+from utils.recommendations.requests.parser import (
+    normalize_preset,
+    parse_recommendation_request,
+)
 
 
 def test_parse_recommendation_request_applies_defaults_and_aliases():

@@ -2,11 +2,14 @@ from __future__ import annotations
 
 import pytest
 
-from utils.product_rules.cost import calculate_economic_cost, calculate_reference_price
-from utils.product_rules.display import round_distance
-from utils.product_rules.filters import filter_by_brand
-from utils.product_rules.normalization import normalize_metric
-from utils.product_rules.ranking import compute_final_score
+from utils.recommendations.product_rules.cost import (
+    calculate_economic_cost,
+    calculate_reference_price,
+)
+from utils.recommendations.product_rules.display import round_distance
+from utils.recommendations.product_rules.filters import filter_by_brand
+from utils.recommendations.product_rules.normalization import normalize_metric
+from utils.recommendations.product_rules.ranking import compute_final_score
 
 
 def test_calculate_economic_cost_combines_purchase_and_travel_costs():

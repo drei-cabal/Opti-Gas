@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from utils.product_rules.ranking import build_sort_key
+from utils.recommendations.product_rules.ranking import build_sort_key
 
 PRIMARY_REASON_BALANCED = "Best overall balance"
 PRIMARY_REASON_COST = "Lowest total fuel cost"
@@ -135,4 +135,3 @@ def _has_clear_advantage(
     if next_best <= 0:
         return False
     return (next_best - winner_value) / next_best >= threshold
-

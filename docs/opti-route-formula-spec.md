@@ -14,9 +14,9 @@ It is the canonical formula-design reference for:
 
 If the formula changes, this document must be updated in the same change set.
 
-The executable implementation is split into `utils/product_rules/` so formula
-changes stay separate from HTTP request handling and API response shaping. For
-the folder map, see `docs/PRODUCT_RULES.md`.
+The executable implementation is split into `utils/recommendations/product_rules/`
+so formula changes stay separate from HTTP request handling and API response
+shaping. For the folder map, see `docs/PRODUCT_RULES.md`.
 
 ## Problem With The Current Formula
 

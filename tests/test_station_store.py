@@ -5,7 +5,7 @@ from datetime import date
 
 import pytest
 
-from utils.station_store import (
+from utils.data.station_store import (
     StationValidationError,
     is_stale_price,
     load_stations,

@@ -14,7 +14,10 @@ OPTI-GAS is a mobile-first Flask + Leaflet web app for Tagum City drivers. It op
 ## Project Layout
 
 - `app.py`: Flask entrypoint and API routes
-- `utils/`: station loading, validation, routing, recommendation orchestration, and product rules
+- `utils/data/`: station loading, validation, and persistence
+- `utils/geo/`: coordinate distance and local fallback-estimation helpers
+- `utils/routing/`: route provider selection, route cache, and provider fallback logic
+- `utils/recommendations/`: recommendation request parsing, engine orchestration, and product rules
 - `templates/index.html`: single-page shell
 - `static/css/main.css`: stylesheet entrypoint for modular map, overlay, layout, and component styles
 - `static/js/ui.js`: thin browser entrypoint and app wiring
@@ -41,12 +44,12 @@ flowchart LR
   Shared[static/js/shared/*]
   Features[static/js/features/*]
   Flask[app.py]
-  RequestNorm[utils/recommendation_request.py]
-  Pipeline[utils/recommendation_pipeline.py]
-  Rules[utils/product_rules/*]
-  Store[utils/station_store.py]
-  Routing[utils/routing.py]
-  Algorithms[utils/algorithms.py]
+  RequestNorm[utils/recommendations/requests/parser.py]
+  Pipeline[utils/recommendations/engine/pipeline.py]
+  Rules[utils/recommendations/product_rules/*]
+  Store[utils/data/station_store.py]
+  Routing[utils/routing/service.py]
+  Algorithms[utils/recommendations/engine/algorithms.py]
   StationData[data/stations/stations.json]
   Leaflet[Leaflet]
   GoogleMaps[Google Maps]
@@ -153,8 +156,8 @@ Filtering steps:
 
 Relevant files:
 
-- `utils/product_rules/filters.py`
-- `utils/recommendation_pipeline.py`
+- `utils/recommendations/product_rules/filters.py`
+- `utils/recommendations/engine/pipeline.py`
 
 Pseudocode:
 
@@ -182,8 +185,8 @@ For each remaining candidate station, the system computes distance and estimated
 
 Relevant files:
 
-- `utils/routing.py`
-- `utils/location.py`
+- `utils/routing/service.py`
+- `utils/geo/location.py`
 
 This design is a fallback algorithm strategy:
 
@@ -238,12 +241,12 @@ decides the winning station.
 
 Relevant file:
 
-- `utils/product_rules/presets.py`
-- `utils/product_rules/cost.py`
-- `utils/product_rules/normalization.py`
-- `utils/product_rules/ranking.py`
-- `utils/product_rules/explanations.py`
-- `utils/recommendation_pipeline.py`
+- `utils/recommendations/product_rules/presets.py`
+- `utils/recommendations/product_rules/cost.py`
+- `utils/recommendations/product_rules/normalization.py`
+- `utils/recommendations/product_rules/ranking.py`
+- `utils/recommendations/product_rules/explanations.py`
+- `utils/recommendations/engine/pipeline.py`
 
 Pseudocode:
 
@@ -269,8 +272,8 @@ Some stations may share the same name but represent different physical locations
 
 Relevant files:
 
-- `utils/station_store.py`
-- `utils/algorithms.py`
+- `utils/data/station_store.py`
+- `utils/recommendations/engine/algorithms.py`
 - `static/js/features/stations.js`
 
 This is an identity-resolution algorithm based on location rather than name alone.

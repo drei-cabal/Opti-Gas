@@ -4,7 +4,7 @@ from collections.abc import Mapping
 
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 
-from utils.product_rules.presets import (
+from utils.recommendations.product_rules.presets import (
     DEFAULT_KM_PER_LITER,
     DEFAULT_LITERS_TO_FILL,
     RECOMMENDATION_PRESETS,

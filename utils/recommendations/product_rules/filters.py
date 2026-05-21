@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from utils.location import haversine_distance_km
+from utils.geo.location import haversine_distance_km
 
 
 # Keep only stations that match the requested brand unless the request is unrestricted.
@@ -29,4 +29,3 @@ def filter_by_radius(
         if distance <= radius_km:
             filtered.append(station)
     return filtered
-

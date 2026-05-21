@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from utils.product_rules.presets import (
+from utils.recommendations.engine.pipeline import recommend_stations_result
+from utils.recommendations.product_rules.presets import (
     DEFAULT_KM_PER_LITER,
     DEFAULT_LITERS_TO_FILL,
 )
-from utils.recommendation_pipeline import recommend_stations_result
-from utils.routing import get_estimated_route, get_route
+from utils.routing.service import get_estimated_route, get_route
 
 
 # Preserve the existing public recommendation entrypoint while delegating to the pipeline seam.

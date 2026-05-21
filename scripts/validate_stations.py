@@ -7,7 +7,7 @@ ROOT_DIR = Path(__file__).resolve().parents[1]
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
-from utils.station_store import StationValidationError, load_stations
+from utils.data.station_store import StationValidationError, load_stations
 
 
 def main() -> int:
