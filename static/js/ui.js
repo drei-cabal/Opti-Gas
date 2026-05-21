@@ -235,7 +235,11 @@ function bindEvents() {
 
 function handleSearchInput(event) {
   state.searchQuery = event.target.value.trim();
-  elements.clearSearchButton.classList.toggle("hidden", !state.searchQuery);
+  const isSearching = Boolean(state.searchQuery);
+  elements.clearSearchButton.classList.toggle("hidden", !isSearching);
+  // Keep search results and the active summary visible while the user is searching.
+  setSheetState(isSearching ? "half" : "collapsed");
+
   const visibleStations = getVisibleStations();
   if (
     state.activeStationId &&
@@ -250,6 +254,8 @@ function clearSearch() {
   elements.stationSearchInput.value = "";
   state.searchQuery = "";
   elements.clearSearchButton.classList.add("hidden");
+  // Return the station sheet to its default map position after search ends.
+  setSheetState("collapsed");
   if (!state.activeStationId && state.best) {
     state.activeStationId = state.best.station_id;
   }

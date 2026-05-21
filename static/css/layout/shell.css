@@ -86,6 +86,14 @@
   outline: none;
 }
 
+.search-shell__input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.search-shell__input::-webkit-search-decoration {
+  display: none;
+}
+
 .search-shell__clear {
   display: grid;
   place-items: center;
