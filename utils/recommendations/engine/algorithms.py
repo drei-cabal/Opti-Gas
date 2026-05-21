@@ -1,11 +1,13 @@
-from __future__ import annotations
+from __future__ import annotations  # Enable postponed evaluation of type annotations.
 
-from utils.recommendations.engine.pipeline import recommend_stations_result
-from utils.recommendations.product_rules.presets import (
+from utils.recommendations.engine.pipeline import (
+    recommend_stations_result,  # Delegate to the pipeline.
+)
+from utils.recommendations.product_rules.presets import (  # Reuse default trip assumptions.
     DEFAULT_KM_PER_LITER,
     DEFAULT_LITERS_TO_FILL,
 )
-from utils.routing.service import get_estimated_route, get_route
+from utils.routing.service import get_estimated_route, get_route  # Select live or estimate routing.
 
 
 # Preserve the existing public recommendation entrypoint while delegating to the pipeline seam.

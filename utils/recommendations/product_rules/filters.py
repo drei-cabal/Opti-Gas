@@ -1,5 +1,7 @@
+# Enable postponed evaluation of type annotations.
 from __future__ import annotations
 
+# Use straight-line distance for fast radius prefiltering.
 from utils.geo.location import haversine_distance_km
 
 

@@ -1,7 +1,10 @@
+# Enable postponed evaluation of type annotations.
 from __future__ import annotations
 
+# Parse and validate station fuel update dates.
 from datetime import datetime
 
+# Build strict station and fuel validation models.
 from pydantic import (
     BaseModel,
     ConfigDict,

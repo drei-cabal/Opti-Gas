@@ -1,3 +1,4 @@
+# Enable postponed evaluation of type annotations.
 from __future__ import annotations
 
 

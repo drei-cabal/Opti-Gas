@@ -1,13 +1,18 @@
-from __future__ import annotations
+from __future__ import annotations  # Enable postponed evaluation of type annotations.
 
-import json
-import tempfile
-import threading
-from datetime import date, datetime
-from pathlib import Path
+import json  # Read and write station and landmark JSON files.
+import tempfile  # Write station JSON through temporary files before replacement.
+import threading  # Coordinate station data writes across requests.
+from datetime import date, datetime  # Handle update dates and stale-price comparisons.
+from pathlib import Path  # Represent station and landmark file paths.
 
-from utils.data.cache import CacheStore, file_cache_key, get_cached, set_cached
-from utils.data.models import (
+from utils.data.cache import (  # Reuse file cache helpers.
+    CacheStore,
+    file_cache_key,
+    get_cached,
+    set_cached,
+)
+from utils.data.models import (  # Reuse validation models, data aliases, and stable errors.
     FuelDict,
     StationCollection,
     StationDict,

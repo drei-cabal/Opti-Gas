@@ -1,9 +1,13 @@
+# Enable postponed evaluation of type annotations.
 from __future__ import annotations
 
+# Type the request query object accepted by the parser.
 from collections.abc import Mapping
 
+# Validate and normalize recommendation request fields.
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 
+# Reuse defaults and supported mode names from product-rule presets.
 from utils.recommendations.product_rules.presets import (
     DEFAULT_KM_PER_LITER,
     DEFAULT_LITERS_TO_FILL,

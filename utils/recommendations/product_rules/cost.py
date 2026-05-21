@@ -1,7 +1,10 @@
+# Enable postponed evaluation of type annotations.
 from __future__ import annotations
 
+# Compute average prices for candidate and citywide reference pricing.
 from statistics import fmean
 
+# Use the threshold for preferring candidate-only reference prices.
 from utils.recommendations.product_rules.presets import CANDIDATE_AVERAGE_MIN_COUNT
 
 

@@ -1,3 +1,4 @@
+# Enable postponed evaluation of type annotations.
 from __future__ import annotations
 
 
@@ -10,4 +11,3 @@ def normalize_metric(values: list[float]) -> list[float]:
     if upper == lower:
         return [0.0 for _ in values]
     return [(value - lower) / (upper - lower) for value in values]
-

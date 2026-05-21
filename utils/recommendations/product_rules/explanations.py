@@ -1,5 +1,7 @@
+# Enable postponed evaluation of type annotations.
 from __future__ import annotations
 
+# Reuse the final ranking order to identify the winning candidate.
 from utils.recommendations.product_rules.ranking import build_sort_key
 
 PRIMARY_REASON_BALANCED = "Best overall balance"

@@ -20,7 +20,7 @@ Opti-Gas is a mobile-first Flask plus Leaflet app for Tagum City drivers. It rec
 
 - `app.py` is the HTTP seam.
 - `utils/recommendations/requests/parser.py` owns recommendation query normalization and defaults.
-- `utils/recommendations/engine/pipeline.py` owns recommendation pipeline orchestration.
+- `utils/recommendations/engine/pipeline.py` owns recommendation pipeline orchestration, scoring application, and API response shaping helpers.
 - `utils/recommendations/product_rules/` owns recommendation mode weights, filter rules, cost formulas, normalization, ranking, display rounding, and explanation rules.
 - `utils/routing/service.py` owns route provider selection and in-memory route cache behavior.
 - `utils/geo/location.py` owns distance math and local fallback-estimation helpers.

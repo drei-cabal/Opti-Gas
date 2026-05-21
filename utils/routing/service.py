@@ -1,13 +1,13 @@
-from __future__ import annotations
+from __future__ import annotations  # Enable postponed evaluation of type annotations.
 
-import threading
+import threading  # Coordinate access to the in-memory route cache.
 
-import openrouteservice
-import requests
-from cachetools import TTLCache
-from openrouteservice import exceptions as ors_exceptions
+import openrouteservice  # Call OpenRouteService for live route distance and duration.
+import requests  # Call OSRM as the public live-routing fallback.
+from cachetools import TTLCache  # Store short-lived route results in memory.
+from openrouteservice import exceptions as ors_exceptions  # Handle OpenRouteService failures.
 
-from utils.geo.location import (
+from utils.geo.location import (  # Use local distance and duration helpers for fallback estimates.
     estimate_duration_min,
     estimate_road_distance_km,
     haversine_distance_km,

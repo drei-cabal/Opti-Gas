@@ -1,5 +1,7 @@
+# Enable postponed evaluation of type annotations.
 from __future__ import annotations
 
+# Use preset weights to compute mode-specific recommendation scores.
 from utils.recommendations.product_rules.presets import PRESET_WEIGHTS
 
 

@@ -1,5 +1,7 @@
+# Enable postponed evaluation of type annotations.
 from __future__ import annotations
 
+# Use the library-backed Haversine formula for straight-line distance.
 from haversine import Unit, haversine
 
 

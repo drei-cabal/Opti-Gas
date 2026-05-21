@@ -1,10 +1,10 @@
-from __future__ import annotations
+from __future__ import annotations  # Enable postponed evaluation of type annotations.
 
-import copy
-import threading
-from pathlib import Path
+import copy  # Copy cached payloads so callers cannot mutate shared cache data.
+import threading  # Coordinate access to the shared in-memory cache stores.
+from pathlib import Path  # Represent file paths used as cache keys.
 
-from utils.data.models import StationCollection
+from utils.data.models import StationCollection  # Reuse the data-layer collection type.
 
 type CacheKey = dict[str, int]
 type CacheStore = dict[Path, dict[str, object]]

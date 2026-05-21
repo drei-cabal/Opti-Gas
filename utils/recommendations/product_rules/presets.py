@@ -1,3 +1,4 @@
+# Enable postponed evaluation of type annotations.
 from __future__ import annotations
 
 PRESET_WEIGHTS = {
@@ -11,4 +12,3 @@ DEFAULT_KM_PER_LITER = 14.0
 DEFAULT_LITERS_TO_FILL = 20.0
 CANDIDATE_AVERAGE_MIN_COUNT = 3
 RECOMMENDATION_PRESETS = set(PRESET_WEIGHTS)
-
