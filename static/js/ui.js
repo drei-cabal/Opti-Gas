@@ -237,8 +237,8 @@ function handleSearchInput(event) {
   state.searchQuery = event.target.value.trim();
   const isSearching = Boolean(state.searchQuery);
   elements.clearSearchButton.classList.toggle("hidden", !isSearching);
-  // Keep search results and the active summary visible while the user is searching.
-  setSheetState(isSearching ? "half" : "collapsed");
+  // Use the full station sheet height so search results and the active summary stay visible.
+  setSheetState(isSearching ? "expanded" : "collapsed");
 
   const visibleStations = getVisibleStations();
   if (

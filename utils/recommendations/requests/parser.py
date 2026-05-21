@@ -5,7 +5,13 @@ from __future__ import annotations
 from collections.abc import Mapping
 
 # Validate and normalize recommendation request fields.
-from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    ValidationError,
+    field_validator,
+)
 
 # Reuse defaults and supported mode names from product-rule presets.
 from utils.recommendations.product_rules.presets import (
@@ -18,6 +24,16 @@ PRESET_ALIASES = {
     "shortest": "save-time",
     "cheapest": "save-money",
 }
+QUERY_FIELDS = {
+    "lat": ("lat", None),
+    "lng": ("lng", None),
+    "radius_km": ("radius_km", 5.0),
+    "preset": ("mode", "opti-route"),
+    "brand": ("brand", "any"),
+    "fuel_type": ("fuel_type", "Unleaded 91"),
+    "km_per_liter": ("km_per_liter", DEFAULT_KM_PER_LITER),
+    "liters_to_fill": ("liters_to_fill", DEFAULT_LITERS_TO_FILL),
+}
 
 
 # Validates and normalizes recommendation query parameters.
@@ -26,12 +42,12 @@ class RecommendationRequestModel(BaseModel):
 
     lat: float
     lng: float
-    radius_km: float = 5.0
+    radius_km: float = Field(default=5.0, gt=0)
     preset: str = "opti-route"
     brand: str = "any"
-    fuel_type: str = "Unleaded 91"
-    km_per_liter: float = DEFAULT_KM_PER_LITER
-    liters_to_fill: float = DEFAULT_LITERS_TO_FILL
+    fuel_type: str = Field(default="Unleaded 91", min_length=1)
+    km_per_liter: float = Field(default=DEFAULT_KM_PER_LITER, gt=0)
+    liters_to_fill: float = Field(default=DEFAULT_LITERS_TO_FILL, gt=0)
 
     @field_validator("preset", mode="before")
     @classmethod
@@ -53,58 +69,11 @@ class RecommendationRequestModel(BaseModel):
             raise ValueError("Unsupported preset.")
         return value
 
-    @field_validator("radius_km")
-    @classmethod
-    # Require a positive search radius.
-    def _validate_radius(cls, value: float) -> float:
-        if value <= 0:
-            raise ValueError("radius_km must be positive.")
-        return value
-
-    @field_validator("km_per_liter")
-    @classmethod
-    # Require positive vehicle fuel efficiency.
-    def _validate_km_per_liter(cls, value: float) -> float:
-        if value <= 0:
-            raise ValueError("km_per_liter must be positive.")
-        return value
-
-    @field_validator("liters_to_fill")
-    @classmethod
-    # Require a positive planned refill amount.
-    def _validate_liters_to_fill(cls, value: float) -> float:
-        if value <= 0:
-            raise ValueError("liters_to_fill must be positive.")
-        return value
-
-    @field_validator("fuel_type")
-    @classmethod
-    # Require a selected fuel type.
-    def _validate_fuel_type(cls, value: str) -> str:
-        if not value:
-            raise ValueError("fuel_type is required.")
-        return value
-
 
 # Parse and validate recommendation query parameters into normalized backend inputs.
 def parse_recommendation_request(query_args: Mapping[str, str]) -> dict:
     try:
-        request_model = RecommendationRequestModel.model_validate(
-            {
-                "lat": query_args.get("lat"),
-                "lng": query_args.get("lng"),
-                "radius_km": query_args.get("radius_km", 5.0),
-                "preset": query_args.get("mode", "opti-route"),
-                "brand": query_args.get("brand", "any"),
-                "fuel_type": query_args.get("fuel_type", "Unleaded 91"),
-                "km_per_liter": query_args.get(
-                    "km_per_liter", DEFAULT_KM_PER_LITER
-                ),
-                "liters_to_fill": query_args.get(
-                    "liters_to_fill", DEFAULT_LITERS_TO_FILL
-                ),
-            }
-        )
+        request_model = RecommendationRequestModel.model_validate(_query_payload(query_args))
     except ValidationError as exc:
         raise ValueError(_first_validation_error(exc)) from exc
 
@@ -117,6 +86,14 @@ def normalize_preset(value: str) -> str:
     return normalized or "opti-route"
 
 
+# Convert Flask query arguments into model field names and defaults.
+def _query_payload(query_args: Mapping[str, str]) -> dict:
+    return {
+        field_name: query_args.get(query_name, default)
+        for field_name, (query_name, default) in QUERY_FIELDS.items()
+    }
+
+
 # Return a stable request-friendly error message from Pydantic validation details.
 def _first_validation_error(exc: ValidationError) -> str:
     error = exc.errors()[0]
@@ -125,4 +102,6 @@ def _first_validation_error(exc: ValidationError) -> str:
         return f"{field_name} is required."
     if error["type"].startswith(("float_", "int_")):
         return f"{field_name} must be numeric."
+    if error["type"] == "greater_than":
+        return f"{field_name} must be positive."
     return str(error["msg"]).removeprefix("Value error, ")

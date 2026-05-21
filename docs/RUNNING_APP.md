@@ -124,7 +124,7 @@ Clicking a gas station marker selects that station, expands the station sheet, u
 
 When filters trigger a recommendation refresh, the main summary card enters a loading shimmer state until the updated recommendations return.
 
-Typing in search opens the station sheet enough to keep the matched station summary and cards visible. Clearing search returns the sheet to its collapsed default map position.
+Typing in search opens the station sheet to its expanded height so the matched station summary and cards stay visible. Clearing search returns the sheet to its collapsed default map position.
 
 ## 2. If `python` does not work but Python is installed
 
