@@ -14,7 +14,7 @@ OPTI-GAS is a mobile-first Flask + Leaflet web app for Tagum City drivers. It op
 ## Project Layout
 
 - `app.py`: Flask entrypoint and API routes
-- `utils/data/`: station loading, validation, and persistence
+- `utils/data/`: station loading, caching, validation models, and persistence
 - `utils/geo/`: coordinate distance and local fallback-estimation helpers
 - `utils/routing/`: route provider selection, route cache, and provider fallback logic
 - `utils/recommendations/`: recommendation request parsing, engine orchestration, and product rules

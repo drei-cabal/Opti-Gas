@@ -3,6 +3,7 @@ from __future__ import annotations
 from haversine import Unit, haversine
 
 
+# Compute straight-line distance between two coordinates using the haversine library.
 def haversine_distance_km(
     origin_lat: float,
     origin_lng: float,
@@ -16,6 +17,7 @@ def haversine_distance_km(
     )
 
 
+# Estimate local fallback drive duration from adjusted road distance.
 def estimate_duration_min(distance_km: float, average_speed_kmh: float = 35.0) -> float:
     if average_speed_kmh <= 0:
         raise ValueError("average_speed_kmh must be positive.")
@@ -37,6 +39,7 @@ def estimate_duration_min(distance_km: float, average_speed_kmh: float = 35.0) -
     return (1.2 if distance_km < 2 else 1.8) + (distance_km / speed_kmh) * 60.0
 
 
+# Convert straight-line distance into an approximate local road distance.
 def estimate_road_distance_km(straight_line_distance_km: float) -> float:
     if straight_line_distance_km < 0:
         raise ValueError("straight_line_distance_km cannot be negative.")

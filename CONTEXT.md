@@ -24,7 +24,9 @@ Opti-Gas is a mobile-first Flask plus Leaflet app for Tagum City drivers. It rec
 - `utils/recommendations/product_rules/` owns recommendation mode weights, filter rules, cost formulas, normalization, ranking, display rounding, and explanation rules.
 - `utils/routing/service.py` owns route provider selection and in-memory route cache behavior.
 - `utils/geo/location.py` owns distance math and local fallback-estimation helpers.
-- `utils/data/station_store.py` owns station collection normalization, validation, station identity, and station price update flow.
+- `utils/data/station_store.py` owns the public station data API: cached station and landmark loading, normalization, station identity, and atomic station price updates.
+- `utils/data/models.py` owns Pydantic-backed station and fuel validation rules.
+- `utils/data/cache.py` owns file-metadata cache helpers shared by station and landmark loading.
 - `static/js/ui.js` is now the thin frontend entrypoint and composition seam.
 - `static/js/features/` owns feature-local browser behavior such as the Garage, station collection presentation, filters, advisories, sheets, and directions handoff.
 - `static/js/features/view.js` owns Map-vs-Garage visibility plus setup-prompt rendering.

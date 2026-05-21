@@ -16,6 +16,7 @@ PRESET_ALIASES = {
 }
 
 
+# Validates and normalizes recommendation query parameters.
 class RecommendationRequestModel(BaseModel):
     model_config = ConfigDict(extra="ignore")
 
@@ -30,16 +31,19 @@ class RecommendationRequestModel(BaseModel):
 
     @field_validator("preset", mode="before")
     @classmethod
+    # Normalize legacy and empty preset values before preset validation.
     def _normalize_preset(cls, value: str) -> str:
         return normalize_preset(value)
 
     @field_validator("brand", "fuel_type", mode="before")
     @classmethod
+    # Strip filter text values before storing them on the request model.
     def _strip_text(cls, value: str) -> str:
         return str(value or "").strip()
 
     @field_validator("preset")
     @classmethod
+    # Reject unsupported recommendation presets.
     def _validate_preset(cls, value: str) -> str:
         if value not in RECOMMENDATION_PRESETS:
             raise ValueError("Unsupported preset.")
@@ -47,6 +51,7 @@ class RecommendationRequestModel(BaseModel):
 
     @field_validator("radius_km")
     @classmethod
+    # Require a positive search radius.
     def _validate_radius(cls, value: float) -> float:
         if value <= 0:
             raise ValueError("radius_km must be positive.")
@@ -54,6 +59,7 @@ class RecommendationRequestModel(BaseModel):
 
     @field_validator("km_per_liter")
     @classmethod
+    # Require positive vehicle fuel efficiency.
     def _validate_km_per_liter(cls, value: float) -> float:
         if value <= 0:
             raise ValueError("km_per_liter must be positive.")
@@ -61,6 +67,7 @@ class RecommendationRequestModel(BaseModel):
 
     @field_validator("liters_to_fill")
     @classmethod
+    # Require a positive planned refill amount.
     def _validate_liters_to_fill(cls, value: float) -> float:
         if value <= 0:
             raise ValueError("liters_to_fill must be positive.")
@@ -68,6 +75,7 @@ class RecommendationRequestModel(BaseModel):
 
     @field_validator("fuel_type")
     @classmethod
+    # Require a selected fuel type.
     def _validate_fuel_type(cls, value: str) -> str:
         if not value:
             raise ValueError("fuel_type is required.")

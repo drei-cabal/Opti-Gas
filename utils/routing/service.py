@@ -50,6 +50,7 @@ def get_route(
     return route
 
 
+# Return the local fallback route estimate without calling external providers.
 def get_estimated_route(
     origin: tuple[float, float],
     station: dict,
