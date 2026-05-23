@@ -95,6 +95,7 @@ def create_app(test_config: dict | None = None) -> Flask:
     app = Flask(__name__)
     app.config.update(
         ORS_API_KEY=os.getenv("ORS_API_KEY", "").strip(),
+        ROUTING_MODE=os.getenv("ROUTING_MODE", "live").strip().lower(),
         PRICE_UPDATE_TOKEN=os.getenv("PRICE_UPDATE_TOKEN", "").strip(),
         RECOMMEND_RATE_LIMIT_COUNT=_get_int_env(
             "RECOMMEND_RATE_LIMIT_COUNT", DEFAULT_RECOMMEND_RATE_LIMIT_COUNT
@@ -191,6 +192,7 @@ def create_app(test_config: dict | None = None) -> Flask:
             fuel_type=recommendation_request["fuel_type"],
             radius_km=recommendation_request["radius_km"],
             ors_api_key=app.config["ORS_API_KEY"],
+            routing_mode=app.config["ROUTING_MODE"],
             km_per_liter=recommendation_request["km_per_liter"],
             liters_to_fill=recommendation_request["liters_to_fill"],
         )

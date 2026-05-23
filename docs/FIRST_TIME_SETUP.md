@@ -89,7 +89,7 @@ The app reads runtime settings from `.env`. `.env.example` is only a starter tem
 
 ## 6. Get an OpenRouteService API key
 
-This project uses live routing for recommendation distance and time. OpenRouteService is the primary provider, and OSRM is the secondary provider when ORS is unavailable.
+This project uses live-first routing for recommendation distance and time. OpenRouteService is the primary provider, OSRM is the secondary provider when ORS is unavailable, and a local Haversine-based estimate is used as the fallback.
 
 Create an account on the OpenRouteService website:
 
@@ -111,6 +111,7 @@ Open `.env` and set:
 
 ```env
 ORS_API_KEY=your_real_api_key_here
+ROUTING_MODE=live
 ```
 
 You may also keep or adjust these if needed:
@@ -186,7 +187,7 @@ or reinstall Python with PATH enabled.
 
 ### API key missing
 
-If `ORS_API_KEY` is empty, the app can still try OSRM. If neither ORS nor OSRM can return a route, recommendations return `Route unavailable for current stations.`
+If `ORS_API_KEY` is empty, the app can still try OSRM. If neither ORS nor OSRM can return a route, recommendations use the local fallback route estimate. For a faster demo that skips live providers, set `ROUTING_MODE=estimate`.
 
 ### Slow first load
 
@@ -194,7 +195,7 @@ The first load may be slower because of:
 
 - browser geolocation
 - first route calculations for candidate stations
-- network latency to ORS or OSRM
+- network latency to ORS or OSRM before fallback estimates are used
 
 Later refreshes should be faster because of browser-side session reuse and backend route caching.
 

@@ -79,13 +79,22 @@ RATELIMIT_STORAGE_URI=memory://
 
 ### Live routing
 
-Recommendations use live road routing. Set an ORS key when you want the primary provider enabled:
+Recommendations use live-first road routing by default. Set an ORS key when you want the primary provider enabled:
 
 ```env
 ORS_API_KEY=your_real_api_key_here
+ROUTING_MODE=live
 ```
 
-If ORS is unavailable or no key is configured, the app tries OSRM. If no live route can be resolved, recommendations return a clear route-unavailable result instead of using a local distance estimate.
+If ORS is unavailable or no key is configured, the app tries OSRM. If no live route can be resolved, the app falls back to a local Haversine-based route estimate so recommendations can still be ranked for demos.
+
+For the fastest offline-style demo path, use:
+
+```env
+ROUTING_MODE=estimate
+```
+
+In estimate mode, Opti-Gas skips live routing and uses the local fallback route estimate immediately.
 
 ### Security headers
 
@@ -231,7 +240,7 @@ Pytest is configured to create new cache and temporary test output under `.tmp`.
 This is usually caused by one or more of these:
 
 - browser geolocation delay
-- live routing waiting on ORS or OSRM
+- live routing waiting on ORS or OSRM before the local fallback estimate is used
 - first-time route calculation for many stations
 
 What to do:

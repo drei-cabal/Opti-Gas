@@ -33,7 +33,9 @@ def test_recommend_stations_uses_weighted_presets(monkeypatch):
     monkeypatch.setattr(
         recommender,
         "get_route",
-        lambda origin, station, ors_api_key=None: routes[station["name"]],
+        lambda origin, station, ors_api_key=None, routing_mode="live": routes[
+            station["name"]
+        ],
     )
 
     save_money = recommender.recommend_stations(
@@ -78,7 +80,9 @@ def test_recommend_stations_ranks_by_raw_distance_not_display_distance(monkeypat
     monkeypatch.setattr(
         recommender,
         "get_route",
-        lambda origin, station, ors_api_key=None: routes[station["name"]],
+        lambda origin, station, ors_api_key=None, routing_mode="live": routes[
+            station["name"]
+        ],
     )
 
     result = recommender.recommend_stations(
@@ -102,7 +106,7 @@ def test_recommend_stations_flags_single_option(monkeypatch):
     monkeypatch.setattr(
         recommender,
         "get_route",
-        lambda origin, station, ors_api_key=None: {
+        lambda origin, station, ors_api_key=None, routing_mode="live": {
             "distance_km": 2.2,
             "duration_min": 6.5,
             "source": "osrm",
@@ -141,7 +145,7 @@ def test_recommend_stations_returns_no_option_when_fuel_missing(monkeypatch):
     monkeypatch.setattr(
         recommender,
         "get_route",
-        lambda origin, station, ors_api_key=None: {
+        lambda origin, station, ors_api_key=None, routing_mode="live": {
             "distance_km": 2.2,
             "duration_min": 6.5,
             "source": "ors",
@@ -164,10 +168,8 @@ def test_recommend_stations_returns_no_option_when_fuel_missing(monkeypatch):
     assert result["reason"] == "No stations match the current filters."
 
 
-def test_recommend_stations_returns_route_unavailable_when_live_routing_fails(monkeypatch):
+def test_recommend_stations_uses_estimate_mode():
     stations = [build_station("Estimate Only", "Petron", 7.45, 125.81, 90.0)]
-
-    monkeypatch.setattr(recommender, "get_route", lambda origin, station, ors_api_key=None: None)
 
     result = recommender.recommend_stations(
         stations=stations,
@@ -177,10 +179,10 @@ def test_recommend_stations_returns_route_unavailable_when_live_routing_fails(mo
         fuel_type="Unleaded 91",
         radius_km=10,
         ors_api_key="test-key",
+        routing_mode="estimate",
     )
 
-    assert result["best"] is None
-    assert result["candidates"] == []
-    assert result["candidate_count"] == 0
-    assert result["scoring_mode"] == "no-option"
-    assert result["reason"] == "Route unavailable for current stations."
+    assert result["best"]["name"] == "Estimate Only"
+    assert result["best"]["distance_source"] == "estimate"
+    assert result["candidate_count"] == 1
+    assert result["scoring_mode"] == "single-option"

@@ -57,7 +57,7 @@ def diesel_price_from_file(stations_path):
 def use_mock_route(monkeypatch):
     monkeypatch.setattr(
         "utils.recommendations.engine.recommender.get_route",
-        lambda origin, station, ors_api_key=None: {
+        lambda origin, station, ors_api_key=None, routing_mode="live": {
             "distance_km": 2.2,
             "duration_min": 6.5,
             "source": "osrm",
@@ -165,15 +165,12 @@ def test_api_recommend_returns_selected_fuel(tmp_path, monkeypatch):
     assert "fallback_warning" not in payload
 
 
-def test_api_recommend_returns_route_unavailable_when_live_routing_fails(tmp_path, monkeypatch):
-    monkeypatch.setattr(
-        "utils.recommendations.engine.recommender.get_route",
-        lambda origin, station, ors_api_key=None: None,
-    )
+def test_api_recommend_returns_estimate_when_estimate_mode_is_enabled(tmp_path):
     stations_path, landmarks_path = write_fixture_files(tmp_path)
     app = create_app(
         {
             "TESTING": True,
+            "ROUTING_MODE": "estimate",
             "STATIONS_PATH": stations_path,
             "LANDMARKS_PATH": landmarks_path,
         }
@@ -185,11 +182,9 @@ def test_api_recommend_returns_route_unavailable_when_live_routing_fails(tmp_pat
 
     assert response.status_code == 200
     payload = response.get_json()
-    assert payload["best"] is None
-    assert payload["candidates"] == []
-    assert payload["candidate_count"] == 0
-    assert payload["scoring_mode"] == "no-option"
-    assert payload["reason"] == "Route unavailable for current stations."
+    assert payload["best"]["distance_source"] == "estimate"
+    assert payload["candidate_count"] == 1
+    assert payload["scoring_mode"] == "single-option"
     assert "fallback_warning" not in payload
 
 

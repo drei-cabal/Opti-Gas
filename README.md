@@ -7,7 +7,7 @@ OPTI-GAS is a mobile-first Flask + Leaflet web app for Tagum City drivers. It op
 - Backend: Flask
 - Frontend: HTML, CSS, vanilla JavaScript, Leaflet.js 
 - Data: `data/stations/stations.json`
-- Routing: OpenRouteService with OSRM as the secondary live-route provider
+- Routing: OpenRouteService, OSRM, and local fallback route estimation
 
 
 
@@ -16,7 +16,7 @@ OPTI-GAS is a mobile-first Flask + Leaflet web app for Tagum City drivers. It op
 - `app.py`: Flask entrypoint and API routes
 - `utils/data/`: station loading, caching, validation models, and persistence
 - `utils/geo/`: coordinate distance helpers
-- `utils/routing/`: live route provider selection, route cache, and route-unavailable handling
+- `utils/routing/`: live route provider selection, route cache, and fallback route estimation
 - `utils/recommendations/`: query parsing, recommendation filters/scoring, engine orchestration, and product rules
 - `templates/index.html`: single-page shell
 - `static/css/main.css`: stylesheet entrypoint for modular map, overlay, layout, and component styles
@@ -49,6 +49,8 @@ flowchart LR
   Rules[utils/recommendations/product_rules/*]
   Store[utils/data/station_store.py]
   Routing[utils/routing/service.py]
+  OSRM[OSRM]
+  FallbackRoute[Fallback route estimate]
   Recommender[utils/recommendations/engine/recommender.py]
   StationData[data/stations/stations.json]
   Leaflet[Leaflet]
@@ -64,7 +66,10 @@ flowchart LR
   Flask --> RequestNorm --> Pipeline
   Pipeline --> Rules
   Pipeline --> Store --> StationData
-  Pipeline --> Routing --> ORS
+  Pipeline --> Routing
+  Routing --> ORS
+  Routing --> OSRM
+  Routing --> FallbackRoute
   Flask --> Recommender --> Pipeline
 
   Features --> Leaflet --> OSM
@@ -122,7 +127,7 @@ pytest
 
 ## Algorithms Used
 
-This project is not only a Flask + Leaflet application. Its core behavior is driven by filtering, live routing, and ranking algorithms that determine which fuel station should be recommended to the user.
+This project is not only a Flask + Leaflet application. Its core behavior is driven by filtering, live routing or fallback route estimation, and ranking algorithms that determine which fuel station should be recommended to the user.
 
 For the current Opti-Route redesign specification, see `docs/opti-route-formula-spec.md`.
 
@@ -181,10 +186,11 @@ Time complexity:
 
 ### 2. Route Distance and Travel Time Computation
 
-For each remaining candidate station, the system computes road distance and travel time using live routing:
+For each remaining candidate station, the system computes route distance and travel time using live routing first and local fallback estimation when needed:
 
 1. OpenRouteService (ORS)
 2. OSRM public road routing
+3. Local Haversine-based fallback estimate
 
 Relevant files:
 
@@ -197,7 +203,7 @@ This design is a live-routing provider chain:
 
 - use the most accurate road-network result first
 - try OSRM if ORS is unavailable
-- return a clear route-unavailable result if no live route can be resolved
+- use a local fallback estimate if no live route can be resolved or `ROUTING_MODE=estimate` is enabled
 
 Pseudocode:
 
@@ -208,7 +214,7 @@ for each station in candidate_stations:
     else if OSRM is available:
         route = get_osrm_route(origin, station)
     else:
-        return route unavailable
+        route = get_estimated_route(origin, station)
 ```
 
 Time complexity:

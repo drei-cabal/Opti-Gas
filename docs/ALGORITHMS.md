@@ -9,6 +9,7 @@ This document lists the main project-specific algorithms and third-party algorit
 | Brand filter | Limiting recommendations to the selected fuel brand. | Implemented in `utils/recommendations/filters/brand_filter.py`. If the user chooses `any`, all brands stay available. Otherwise, Opti-Gas keeps only stations whose brand matches the selected brand. |
 | Fuel filter | Matching stations to the fuel type the user needs. | Implemented in `utils/recommendations/filters/fuel_filter.py`. Opti-Gas checks each station's `fuels` list and keeps only stations that carry the selected fuel type, such as `Unleaded 91`, `Premium 95`, or `Diesel`. |
 | Radius filter | Limiting recommendations to stations inside the selected search radius. | Implemented in `utils/recommendations/filters/radius_filter.py`. Opti-Gas compares the user's location to each station using Haversine distance and keeps only nearby stations. |
+| Fallback route estimate | Estimating route distance and duration when live routing is unavailable or estimate mode is enabled. | Implemented in `utils/routing/fallback.py` with helpers in `utils/geo/route_estimates.py`. Opti-Gas estimates road distance from Haversine distance and estimates duration with a city-driving speed assumption. |
 | Economic cost formula | Estimating the total cost of choosing a station. | Implemented in `utils/recommendations/product_rules/cost.py`. Opti-Gas combines the cost of fuel to buy at the station with the estimated fuel burned while driving there. |
 | Min-max normalization | Making pesos, minutes, and kilometers comparable. | Implemented in `utils/recommendations/product_rules/normalization.py`. Opti-Gas converts each metric into a `0` to `1` value before applying weights. |
 | Preset weighted scoring | Ranking filtered stations. | Implemented in `utils/recommendations/filters/scoring_filter.py`. Opti-Gas combines normalized cost, travel time, and distance using the selected mode: `opti-route`, `save-money`, `save-time`, or `balanced`. Lower score is better. |
@@ -24,9 +25,9 @@ This document lists the main project-specific algorithms and third-party algorit
 
 | Library Or Service | Used For | Project Usage |
 | --- | --- | --- |
-| `haversine` | Great-circle distance. | Radius filtering and OSM audit distance checks. |
+| `haversine` | Great-circle distance. | Radius filtering, fallback route estimation, and OSM audit distance checks. |
 | `openrouteservice` | Live driving routes through OpenRouteService. | Primary live route provider when `ORS_API_KEY` is configured. |
-| OSRM public route API | Live driving routes without a project API key. | Secondary live route provider after ORS failure or absence. |
+| OSRM public route API | Live driving routes without a project API key. | Secondary live route provider after ORS failure or absence before falling back to a local estimate. |
 | `cachetools.TTLCache` | Time-limited in-memory route cache. | Stores route results for repeated origin/station pairs. |
 | Pydantic | Data validation and coercion. | Recommendation requests, price updates, station records, and fuel records. |
 | Fuse.js | Fuzzy search. | Browser-side station search by name, brand, and fuel type. |

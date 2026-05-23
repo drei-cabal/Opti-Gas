@@ -442,6 +442,9 @@ function buildRouteSourceNote(station) {
   if (station.distance_source === "osrm") {
     return "Travel time uses live road routing.";
   }
+  if (station.distance_source === "estimate") {
+    return "Travel time is estimated from straight-line distance.";
+  }
   return "Travel time source unavailable.";
 }
 

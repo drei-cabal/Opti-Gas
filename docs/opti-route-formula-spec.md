@@ -116,7 +116,7 @@ Source:
 
 - ORS route distance when available
 - OSRM route distance when ORS is unavailable
-- no scored recommendation when no live route is available
+- fallback estimated route distance when no live route is available
 
 ### 2. Travel Time
 
@@ -128,7 +128,7 @@ Source:
 
 - ORS route duration when available
 - OSRM route duration when ORS is unavailable
-- no scored recommendation when no live route is available
+- fallback estimated route duration when no live route is available
 
 ### 3. Economic Cost
 
@@ -473,12 +473,12 @@ The backend should still compute intermediate fields such as:
 
 even if the demo response does not expose them all.
 
-## Route Unavailable Behavior
+## Fallback Route Behavior
 
 If ORS and OSRM both fail:
 
-- do not compute scores using fabricated route values
-- return a no-option response with `Route unavailable for current stations.`
+- use the centralized fallback route estimate
+- mark the route source as `estimate`
 - allow Google Maps handoff only after the user selects a station with coordinates
 
 ## Demo Scope

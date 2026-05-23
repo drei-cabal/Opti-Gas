@@ -15,8 +15,10 @@ def build_route_cache_key(
     origin: tuple[float, float],
     station_lat: float,
     station_lng: float,
-) -> tuple[float, float, float, float]:
+    routing_mode: str = "live",
+) -> tuple[str, float, float, float, float]:
     return (
+        routing_mode,
         round(origin[0], 4),
         round(origin[1], 4),
         round(float(station_lat), 6),
@@ -25,7 +27,7 @@ def build_route_cache_key(
 
 
 # Return a cached route if it is still fresh enough to reuse.
-def get_cached_route(cache_key: tuple[float, float, float, float]) -> dict | None:
+def get_cached_route(cache_key: tuple[str, float, float, float, float]) -> dict | None:
     with _cache_lock:
         route = _route_cache.get(cache_key)
         if route is None:
@@ -34,6 +36,9 @@ def get_cached_route(cache_key: tuple[float, float, float, float]) -> dict | Non
 
 
 # Store a fresh route result in the in-memory cache.
-def set_cached_route(cache_key: tuple[float, float, float, float], route: dict) -> None:
+def set_cached_route(
+    cache_key: tuple[str, float, float, float, float],
+    route: dict,
+) -> None:
     with _cache_lock:
         _route_cache[cache_key] = dict(route)

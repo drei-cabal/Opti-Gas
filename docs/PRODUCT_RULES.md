@@ -33,7 +33,7 @@ The recommendation pipeline uses the algorithms and product rules in this order:
 
 1. Filter the station collection by brand and radius.
 2. Build candidate station records for the selected fuel type.
-3. Resolve route distance and duration through the configured route provider.
+3. Resolve route distance and duration through live providers or the fallback estimator.
 4. Select a reference fuel price.
 5. Calculate expected economic cost per candidate.
 6. Normalize cost, time, and distance metrics.
