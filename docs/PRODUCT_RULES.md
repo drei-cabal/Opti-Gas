@@ -1,6 +1,10 @@
 # Product Rules
 
-This project keeps the formulas for recommendation filters, cost scoring, ranking, and user-facing recommendation reasons in `utils/recommendations/product_rules/`.
+This project keeps formula support rules such as reference-price logic,
+normalization, presets, display rounding, and explanation text in
+`utils/recommendations/product_rules/`.
+The main filtering and scoring algorithms live in `utils/recommendations/filters/`
+so each one has a specific file name.
 
 The goal is to keep product decisions separate from HTTP handling and response shaping. `utils/recommendations/engine/pipeline.py` still owns the full recommendation pipeline, but it calls product-rule modules for the actual calculations.
 
@@ -8,19 +12,24 @@ The goal is to keep product decisions separate from HTTP handling and response s
 
 | File | Owns |
 | --- | --- |
+| `utils/recommendations/filters/brand_filter.py` | Brand filter algorithm |
+| `utils/recommendations/filters/fuel_filter.py` | Fuel filter algorithm |
+| `utils/recommendations/filters/radius_filter.py` | Radius filter algorithm |
+| `utils/recommendations/filters/scoring_filter.py` | Preset weighted scoring and tie-break algorithm |
 | `utils/recommendations/product_rules/presets.py` | Recommendation modes, scoring weights, and default trip assumptions |
-| `utils/recommendations/product_rules/filters.py` | Brand and radius filter rules |
 | `utils/recommendations/product_rules/cost.py` | Reference-price selection and expected fuel-spend formulas |
 | `utils/recommendations/product_rules/normalization.py` | Metric normalization for weighted scoring |
-| `utils/recommendations/product_rules/ranking.py` | Final score calculation and deterministic sort order |
 | `utils/recommendations/product_rules/explanations.py` | Primary and secondary recommendation reason rules |
 | `utils/recommendations/product_rules/display.py` | Public display values for distance, duration, and trip cost |
 
-New backend code should import directly from `utils/recommendations/product_rules/` for formula-level behavior, or from `utils/recommendations/engine/` for the full recommendation flow.
+New backend code should import filtering and scoring algorithms from
+`utils/recommendations/filters/`, formula helpers from
+`utils/recommendations/product_rules/`, or the recommendation entrypoint from
+`utils/recommendations/engine/recommender.py`.
 
 ## Recommendation Pipeline Usage
 
-The recommendation pipeline uses the product rules in this order:
+The recommendation pipeline uses the algorithms and product rules in this order:
 
 1. Filter the station collection by brand and radius.
 2. Build candidate station records for the selected fuel type.

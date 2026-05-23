@@ -26,7 +26,7 @@ from utils.data.station_store import (
     load_stations,
     update_station_price,
 )
-from utils.recommendations.engine.algorithms import recommend_stations
+from utils.recommendations.engine.recommender import recommend_stations
 from utils.recommendations.requests.parser import parse_recommendation_request
 
 BASE_DIR = Path(__file__).resolve().parent

@@ -4,6 +4,17 @@ from collections.abc import Callable  # Type the route provider callback accepte
 from concurrent.futures import ThreadPoolExecutor  # Resolve candidate routes concurrently.
 
 from utils.data.station_store import get_station_id  # Build stable candidate station identifiers.
+from utils.recommendations.filters.brand_filter import (  # Apply brand filtering.
+    filter_by_brand,
+)
+from utils.recommendations.filters.fuel_filter import (  # Apply selected-fuel filtering.
+    find_station_fuel,
+)
+from utils.recommendations.filters.radius_filter import filter_by_radius
+from utils.recommendations.filters.scoring_filter import (  # Rank candidates.
+    build_sort_key,
+    compute_final_score,
+)
 from utils.recommendations.product_rules.cost import (  # Calculate economic and reference prices.
     calculate_economic_cost,
     calculate_reference_price,
@@ -16,16 +27,8 @@ from utils.recommendations.product_rules.display import (  # Round public displa
 from utils.recommendations.product_rules.explanations import (
     describe_candidates,  # Attach recommendation reasons.
 )
-from utils.recommendations.product_rules.filters import (  # Filter candidate stations.
-    filter_by_brand,
-    filter_by_radius,
-)
 from utils.recommendations.product_rules.normalization import (
     normalize_metric,  # Normalize metrics for scoring.
-)
-from utils.recommendations.product_rules.ranking import (  # Rank candidates.
-    build_sort_key,
-    compute_final_score,
 )
 
 MAX_ROUTE_WORKERS = 6
@@ -252,7 +255,7 @@ def _build_routed_candidate(
     route_getter: RouteGetter,
     ors_api_key: str | None,
 ) -> dict | None:
-    selected_fuel = _find_station_fuel(station, fuel_type)
+    selected_fuel = find_station_fuel(station, fuel_type)
     if selected_fuel is None:
         return None
 
@@ -273,11 +276,3 @@ def _build_routed_candidate(
         "_distance_km_raw": route["distance_km"],
         "_duration_min_raw": route["duration_min"],
     }
-
-
-# Find the fuel entry on a station that matches the requested fuel type.
-def _find_station_fuel(station: dict, fuel_type: str) -> dict | None:
-    for fuel in station["fuels"]:
-        if fuel["fuel_type"] == fuel_type:
-            return fuel
-    return None

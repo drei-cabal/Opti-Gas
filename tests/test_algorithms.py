@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from utils.recommendations.engine import algorithms
+from utils.recommendations.engine import recommender
 
 
 def build_station(name: str, brand: str, lat: float, lng: float, price: float) -> dict:
@@ -31,12 +31,12 @@ def test_recommend_stations_uses_weighted_presets(monkeypatch):
     }
 
     monkeypatch.setattr(
-        algorithms,
+        recommender,
         "get_route",
         lambda origin, station, ors_api_key=None: routes[station["name"]],
     )
 
-    save_money = algorithms.recommend_stations(
+    save_money = recommender.recommend_stations(
         stations=stations,
         origin=(7.44, 125.8),
         preset="save-money",
@@ -45,7 +45,7 @@ def test_recommend_stations_uses_weighted_presets(monkeypatch):
         radius_km=10,
         ors_api_key="test-key",
     )
-    save_time = algorithms.recommend_stations(
+    save_time = recommender.recommend_stations(
         stations=stations,
         origin=(7.44, 125.8),
         preset="save-time",
@@ -76,12 +76,12 @@ def test_recommend_stations_ranks_by_raw_distance_not_display_distance(monkeypat
     }
 
     monkeypatch.setattr(
-        algorithms,
+        recommender,
         "get_route",
         lambda origin, station, ors_api_key=None: routes[station["name"]],
     )
 
-    result = algorithms.recommend_stations(
+    result = recommender.recommend_stations(
         stations=stations,
         origin=(7.44, 125.8),
         preset="save-time",
@@ -100,7 +100,7 @@ def test_recommend_stations_flags_single_option(monkeypatch):
     stations = [build_station("Only Option", "Petron", 7.45, 125.81, 90.0)]
 
     monkeypatch.setattr(
-        algorithms,
+        recommender,
         "get_route",
         lambda origin, station, ors_api_key=None: {
             "distance_km": 2.2,
@@ -109,7 +109,7 @@ def test_recommend_stations_flags_single_option(monkeypatch):
         },
     )
 
-    result = algorithms.recommend_stations(
+    result = recommender.recommend_stations(
         stations=stations,
         origin=(7.44, 125.8),
         preset="balanced",
@@ -140,7 +140,7 @@ def test_recommend_stations_returns_no_option_when_fuel_missing(monkeypatch):
     ]
 
     monkeypatch.setattr(
-        algorithms,
+        recommender,
         "get_route",
         lambda origin, station, ors_api_key=None: {
             "distance_km": 2.2,
@@ -149,7 +149,7 @@ def test_recommend_stations_returns_no_option_when_fuel_missing(monkeypatch):
         },
     )
 
-    result = algorithms.recommend_stations(
+    result = recommender.recommend_stations(
         stations=stations,
         origin=(7.44, 125.8),
         preset="opti-route",
@@ -171,9 +171,9 @@ def test_recommend_stations_estimate_mode_skips_live_routing(monkeypatch):
     def fail_live_route(origin, station, ors_api_key=None):
         raise AssertionError("live routing should not run in estimate mode")
 
-    monkeypatch.setattr(algorithms, "get_route", fail_live_route)
+    monkeypatch.setattr(recommender, "get_route", fail_live_route)
 
-    result = algorithms.recommend_stations(
+    result = recommender.recommend_stations(
         stations=stations,
         origin=(7.44, 125.8),
         preset="balanced",

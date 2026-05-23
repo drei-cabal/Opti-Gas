@@ -2,14 +2,15 @@ from __future__ import annotations
 
 import pytest
 
+from utils.recommendations.filters.brand_filter import filter_by_brand
+from utils.recommendations.filters.fuel_filter import find_station_fuel
+from utils.recommendations.filters.scoring_filter import compute_final_score
 from utils.recommendations.product_rules.cost import (
     calculate_economic_cost,
     calculate_reference_price,
 )
 from utils.recommendations.product_rules.display import round_distance
-from utils.recommendations.product_rules.filters import filter_by_brand
 from utils.recommendations.product_rules.normalization import normalize_metric
-from utils.recommendations.product_rules.ranking import compute_final_score
 
 
 def test_calculate_economic_cost_combines_purchase_and_travel_costs():
@@ -78,3 +79,18 @@ def test_filter_by_brand_keeps_any_brand_unrestricted():
 
     assert filter_by_brand(stations, "any") == stations
     assert filter_by_brand(stations, "shell") == [{"brand": "Shell"}]
+
+
+def test_find_station_fuel_returns_selected_fuel_type():
+    station = {
+        "fuels": [
+            {"fuel_type": "Unleaded 91", "price": 62.0},
+            {"fuel_type": "Diesel", "price": 58.0},
+        ]
+    }
+
+    assert find_station_fuel(station, "Diesel") == {
+        "fuel_type": "Diesel",
+        "price": 58.0,
+    }
+    assert find_station_fuel(station, "Premium 95") is None

@@ -21,9 +21,15 @@ Opti-Gas is a mobile-first Flask plus Leaflet app for Tagum City drivers. It rec
 - `app.py` is the HTTP seam.
 - `utils/recommendations/requests/parser.py` owns recommendation query normalization and defaults.
 - `utils/recommendations/engine/pipeline.py` owns recommendation pipeline orchestration, scoring application, and API response shaping helpers.
-- `utils/recommendations/product_rules/` owns recommendation mode weights, filter rules, cost formulas, normalization, ranking, display rounding, and explanation rules.
-- `utils/routing/service.py` owns route provider selection and in-memory route cache behavior.
-- `utils/geo/location.py` owns distance math and local fallback-estimation helpers.
+- `utils/recommendations/filters/` owns brand, fuel, radius, and scoring filters used by the recommendation pipeline.
+- `utils/recommendations/product_rules/` owns recommendation mode weights, cost formulas, normalization, display rounding, and explanation rules.
+- `utils/recommendations/engine/recommender.py` owns the public `recommend_stations(...)` entrypoint.
+- `utils/routing/service.py` owns route provider orchestration.
+- `utils/routing/providers.py` owns ORS and OSRM provider calls.
+- `utils/routing/fallback.py` owns the local fallback route estimate.
+- `utils/routing/cache.py` owns in-memory route cache behavior.
+- `utils/geo/distance.py` owns straight-line distance math.
+- `utils/geo/route_estimates.py` owns local road-distance and duration-estimation helpers.
 - `utils/data/station_store.py` owns the public station data API: cached station and landmark loading, normalization, station identity, and atomic station price updates.
 - `utils/data/models.py` owns Pydantic-backed station and fuel validation rules.
 - `utils/data/cache.py` owns file-metadata cache helpers shared by station and landmark loading.

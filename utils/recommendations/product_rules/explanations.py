@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 # Reuse the final ranking order to identify the winning candidate.
-from utils.recommendations.product_rules.ranking import build_sort_key
+from utils.recommendations.filters.scoring_filter import build_sort_key
 
 PRIMARY_REASON_BALANCED = "Best overall balance"
 PRIMARY_REASON_COST = "Lowest total fuel cost"

@@ -17,7 +17,7 @@ OPTI-GAS is a mobile-first Flask + Leaflet web app for Tagum City drivers. It op
 - `utils/data/`: station loading, caching, validation models, and persistence
 - `utils/geo/`: coordinate distance and local fallback-estimation helpers
 - `utils/routing/`: route provider selection, route cache, and provider fallback logic
-- `utils/recommendations/`: query-argument parsing, engine orchestration, and product rules
+- `utils/recommendations/`: query parsing, recommendation filters/scoring, engine orchestration, and product rules
 - `templates/index.html`: single-page shell
 - `static/css/main.css`: stylesheet entrypoint for modular map, overlay, layout, and component styles
 - `static/js/ui.js`: thin browser entrypoint and app wiring
@@ -49,7 +49,7 @@ flowchart LR
   Rules[utils/recommendations/product_rules/*]
   Store[utils/data/station_store.py]
   Routing[utils/routing/service.py]
-  Algorithms[utils/recommendations/engine/algorithms.py]
+  Recommender[utils/recommendations/engine/recommender.py]
   StationData[data/stations/stations.json]
   Leaflet[Leaflet]
   GoogleMaps[Google Maps]
@@ -65,7 +65,7 @@ flowchart LR
   Pipeline --> Rules
   Pipeline --> Store --> StationData
   Pipeline --> Routing --> ORS
-  Pipeline --> Algorithms
+  Flask --> Recommender --> Pipeline
 
   Features --> Leaflet --> OSM
   Features --> GoogleMaps
@@ -126,6 +126,8 @@ This project is not only a Flask + Leaflet application. Its core behavior is dri
 
 For the current Opti-Route redesign specification, see `docs/opti-route-formula-spec.md`.
 
+For a categorized table of all project algorithms, see `docs/ALGORITHMS.md`.
+
 For the backend folder that contains the executable recommendation formulas and product rules, see `docs/PRODUCT_RULES.md`.
 
 For the current Map + Garage product interaction, saved-vehicle behavior, and first-run gating rules, see `docs/map-garage-product-spec.md`.
@@ -156,7 +158,9 @@ Filtering steps:
 
 Relevant files:
 
-- `utils/recommendations/product_rules/filters.py`
+- `utils/recommendations/filters/brand_filter.py`
+- `utils/recommendations/filters/fuel_filter.py`
+- `utils/recommendations/filters/radius_filter.py`
 - `utils/recommendations/engine/pipeline.py`
 
 Pseudocode:
@@ -186,7 +190,11 @@ For each remaining candidate station, the system computes distance and estimated
 Relevant files:
 
 - `utils/routing/service.py`
-- `utils/geo/location.py`
+- `utils/routing/providers.py`
+- `utils/routing/fallback.py`
+- `utils/routing/cache.py`
+- `utils/geo/distance.py`
+- `utils/geo/route_estimates.py`
 
 This design is a fallback algorithm strategy:
 
@@ -244,7 +252,7 @@ Relevant file:
 - `utils/recommendations/product_rules/presets.py`
 - `utils/recommendations/product_rules/cost.py`
 - `utils/recommendations/product_rules/normalization.py`
-- `utils/recommendations/product_rules/ranking.py`
+- `utils/recommendations/filters/scoring_filter.py`
 - `utils/recommendations/product_rules/explanations.py`
 - `utils/recommendations/engine/pipeline.py`
 
@@ -273,7 +281,7 @@ Some stations may share the same name but represent different physical locations
 Relevant files:
 
 - `utils/data/station_store.py`
-- `utils/recommendations/engine/algorithms.py`
+- `utils/recommendations/engine/recommender.py`
 - `static/js/features/stations.js`
 
 This is an identity-resolution algorithm based on location rather than name alone.
