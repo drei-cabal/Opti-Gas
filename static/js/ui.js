@@ -387,7 +387,7 @@ async function refreshRecommendations({ silent = false } = {}) {
 
     state.best = response.best;
     state.candidates = response.candidates;
-    state.fallbackWarning = response.fallback_warning;
+    state.recommendationReason = response.reason || null;
     lastRecommendationLocation = { ...state.userLocation };
 
     const visibleStations = getVisibleStations();
@@ -432,19 +432,6 @@ function render() {
     ? buildSummaryMeta(primary, activeVehicle)
     : "Enable GPS to start routing.";
   elements.summaryDirections.disabled = !(primary && state.userLocation);
-
-  if (state.fallbackWarning) {
-    showAnnouncement(
-      "Using estimated route values. You can still review stations and update prices from any card.",
-      "info",
-      {
-        title: "Results are estimated",
-        kind: "fallback",
-      }
-    );
-  } else if (state.locationSource && state.activeAnnouncement?.kind === "fallback") {
-    clearAnnouncement();
-  }
 
   mapView.renderStations({
     stations: state.allStations,

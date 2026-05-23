@@ -287,7 +287,7 @@ function renderStationDetail(station) {
       <div class="detail-card__stats">
         <div class="stat-card">
           <span>Drive</span>
-          <strong>${station.distance_km != null ? `~${formatDistance(station.distance_km)}km - ~${formatDuration(station.duration_min)} min` : "Set location to estimate"}</strong>
+          <strong>${station.distance_km != null ? `~${formatDistance(station.distance_km)}km - ~${formatDuration(station.duration_min)} min` : "Set location for route"}</strong>
         </div>
         <div class="stat-card">
           <span>${showPersonalizedCost ? "Est. total cost" : "Personalized cost"}</span>
@@ -421,7 +421,7 @@ export function buildSummaryMeta(station, activeVehicle) {
     if (!activeVehicle) {
       return `${base}. Add a vehicle in Garage to unlock personalized recommendations.`;
     }
-    return `${base}${station.distance_source === "haversine" ? " estimate" : ""}`;
+    return base;
   }
   return `${station.brand} - ${station.fuel_type} - updated ${formatDate(station.last_updated)}`;
 }
@@ -430,7 +430,7 @@ function buildRowMeta(station) {
   if (station.distance_km != null) {
     return `${station.brand} - ~${formatDistance(station.distance_km)}km - ~${formatDuration(
       station.duration_min
-    )} min${station.distance_source === "haversine" ? " estimate" : ""}`;
+    )} min`;
   }
   return `${station.brand} - ${station.available_fuel_types.join(", ")}`;
 }
@@ -442,15 +442,15 @@ function buildRouteSourceNote(station) {
   if (station.distance_source === "osrm") {
     return "Travel time uses live road routing.";
   }
-  if (station.distance_source === "haversine") {
-    return "Travel time uses a map-based estimate when live route data is unavailable.";
-  }
   return "Travel time source unavailable.";
 }
 
 function getEmptyListMessage() {
   if (state.searchQuery) {
     return "No gas stations match that search.";
+  }
+  if (state.recommendationReason) {
+    return state.recommendationReason;
   }
   if (!state.userLocation) {
     return "Search for a gas station or enable location to see nearby recommendations.";

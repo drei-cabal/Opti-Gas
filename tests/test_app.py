@@ -54,6 +54,17 @@ def diesel_price_from_file(stations_path):
     return diesel["price"]
 
 
+def use_mock_route(monkeypatch):
+    monkeypatch.setattr(
+        "utils.recommendations.engine.recommender.get_route",
+        lambda origin, station, ors_api_key=None: {
+            "distance_km": 2.2,
+            "duration_min": 6.5,
+            "source": "osrm",
+        },
+    )
+
+
 def test_api_stations(tmp_path):
     stations_path, landmarks_path = write_fixture_files(tmp_path)
     app = create_app(
@@ -127,7 +138,8 @@ def test_api_recommend_requires_numeric_inputs(tmp_path):
     assert response.status_code == 400
 
 
-def test_api_recommend_returns_selected_fuel(tmp_path):
+def test_api_recommend_returns_selected_fuel(tmp_path, monkeypatch):
+    use_mock_route(monkeypatch)
     stations_path, landmarks_path = write_fixture_files(tmp_path)
     app = create_app(
         {
@@ -150,9 +162,39 @@ def test_api_recommend_returns_selected_fuel(tmp_path):
     assert "travel_liters" in payload["best"]
     assert "purchase_cost" in payload["best"]
     assert "norm_distance" in payload["best"]
+    assert "fallback_warning" not in payload
 
 
-def test_api_recommend_rate_limit_blocks_excess_requests(tmp_path):
+def test_api_recommend_returns_route_unavailable_when_live_routing_fails(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        "utils.recommendations.engine.recommender.get_route",
+        lambda origin, station, ors_api_key=None: None,
+    )
+    stations_path, landmarks_path = write_fixture_files(tmp_path)
+    app = create_app(
+        {
+            "TESTING": True,
+            "STATIONS_PATH": stations_path,
+            "LANDMARKS_PATH": landmarks_path,
+        }
+    )
+
+    response = app.test_client().get(
+        "/api/recommend?lat=7.4478&lng=125.8079&mode=balanced&brand=any&fuel_type=Diesel&radius_km=5"
+    )
+
+    assert response.status_code == 200
+    payload = response.get_json()
+    assert payload["best"] is None
+    assert payload["candidates"] == []
+    assert payload["candidate_count"] == 0
+    assert payload["scoring_mode"] == "no-option"
+    assert payload["reason"] == "Route unavailable for current stations."
+    assert "fallback_warning" not in payload
+
+
+def test_api_recommend_rate_limit_blocks_excess_requests(tmp_path, monkeypatch):
+    use_mock_route(monkeypatch)
     stations_path, landmarks_path = write_fixture_files(tmp_path)
     app = create_app(
         {
@@ -179,7 +221,8 @@ def test_api_recommend_rate_limit_blocks_excess_requests(tmp_path):
     assert response.get_json()["error"].startswith("Too many recommendation requests.")
 
 
-def test_api_recommend_rate_limit_can_be_disabled(tmp_path):
+def test_api_recommend_rate_limit_can_be_disabled(tmp_path, monkeypatch):
+    use_mock_route(monkeypatch)
     stations_path, landmarks_path = write_fixture_files(tmp_path)
     app = create_app(
         {
@@ -386,7 +429,8 @@ def test_api_update_price_with_configured_token_accepts_matching_header(tmp_path
     assert updated_fuel["price"] == 93.45
 
 
-def test_api_update_price_then_recommend_reflects_change(tmp_path):
+def test_api_update_price_then_recommend_reflects_change(tmp_path, monkeypatch):
+    use_mock_route(monkeypatch)
     stations_path, landmarks_path = write_fixture_files(tmp_path)
     app = create_app(
         {

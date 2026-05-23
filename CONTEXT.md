@@ -12,8 +12,8 @@ Opti-Gas is a mobile-first Flask plus Leaflet app for Tagum City drivers. It rec
 - **Station identity** - coordinate-based `station_id`, not station name.
 - **Recommendation pipeline** - filter candidates, resolve routes, compute price-aware metrics, rank by recommendation mode, and shape the recommendation response.
 - **Recommendation mode** - one of `opti-route`, `save-money`, `save-time`, or `balanced`.
-- **Route provider** - ORS, OSRM, or the fallback route estimate.
-- **Fallback route estimate** - local haversine-derived distance and duration heuristics used when external routing is unavailable.
+- **Route provider** - ORS or OSRM.
+- **Route unavailable** - the explicit no-option state returned when no live route can be resolved for the current candidates.
 - **Station price update flow** - the mutation path that validates and writes an updated fuel price back to station data.
 
 ## Important Seams
@@ -26,10 +26,8 @@ Opti-Gas is a mobile-first Flask plus Leaflet app for Tagum City drivers. It rec
 - `utils/recommendations/engine/recommender.py` owns the public `recommend_stations(...)` entrypoint.
 - `utils/routing/service.py` owns route provider orchestration.
 - `utils/routing/providers.py` owns ORS and OSRM provider calls.
-- `utils/routing/fallback.py` owns the local fallback route estimate.
 - `utils/routing/cache.py` owns in-memory route cache behavior.
 - `utils/geo/distance.py` owns straight-line distance math.
-- `utils/geo/route_estimates.py` owns local road-distance and duration-estimation helpers.
 - `utils/data/station_store.py` owns the public station data API: cached station and landmark loading, normalization, station identity, and atomic station price updates.
 - `utils/data/models.py` owns Pydantic-backed station and fuel validation rules.
 - `utils/data/cache.py` owns file-metadata cache helpers shared by station and landmark loading.

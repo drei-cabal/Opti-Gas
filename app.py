@@ -106,7 +106,6 @@ def create_app(test_config: dict | None = None) -> Flask:
         RATELIMIT_STORAGE_URI=os.getenv(
             "RATELIMIT_STORAGE_URI", DEFAULT_RATE_LIMIT_STORAGE_URI
         ).strip(),
-        ROUTING_MODE=_normalize_routing_mode(os.getenv("ROUTING_MODE", "estimate")),
         SECURITY_FORCE_HTTPS=_get_bool_env("SECURITY_FORCE_HTTPS", False),
         STATIONS_PATH=BASE_DIR / "data" / "stations" / "stations.json",
         LANDMARKS_PATH=BASE_DIR / "data" / "landmarks.json",
@@ -194,7 +193,6 @@ def create_app(test_config: dict | None = None) -> Flask:
             ors_api_key=app.config["ORS_API_KEY"],
             km_per_liter=recommendation_request["km_per_liter"],
             liters_to_fill=recommendation_request["liters_to_fill"],
-            routing_mode=app.config["ROUTING_MODE"],
         )
         return jsonify(recommendation)
 
@@ -293,13 +291,6 @@ def _get_bool_env(name: str, default: bool) -> bool:
     if raw is None:
         return default
     return raw.strip().lower() in {"1", "true", "yes", "on"}
-
-
-def _normalize_routing_mode(raw_mode: str | None) -> str:
-    mode = (raw_mode or "").strip().lower()
-    if mode == "live":
-        return "live"
-    return "estimate"
 
 
 def _load_browser_libraries(path: str | Path) -> list[dict]:

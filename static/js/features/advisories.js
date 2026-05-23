@@ -8,11 +8,11 @@ let advisoryOpenFrameId = null;
 
 export function showAnnouncement(message, tone = "info", options = {}) {
   state.activeAnnouncement = {
-    kind: options.kind || (tone === "warning" ? "location" : "fallback"),
+    kind: options.kind || (tone === "warning" ? "location" : "system"),
     tone,
     title:
       options.title ||
-      (tone === "warning" ? "Location access off" : "Results are estimated"),
+      (tone === "warning" ? "Location access off" : "Notice"),
     message,
     date: new Date().toISOString().slice(0, 10),
   };

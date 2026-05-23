@@ -115,7 +115,8 @@ distance_km(S)
 Source:
 
 - ORS route distance when available
-- fallback estimator when ORS is unavailable
+- OSRM route distance when ORS is unavailable
+- no scored recommendation when no live route is available
 
 ### 2. Travel Time
 
@@ -126,7 +127,8 @@ time_min(S)
 Source:
 
 - ORS route duration when available
-- fallback estimator when ORS is unavailable
+- OSRM route duration when ORS is unavailable
+- no scored recommendation when no live route is available
 
 ### 3. Economic Cost
 
@@ -191,7 +193,7 @@ Vehicle presets should remain preset-first and editable inside `Garage`, using f
 
 Travel fuel burned before reaching station `S` should be valued using a reference price, not the destination station's price.
 
-Recommended fallback chain:
+Recommended reference-price selection order:
 
 ### First Choice
 
@@ -441,7 +443,7 @@ Recommended minimum top-level response fields:
 - `preset_used`
 - `reference_price_source`
 - `reference_price_used`
-- `fallback_warning`
+- `reason` for no-option responses
 
 Recommended minimum candidate-level response fields:
 
@@ -471,13 +473,13 @@ The backend should still compute intermediate fields such as:
 
 even if the demo response does not expose them all.
 
-## Routing Fallback Behavior
+## Route Unavailable Behavior
 
-If ORS fails:
+If ORS and OSRM both fail:
 
-- still compute scores using fallback-estimated route values
-- return a visible indicator that route values are estimated
-- do not silently treat fallback values as if they were fully trusted ORS values
+- do not compute scores using fabricated route values
+- return a no-option response with `Route unavailable for current stations.`
+- allow Google Maps handoff only after the user selects a station with coordinates
 
 ## Demo Scope
 

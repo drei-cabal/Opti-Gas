@@ -7,7 +7,7 @@ OPTI-GAS is a mobile-first Flask + Leaflet web app for Tagum City drivers. It op
 - Backend: Flask
 - Frontend: HTML, CSS, vanilla JavaScript, Leaflet.js 
 - Data: `data/stations/stations.json`
-- Routing: OpenRouteService with Haversine fallback
+- Routing: OpenRouteService with OSRM as the secondary live-route provider
 
 
 
@@ -15,8 +15,8 @@ OPTI-GAS is a mobile-first Flask + Leaflet web app for Tagum City drivers. It op
 
 - `app.py`: Flask entrypoint and API routes
 - `utils/data/`: station loading, caching, validation models, and persistence
-- `utils/geo/`: coordinate distance and local fallback-estimation helpers
-- `utils/routing/`: route provider selection, route cache, and provider fallback logic
+- `utils/geo/`: coordinate distance helpers
+- `utils/routing/`: live route provider selection, route cache, and route-unavailable handling
 - `utils/recommendations/`: query parsing, recommendation filters/scoring, engine orchestration, and product rules
 - `templates/index.html`: single-page shell
 - `static/css/main.css`: stylesheet entrypoint for modular map, overlay, layout, and component styles
@@ -122,7 +122,7 @@ pytest
 
 ## Algorithms Used
 
-This project is not only a Flask + Leaflet application. Its core behavior is driven by filtering, routing, ranking, and fallback-estimation algorithms that determine which fuel station should be recommended to the user.
+This project is not only a Flask + Leaflet application. Its core behavior is driven by filtering, live routing, and ranking algorithms that determine which fuel station should be recommended to the user.
 
 For the current Opti-Route redesign specification, see `docs/opti-route-formula-spec.md`.
 
@@ -168,8 +168,8 @@ Pseudocode:
 ```text
 candidate_stations = all_stations
 candidate_stations = filter_by_brand(candidate_stations, selected_brand)
-candidate_stations = filter_by_radius(candidate_stations, user_location, radius_km)
 candidate_stations = keep_only_stations_with_requested_fuel(candidate_stations, fuel_type)
+candidate_stations = filter_by_radius(candidate_stations, user_location, radius_km)
 ```
 
 Time complexity:
@@ -181,25 +181,23 @@ Time complexity:
 
 ### 2. Route Distance and Travel Time Computation
 
-For each remaining candidate station, the system computes distance and estimated travel time using this priority order:
+For each remaining candidate station, the system computes road distance and travel time using live routing:
 
 1. OpenRouteService (ORS)
 2. OSRM public road routing
-3. Local fallback estimate using adjusted road distance and urban-speed heuristics
 
 Relevant files:
 
 - `utils/routing/service.py`
 - `utils/routing/providers.py`
-- `utils/routing/fallback.py`
 - `utils/routing/cache.py`
 - `utils/geo/distance.py`
-- `utils/geo/route_estimates.py`
 
-This design is a fallback algorithm strategy:
+This design is a live-routing provider chain:
 
 - use the most accurate road-network result first
-- degrade gracefully if an external routing provider is unavailable
+- try OSRM if ORS is unavailable
+- return a clear route-unavailable result if no live route can be resolved
 
 Pseudocode:
 
@@ -210,7 +208,7 @@ for each station in candidate_stations:
     else if OSRM is available:
         route = get_osrm_route(origin, station)
     else:
-        route = estimate_route_from_haversine(origin, station)
+        return route unavailable
 ```
 
 Time complexity:
@@ -285,21 +283,6 @@ Relevant files:
 - `static/js/features/stations.js`
 
 This is an identity-resolution algorithm based on location rather than name alone.
-
-### 5. Fallback Estimation Heuristic
-
-When road-routing data is unavailable, the system does not use raw straight-line distance directly. Instead, it:
-
-1. computes haversine distance
-2. applies a road-distance multiplier
-3. estimates travel time using short-distance urban speed bands plus fixed delay
-
-This improves the fallback estimate compared with naive straight-line travel time.
-
-Time complexity:
-
-- Haversine distance: `O(1)`
-- Adjusted fallback estimate: `O(1)`
 
 ### Summary of Core Complexities
 

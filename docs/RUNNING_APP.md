@@ -77,22 +77,15 @@ RATELIMIT_STORAGE_URI=memory://
 
 `memory://` is fine for this single-process app. If the app is deployed with multiple workers, use a shared limiter store such as Redis and enforce rate limits at the reverse proxy as well.
 
-### Routing mode
+### Live routing
 
-Local demo runs default to fast estimated routing:
-
-```env
-ROUTING_MODE=estimate
-```
-
-Set this in `.env`. This uses the app's Haversine-based road-distance estimate, so filters and first-load recommendations do not wait on ORS or OSRM network calls.
-
-For full live-route testing, configure an ORS key and switch routing mode:
+Recommendations use live road routing. Set an ORS key when you want the primary provider enabled:
 
 ```env
 ORS_API_KEY=your_real_api_key_here
-ROUTING_MODE=live
 ```
+
+If ORS is unavailable or no key is configured, the app tries OSRM. If no live route can be resolved, recommendations return a clear route-unavailable result instead of using a local distance estimate.
 
 ### Security headers
 
@@ -238,14 +231,13 @@ Pytest is configured to create new cache and temporary test output under `.tmp`.
 This is usually caused by one or more of these:
 
 - browser geolocation delay
-- live routing mode waiting on ORS or OSRM
-- first-time route calculation for many stations when `ROUTING_MODE=live`
+- live routing waiting on ORS or OSRM
+- first-time route calculation for many stations
 
 What to do:
 
 - wait for location access to finish
 - make sure internet is working
-- use `ROUTING_MODE=estimate` for fast local demos
 - refresh once after the first successful load
 - keep the server running so the in-memory route cache can help
 

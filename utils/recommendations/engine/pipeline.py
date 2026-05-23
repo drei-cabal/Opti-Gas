@@ -8,6 +8,7 @@ from utils.recommendations.filters.brand_filter import (  # Apply brand filterin
     filter_by_brand,
 )
 from utils.recommendations.filters.fuel_filter import (  # Apply selected-fuel filtering.
+    filter_by_fuel,
     find_station_fuel,
 )
 from utils.recommendations.filters.radius_filter import filter_by_radius
@@ -34,7 +35,7 @@ from utils.recommendations.product_rules.normalization import (
 MAX_ROUTE_WORKERS = 6
 PUBLIC_CANDIDATE_FIELDS = ("station_id", "name", "brand", "lat", "lng", "fuel_type", "price", "available_fuel_types", "distance_km", "duration_min", "norm_cost", "norm_time", "norm_distance", "final_score", "distance_source", "preset_used", "reference_price_used", "reference_price_source", "primary_reason", "secondary_reasons", "last_updated")
 
-RouteGetter = Callable[[tuple[float, float], dict, str | None], dict]
+RouteGetter = Callable[[tuple[float, float], dict, str | None], dict | None]
 
 
 # Run the full recommendation flow from filtering through scoring and response shaping.
@@ -52,6 +53,7 @@ def recommend_stations_result(
     liters_to_fill: float,
 ) -> dict:
     filtered = filter_by_brand(stations, brand)
+    filtered = filter_by_fuel(filtered, fuel_type)
     filtered = filter_by_radius(filtered, origin, radius_km)
     routed_candidates = _build_routed_candidates(
         filtered,
@@ -60,15 +62,12 @@ def recommend_stations_result(
         route_getter,
         ors_api_key,
     )
-    fallback_warning = any(
-        candidate["distance_source"] == "haversine" for candidate in routed_candidates
-    )
 
     if not routed_candidates:
+        reason = "Route unavailable for current stations." if filtered else "No stations match the current filters."
         return _no_option_response(
             preset=preset,
-            fallback_warning=fallback_warning,
-            reason="No stations match the current filters.",
+            reason=reason,
         )
 
     reference_price, reference_price_source = calculate_reference_price(
@@ -79,7 +78,6 @@ def recommend_stations_result(
     if reference_price is None or reference_price_source is None:
         return _no_option_response(
             preset=preset,
-            fallback_warning=fallback_warning,
             reason="Unable to compute reference price for selected fuel type from station data.",
         )
 
@@ -103,12 +101,11 @@ def recommend_stations_result(
         preset=preset,
         reference_price_source=reference_price_source,
         reference_price_used=rounded_reference_price,
-        fallback_warning=fallback_warning,
     )
 
 
 # Build the empty recommendation response for no-match or no-price cases.
-def _no_option_response(*, preset: str, fallback_warning: bool, reason: str) -> dict:
+def _no_option_response(*, preset: str, reason: str) -> dict:
     return {
         "best": None,
         "candidates": [],
@@ -117,7 +114,6 @@ def _no_option_response(*, preset: str, fallback_warning: bool, reason: str) -> 
         "preset_used": preset,
         "reference_price_source": None,
         "reference_price_used": None,
-        "fallback_warning": fallback_warning,
         "reason": reason,
     }
 
@@ -178,7 +174,6 @@ def _recommendation_response(
     preset: str,
     reference_price_source: str,
     reference_price_used: float,
-    fallback_warning: bool,
 ) -> dict:
     public_candidates = [_public_candidate(candidate) for candidate in routed_candidates]
     return {
@@ -189,7 +184,6 @@ def _recommendation_response(
         "preset_used": preset,
         "reference_price_source": reference_price_source,
         "reference_price_used": reference_price_used,
-        "fallback_warning": fallback_warning,
     }
 
 
@@ -260,6 +254,9 @@ def _build_routed_candidate(
         return None
 
     route = route_getter(origin, station, ors_api_key=ors_api_key)
+    if route is None:
+        return None
+
     return {
         "station_id": get_station_id(station),
         "name": station["name"],

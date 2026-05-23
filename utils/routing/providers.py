@@ -1,7 +1,7 @@
 from __future__ import annotations  # Enable postponed evaluation of type annotations.
 
 import openrouteservice  # Call OpenRouteService for live route distance and duration.
-import requests  # Call OSRM as the public live-routing fallback.
+import requests  # Call OSRM as the public secondary live-routing provider.
 from openrouteservice import exceptions as ors_exceptions  # Handle OpenRouteService failures.
 
 from utils.routing.results import build_route_result

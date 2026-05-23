@@ -105,7 +105,7 @@ def test_recommend_stations_flags_single_option(monkeypatch):
         lambda origin, station, ors_api_key=None: {
             "distance_km": 2.2,
             "duration_min": 6.5,
-            "source": "haversine",
+            "source": "osrm",
         },
     )
 
@@ -123,7 +123,6 @@ def test_recommend_stations_flags_single_option(monkeypatch):
     assert result["scoring_mode"] == "single-option"
     assert result["best"]["final_score"] is None
     assert result["best"]["primary_reason"] == "Only matching station"
-    assert result["fallback_warning"] is True
 
 
 def test_recommend_stations_returns_no_option_when_fuel_missing(monkeypatch):
@@ -165,13 +164,10 @@ def test_recommend_stations_returns_no_option_when_fuel_missing(monkeypatch):
     assert result["reason"] == "No stations match the current filters."
 
 
-def test_recommend_stations_estimate_mode_skips_live_routing(monkeypatch):
+def test_recommend_stations_returns_route_unavailable_when_live_routing_fails(monkeypatch):
     stations = [build_station("Estimate Only", "Petron", 7.45, 125.81, 90.0)]
 
-    def fail_live_route(origin, station, ors_api_key=None):
-        raise AssertionError("live routing should not run in estimate mode")
-
-    monkeypatch.setattr(recommender, "get_route", fail_live_route)
+    monkeypatch.setattr(recommender, "get_route", lambda origin, station, ors_api_key=None: None)
 
     result = recommender.recommend_stations(
         stations=stations,
@@ -181,8 +177,10 @@ def test_recommend_stations_estimate_mode_skips_live_routing(monkeypatch):
         fuel_type="Unleaded 91",
         radius_km=10,
         ors_api_key="test-key",
-        routing_mode="estimate",
     )
 
-    assert result["candidate_count"] == 1
-    assert result["best"]["distance_source"] == "haversine"
+    assert result["best"] is None
+    assert result["candidates"] == []
+    assert result["candidate_count"] == 0
+    assert result["scoring_mode"] == "no-option"
+    assert result["reason"] == "Route unavailable for current stations."

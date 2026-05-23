@@ -89,9 +89,7 @@ The app reads runtime settings from `.env`. `.env.example` is only a starter tem
 
 ## 6. Get an OpenRouteService API key
 
-For fast local demos, the app can use estimated routing without an OpenRouteService key.
-
-For full live-route testing, this project requires an OpenRouteService key so the team can verify the intended route calculation flow.
+This project uses live routing for recommendation distance and time. OpenRouteService is the primary provider, and OSRM is the secondary provider when ORS is unavailable.
 
 Create an account on the OpenRouteService website:
 
@@ -113,10 +111,7 @@ Open `.env` and set:
 
 ```env
 ORS_API_KEY=your_real_api_key_here
-ROUTING_MODE=live
 ```
-
-Keep `ROUTING_MODE=estimate` in `.env` when you want faster local filter changes and do not need live road-routing checks.
 
 You may also keep or adjust these if needed:
 
@@ -191,17 +186,17 @@ or reinstall Python with PATH enabled.
 
 ### API key missing
 
-If `ORS_API_KEY` is empty, the app can still run with `ROUTING_MODE=estimate`. Live ORS routing requires both `ORS_API_KEY` and `ROUTING_MODE=live`.
+If `ORS_API_KEY` is empty, the app can still try OSRM. If neither ORS nor OSRM can return a route, recommendations return `Route unavailable for current stations.`
 
 ### Slow first load
 
 The first load may be slower because of:
 
 - browser geolocation
-- first route calculations when `ROUTING_MODE=live`
-- network latency to routing services when live routing is enabled
+- first route calculations for candidate stations
+- network latency to ORS or OSRM
 
-For normal local demos, use `ROUTING_MODE=estimate` so filters do not wait for ORS or OSRM. Later live-routing refreshes should be faster because of browser-side session reuse and backend route caching.
+Later refreshes should be faster because of browser-side session reuse and backend route caching.
 
 ### Port already in use
 

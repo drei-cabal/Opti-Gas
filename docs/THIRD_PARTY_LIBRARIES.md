@@ -26,11 +26,11 @@ Current runtime libraries:
 | `Flask` | `libraries/python.txt` | Web app framework. |
 | `Flask-Limiter` | `libraries/python.txt` | Runtime API rate limiting. |
 | `flask-talisman` | `libraries/python.txt` | Runtime browser security headers and CSP. |
-| `haversine` | `libraries/python.txt` | Library-backed straight-line distance for radius filtering and fallback routing. |
+| `haversine` | `libraries/python.txt` | Library-backed straight-line distance for radius filtering and OSM seed auditing. |
 | `openrouteservice` | `libraries/python.txt` | Python client for ORS route distance and duration calls. |
 | `pydantic` | `libraries/python.txt` | Validates station records, fuel records, and API request payloads. |
 | `python-dotenv` | `libraries/python.txt` | Loads local `.env` values. |
-| `requests` | `libraries/python.txt` | Calls the OSRM routing API fallback. |
+| `requests` | `libraries/python.txt` | Calls the OSRM routing API as the secondary live-route provider. |
 
 ## Python Development And Security Tools
 
