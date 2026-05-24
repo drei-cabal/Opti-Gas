@@ -10,10 +10,12 @@ const deps = {
   showAnnouncement: null,
 };
 
+// Injects sheet and refresh dependencies for price updates.
 export function configurePriceUpdates(nextDeps) {
   Object.assign(deps, nextDeps);
 }
 
+// Prepares and opens the price update modal for one station fuel record.
 export function openPriceModal(station) {
   state.priceUpdateStation = createPriceUpdateTarget(station);
   setPriceUpdateError("");
@@ -30,6 +32,7 @@ export function openPriceModal(station) {
   });
 }
 
+// Submits the modal price update and refreshes affected station data.
 export async function submitPriceUpdate() {
   const station = state.priceUpdateStation;
   if (!station || state.isUpdatingPrice) {
@@ -67,12 +70,14 @@ export async function submitPriceUpdate() {
   }
 }
 
+// Clears price update modal state after close or completion.
 export function clearPriceModalTarget() {
   state.priceUpdateStation = null;
   setPriceUpdateError("");
   setPriceUpdateBusy(false);
 }
 
+// Captures the station identity and fuel type being updated.
 function createPriceUpdateTarget(station) {
   return {
     name: station.name,
@@ -81,6 +86,7 @@ function createPriceUpdateTarget(station) {
   };
 }
 
+// Toggles submit button and input state during price update requests.
 function setPriceUpdateBusy(isBusy) {
   state.isUpdatingPrice = isBusy;
   elements.submitPriceButton.disabled = isBusy;
@@ -88,6 +94,7 @@ function setPriceUpdateBusy(isBusy) {
   elements.priceInput.disabled = isBusy;
 }
 
+// Shows or clears inline price update validation errors.
 function setPriceUpdateError(message) {
   if (!elements.priceModalError) {
     return;

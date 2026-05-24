@@ -12,10 +12,12 @@ const deps = {
   isModeLocked: null,
 };
 
+// Injects Garage policy dependencies used by filter rendering.
 export function configureFilters(nextDeps) {
   Object.assign(deps, nextDeps);
 }
 
+// Connects a segmented choice group to a state key.
 export function bindChoiceGroup(container, stateKey, attributeName) {
   container.addEventListener("click", (event) => {
     const button = event.target.closest("button");
@@ -29,6 +31,7 @@ export function bindChoiceGroup(container, stateKey, attributeName) {
   });
 }
 
+// Synchronizes filter controls with current recommendation and Garage state.
 export function syncFilterControls() {
   if (deps.isModeLocked?.(state.mode)) {
     state.mode = "save-time";
@@ -77,6 +80,7 @@ export function syncFilterControls() {
   }
 }
 
+// Builds fuel-type filter buttons from available station fuel records.
 export function renderFuelTypeButtons() {
   const fuelTypes = getFuelTypesFromStations();
   if (!fuelTypes.length) {
@@ -98,6 +102,7 @@ export function renderFuelTypeButtons() {
     .join("");
 }
 
+// Maps geolocation failure reasons to user-facing filter copy.
 export function resolveLocationFailureMessage(reason, error) {
   if (reason === "unsupported") {
     return {
@@ -130,6 +135,7 @@ export function resolveLocationFailureMessage(reason, error) {
   };
 }
 
+// Applies the active state to one pill-button group.
 function syncPillGroup(container, attributeName, selectedValue) {
   const normalizedValue = attributeName === "data-mode" ? normalizeMode(selectedValue) : selectedValue;
   container.querySelectorAll("button").forEach((button) => {
@@ -137,6 +143,7 @@ function syncPillGroup(container, attributeName, selectedValue) {
   });
 }
 
+// Collects supported fuel types from the station collection.
 function getFuelTypesFromStations() {
   const fuelTypes = new Set();
   state.allStations.forEach((station) => {

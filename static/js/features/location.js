@@ -20,10 +20,12 @@ const deps = {
 let locationWatchId = null;
 let lastRecommendationLocation = null;
 
+// Injects map and rendering dependencies for location behavior.
 export function configureLocation(nextDeps) {
   Object.assign(deps, nextDeps);
 }
 
+// Starts or restarts the browser geolocation watch.
 export async function requestLocation({ forceRetry = false } = {}) {
   if (!navigator.geolocation) {
     handleLocationFailure({ reason: "unsupported" });
@@ -55,10 +57,12 @@ export async function requestLocation({ forceRetry = false } = {}) {
   );
 }
 
+// Stores the origin used for the last recommendation refresh.
 export function rememberRecommendationLocation(location = state.userLocation) {
   lastRecommendationLocation = location ? { ...location } : null;
 }
 
+// Updates user location and refreshes recommendations when movement matters.
 async function handleLocationSuccess(position) {
   const lat = position.coords.latitude;
   const lng = position.coords.longitude;
@@ -78,6 +82,7 @@ async function handleLocationSuccess(position) {
   }
 }
 
+// Resets location state and shows the correct location warning.
 function handleLocationFailure({ reason = null, error = null } = {}) {
   state.userLocation = null;
   state.locationSource = null;
@@ -86,6 +91,7 @@ function handleLocationFailure({ reason = null, error = null } = {}) {
   deps.mapView?.centerMap(DEFAULT_CENTER.lat, DEFAULT_CENTER.lng, DEFAULT_CENTER.zoom);
 }
 
+// Decides whether GPS movement is large enough to recompute routes.
 function shouldRefreshForLocation(nextLocation) {
   if (!lastRecommendationLocation) {
     return true;
@@ -97,6 +103,7 @@ function shouldRefreshForLocation(nextLocation) {
   );
 }
 
+// Calculates meter distance between two latitude-longitude points.
 function getDistanceMeters(origin, destination) {
   const earthRadiusMeters = 6371000;
   const originLat = toRadians(origin.lat);
@@ -109,6 +116,7 @@ function getDistanceMeters(origin, destination) {
   return earthRadiusMeters * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
+// Converts degree values to radians for distance math.
 function toRadians(value) {
   return (value * Math.PI) / 180;
 }

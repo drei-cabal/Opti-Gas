@@ -6,6 +6,7 @@ let advisoryDragPointerId = null;
 let advisoryCloseTimeoutId = null;
 let advisoryOpenFrameId = null;
 
+// Displays a transient app announcement and syncs advisory state.
 export function showAnnouncement(message, tone = "info", options = {}) {
   state.activeAnnouncement = {
     kind: options.kind || (tone === "warning" ? "location" : "system"),
@@ -19,11 +20,13 @@ export function showAnnouncement(message, tone = "info", options = {}) {
   syncAdvisories();
 }
 
+// Clears the active announcement banner state.
 export function clearAnnouncement() {
   state.activeAnnouncement = null;
   syncAdvisories();
 }
 
+// Shows a location-specific warning when GPS cannot be used.
 export function applyLocationFailureMessage({ banner }) {
   showAnnouncement(banner, "warning", {
     title: "Location access off",
@@ -31,6 +34,7 @@ export function applyLocationFailureMessage({ banner }) {
   });
 }
 
+// Opens or closes the advisory sheet from the announcement button.
 export function toggleAnnouncement() {
   if (state.isAnnouncementOpen) {
     closeAdvisorySheet();
@@ -42,6 +46,7 @@ export function toggleAnnouncement() {
   elements.announcementButton.setAttribute("aria-expanded", "true");
 }
 
+// Rebuilds advisory items and renders the advisory indicator.
 export function syncAdvisories() {
   state.advisoryItems = buildAdvisoryItems();
   elements.announcementButton.classList.toggle(
@@ -57,6 +62,7 @@ export function syncAdvisories() {
   }
 }
 
+// Attaches drag gestures to advisory sheet handles.
 export function bindAdvisoryDrag(element) {
   if (!element) {
     return;
@@ -96,10 +102,12 @@ export function bindAdvisoryDrag(element) {
   });
 }
 
+// Closes the advisory sheet using the normal close motion.
 export function closeAdvisorySheet() {
   closeAdvisorySheetWithMotion({ fromDrag: false });
 }
 
+// Builds the current advisory list from announcement and station freshness state.
 function buildAdvisoryItems() {
   const items = [];
   if (state.activeAnnouncement) {
@@ -133,6 +141,7 @@ function buildAdvisoryItems() {
   return items;
 }
 
+// Renders advisory rows and the announcement button indicator.
 function renderAdvisories() {
   elements.advisoryList.innerHTML = state.advisoryItems
     .map(
@@ -152,6 +161,7 @@ function renderAdvisories() {
     .join("");
 }
 
+// Animates the advisory sheet closed after a tap or drag.
 function closeAdvisorySheetWithMotion({ fromDrag }) {
   if (elements.advisorySheet.classList.contains("hidden")) {
     state.isAnnouncementOpen = false;
@@ -190,11 +200,13 @@ function closeAdvisorySheetWithMotion({ fromDrag }) {
   }, 280);
 }
 
+// Clears drag styles from the advisory sheet after movement ends.
 function clearAdvisoryDrag() {
   resetAdvisoryDragState();
   setAdvisoryTranslate(0);
 }
 
+// Expands the advisory sheet and applies its scrim.
 function openAdvisorySheet() {
   if (advisoryCloseTimeoutId) {
     window.clearTimeout(advisoryCloseTimeoutId);
@@ -219,12 +231,14 @@ function openAdvisorySheet() {
   });
 }
 
+// Resets advisory drag state after drag completion.
 function resetAdvisoryDragState() {
   advisoryDragStartY = null;
   advisoryDragPointerId = null;
   elements.advisorySheet.classList.remove("advisory-sheet--dragging");
 }
 
+// Applies vertical drag translation to the advisory panel.
 function setAdvisoryTranslate(value) {
   const translateValue = typeof value === "number" ? `${value}px` : value;
   elements.advisoryPanel.style.setProperty("--advisory-translate", translateValue);
@@ -235,6 +249,7 @@ function setAdvisoryTranslate(value) {
   }
 }
 
+// Adjusts advisory scrim opacity during drag interactions.
 function setAdvisoryScrimOpacity(value) {
   const opacity = typeof value === "number" ? Math.max(0, Math.min(1, value)) : value;
   elements.advisorySheet.style.setProperty("--advisory-scrim-opacity", String(opacity));

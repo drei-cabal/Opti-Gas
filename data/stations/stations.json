@@ -1167,8 +1167,8 @@
       },
       {
         "fuel_type": "Diesel",
-        "price": 89.95,
-        "last_updated": "2026-04-30"
+        "price": 80.0,
+        "last_updated": "2026-05-24"
       }
     ]
   },

@@ -6,6 +6,7 @@ import {
 } from "../shared/formatters.js";
 import { state } from "../shared/state.js";
 
+// Builds the summary badge for the selected or recommended station.
 export function buildSummaryBadge(station, activeVehicle) {
   if (!state.userLocation) {
     return "Awaiting location";
@@ -19,6 +20,7 @@ export function buildSummaryBadge(station, activeVehicle) {
   return state.searchQuery ? "Station match" : "Best station";
 }
 
+// Builds the summary metadata text for station distance, price, and vehicle state.
 export function buildSummaryMeta(station, activeVehicle) {
   if (station.distance_km != null) {
     const base = `P${station.price.toFixed(2)} per liter - ~${formatDistance(

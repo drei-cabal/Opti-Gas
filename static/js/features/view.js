@@ -5,10 +5,12 @@ const deps = {
   getActiveVehicle: null,
 };
 
+// Injects dependencies used by view switching and setup prompt rendering.
 export function configureView(nextDeps) {
   Object.assign(deps, nextDeps);
 }
 
+// Shows or hides the Garage setup prompt and backdrop.
 export function renderSetupPrompt() {
   const showPrompt =
     state.view === "map" && !deps.getActiveVehicle?.() && !state.setupPromptDismissed;
@@ -16,6 +18,7 @@ export function renderSetupPrompt() {
   elements.setupPrompt.classList.toggle("hidden", !showPrompt);
 }
 
+// Synchronizes Map and Garage view visibility with navigation buttons.
 export function renderViewState() {
   const isGarageView = state.view === "garage";
   elements.appShell.dataset.view = state.view;
@@ -49,11 +52,13 @@ export function renderViewState() {
   }
 }
 
+// Sets the active app destination to Map and rerenders.
 export function openMapView(render) {
   state.view = "map";
   render();
 }
 
+// Sets the active app destination to Garage and rerenders.
 export function openGarageView(render) {
   state.view = "garage";
   render();

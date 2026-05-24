@@ -7,6 +7,7 @@ import {
 } from "./state.js";
 import { normalizeMode } from "./formatters.js";
 
+// Persists setup prompt dismissal for the current browser session.
 export function dismissSetupPrompt(markSetupStarted) {
   state.setupPromptDismissed = true;
   try {
@@ -19,6 +20,7 @@ export function dismissSetupPrompt(markSetupStarted) {
   }
 }
 
+// Reads whether the setup prompt was dismissed this session.
 export function readSetupPromptDismissed() {
   try {
     const value = window.sessionStorage.getItem(SETUP_PROMPT_SESSION_KEY);
@@ -28,6 +30,7 @@ export function readSetupPromptDismissed() {
   }
 }
 
+// Loads saved Garage state and reconciles the active vehicle.
 export function hydrateGarageState({ hasCachedSession = false, syncFilterControls, getActiveVehicle } = {}) {
   const cached = readGarageState();
   if (!cached) {
@@ -57,6 +60,7 @@ export function hydrateGarageState({ hasCachedSession = false, syncFilterControl
   }
 }
 
+// Saves Garage vehicle state into local storage.
 export function persistGarageState() {
   const payload = {
     activeVehicleId: state.activeVehicleId,
@@ -71,6 +75,7 @@ export function persistGarageState() {
   }
 }
 
+// Reads and validates Garage state from local storage.
 export function readGarageState() {
   try {
     const raw = window.localStorage.getItem(GARAGE_STORAGE_KEY);
@@ -87,6 +92,7 @@ export function readGarageState() {
   }
 }
 
+// Restores the last recommendation session from local storage.
 export function hydrateCachedSession(rebindCachedStation) {
   const cached = readCachedSession();
   if (!cached) {
@@ -113,6 +119,7 @@ export function hydrateCachedSession(rebindCachedStation) {
   return true;
 }
 
+// Caches the current recommendation session for fast reloads.
 export function persistCachedSession() {
   if (!state.userLocation || !state.candidates.length) {
     return;
@@ -139,6 +146,7 @@ export function persistCachedSession() {
   }
 }
 
+// Reads and validates cached recommendation session data.
 export function readCachedSession() {
   try {
     const raw = window.localStorage.getItem(LAST_SESSION_CACHE_KEY);

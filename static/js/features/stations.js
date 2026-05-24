@@ -20,10 +20,12 @@ const deps = {
 };
 let stationSelectionToken = 0;
 
+// Injects dependencies used by station card actions.
 export function configureStations(nextDeps) {
   Object.assign(deps, nextDeps);
 }
 
+// Renders the candidate station list and binds card actions.
 export function renderCandidates() {
   if (state.isLoadingRecommendations) {
     elements.candidateList.innerHTML = renderCandidateLoadingState();
@@ -62,6 +64,7 @@ export function renderCandidates() {
   });
 }
 
+// Selects a station card and keeps map focus and scrolling in sync.
 export function selectStationCard(stationId, { focusMap = true, scroll = true } = {}) {
   if (!stationId) {
     return;
@@ -97,6 +100,7 @@ export function selectStationCard(stationId, { focusMap = true, scroll = true } 
   commitStationSelection(stationId, { focusMap, scroll });
 }
 
+// Builds the collapsed and expanded HTML for one station card.
 function renderStationCard(station) {
   const isActive = station.station_id === state.activeStationId;
 
@@ -122,6 +126,7 @@ function renderStationCard(station) {
   `;
 }
 
+// Builds the expanded station detail content and action buttons.
 function renderStationDetail(station) {
   const staleNotice = station.is_stale_price
     ? '<p class="detail-card__warning">Price may be outdated.</p>'
@@ -181,6 +186,7 @@ function renderStationDetail(station) {
   `;
 }
 
+// Builds compact station metadata for the collapsed card row.
 function buildRowMeta(station) {
   if (station.distance_km != null) {
     return `${station.brand} - ~${formatDistance(station.distance_km)}km - ~${formatDuration(
@@ -190,6 +196,7 @@ function buildRowMeta(station) {
   return `${station.brand} - ${station.available_fuel_types.join(", ")}`;
 }
 
+// Explains whether route data came from live routing or an estimate.
 function buildRouteSourceNote(station) {
   if (station.distance_source === "ors") {
     return "Travel time uses live road routing.";
@@ -203,6 +210,7 @@ function buildRouteSourceNote(station) {
   return "Travel time source unavailable.";
 }
 
+// Chooses empty-state copy for search, recommendation, or location states.
 function getEmptyListMessage() {
   if (state.searchQuery) {
     return "No gas stations match that search.";
@@ -216,6 +224,7 @@ function getEmptyListMessage() {
   return "Stations appear here after location is set.";
 }
 
+// Builds skeleton rows while recommendations are loading.
 function renderCandidateLoadingState() {
   return `
     <div class="candidate-skeleton" aria-hidden="true">
@@ -236,6 +245,7 @@ function renderCandidateLoadingState() {
   `;
 }
 
+// Keeps the active station visible at the top of the station list.
 function prioritizeActiveStation(stations) {
   if (!state.activeStationId) {
     return stations;
@@ -260,6 +270,7 @@ function prioritizeActiveStation(stations) {
   return ordered;
 }
 
+// Animates expanding or collapsing a station card.
 function animateStationToggle(stationId) {
   const currentCard = getStationCardElement(state.activeStationId);
 
@@ -279,6 +290,7 @@ function animateStationToggle(stationId) {
   selectStationCard(stationId);
 }
 
+// Commits station selection after any collapse animation finishes.
 function commitStationSelection(stationId, { focusMap, scroll }) {
   state.activeStationId = stationId;
   deps.render?.();
@@ -291,6 +303,7 @@ function commitStationSelection(stationId, { focusMap, scroll }) {
   }
 }
 
+// Expands the selected station card after render.
 function expandRenderedCard(stationId) {
   const card = getStationCardElement(stationId);
   if (!card) {
@@ -303,6 +316,7 @@ function expandRenderedCard(stationId) {
   });
 }
 
+// Finds the rendered card element for a station identity.
 function getStationCardElement(stationId) {
   if (!stationId) {
     return null;
@@ -310,6 +324,7 @@ function getStationCardElement(stationId) {
   return elements.candidateList.querySelector(`[data-station-card="${cssEscape(stationId)}"]`);
 }
 
+// Scrolls the active station card into view after selection.
 function scrollToStationCard(stationId) {
   const card = getStationCardElement(stationId);
   if (!card) {
@@ -329,6 +344,7 @@ function scrollToStationCard(stationId) {
   }, 240);
 }
 
+// Escapes station identities before using them in CSS selectors.
 function cssEscape(value) {
   if (window.CSS?.escape) {
     return window.CSS.escape(value);

@@ -141,6 +141,7 @@ configureView({
 
 bootstrap();
 
+// Boots the app by loading stations, hydrating cached state, and starting location watch.
 async function bootstrap() {
   bindEvents();
   populateVehicleFamilyOptions();
@@ -169,15 +170,21 @@ async function bootstrap() {
   }
 }
 
+// Wires top-level browser events to the feature modules.
 function bindEvents() {
+  // Wire announcement, filters, map recentering, and directions shortcuts.
   elements.announcementButton.addEventListener("click", toggleAnnouncement);
   elements.showFiltersInline.addEventListener("click", () => openSheet(elements.filterSheet));
   elements.recenterButton.addEventListener("click", () => mapView.recenter());
   elements.summaryDirections.addEventListener("click", () =>
     openDirections(getPrimaryStation(), state.userLocation)
   );
+
+  // Wire station search controls and search-driven sheet resizing.
   elements.clearSearchButton.addEventListener("click", clearSearch);
   elements.stationSearchInput.addEventListener("input", handleSearchInput);
+
+  // Wire recommendation filters and price update submission.
   elements.applyFiltersButton.addEventListener("click", async () => {
     closeSheet(elements.filterSheet);
     await refreshRecommendations();
@@ -194,6 +201,8 @@ function bindEvents() {
     syncFilterControls();
     await refreshRecommendations();
   });
+
+  // Wire first-run setup prompt and primary Map/Garage navigation.
   elements.openGaragePromptButton.addEventListener("click", () => {
     dismissSetupPrompt(true);
     openGarageView();
@@ -208,6 +217,8 @@ function bindEvents() {
   });
   elements.showMapViewButton.addEventListener("click", openMapView);
   elements.showGarageViewButton.addEventListener("click", openGarageView);
+
+  // Wire Garage vehicle modal actions and vehicle preset changes.
   elements.addVehicleButton.addEventListener("click", () => openVehicleModal());
   elements.openCreditsButton.addEventListener("click", () => openSheet(elements.creditsModal));
   elements.vehicleFamilySelect.addEventListener("change", handleVehicleFamilyChange);
@@ -215,14 +226,17 @@ function bindEvents() {
   elements.saveVehicleButton.addEventListener("click", saveVehicleProfile);
   elements.deleteVehicleButton.addEventListener("click", deleteVehicleProfile);
 
+  // Wire shared close buttons for sheets and modals.
   document.querySelectorAll("[data-close-sheet]").forEach((button) => {
     button.addEventListener("click", () => closeById(button.dataset.closeSheet));
   });
 
+  // Wire segmented choice groups to shared filter state.
   bindChoiceGroup(elements.brandButtons, "brand", "data-brand");
   bindChoiceGroup(elements.fuelTypeButtons, "fuelType", "data-fuel-type");
   bindChoiceGroup(elements.tankStatusButtons, "currentTankStatus", "data-tank-status");
 
+  // Wire recommendation mode selection and Garage lock handling.
   elements.modeButtons.addEventListener("click", async (event) => {
     const button = event.target.closest("button");
     if (!button) {
@@ -240,12 +254,14 @@ function bindEvents() {
     await refreshRecommendations();
   });
 
+  // Wire bottom-sheet and advisory drag handles.
   bindSheetDrag(elements.sheetHandle);
   bindSheetDrag(elements.sheetSummary);
   bindAdvisoryDrag(elements.advisoryHandle);
   bindAdvisoryDrag(elements.advisoryHeader);
 }
 
+// Updates station search state and keeps the active station valid.
 function handleSearchInput(event) {
   state.searchQuery = event.target.value.trim();
   const isSearching = Boolean(state.searchQuery);
@@ -263,6 +279,7 @@ function handleSearchInput(event) {
   render();
 }
 
+// Clears station search and returns the station sheet to its default state.
 function clearSearch() {
   elements.stationSearchInput.value = "";
   state.searchQuery = "";
@@ -275,11 +292,13 @@ function clearSearch() {
   render();
 }
 
+// Updates radius state as the filter slider moves.
 function handleRadiusInput(event) {
   state.radiusKm = Number(event.target.value);
   elements.radiusValue.textContent = `${state.radiusKm} km`;
 }
 
+// Coordinates app-shell rendering across map, station, Garage, and prompt modules.
 function render() {
   renderSummaryLoadingState();
 
@@ -313,6 +332,7 @@ function render() {
   );
 }
 
+// Mirrors recommendation loading state on the summary card for accessibility.
 function renderSummaryLoadingState() {
   // Mirror the recommendation refresh state in the main summary card.
   elements.sheetSummary.classList.toggle("sheet-summary--loading", state.isLoadingRecommendations);
@@ -322,10 +342,12 @@ function renderSummaryLoadingState() {
   );
 }
 
+// Switches the shell back to the map view.
 function openMapView() {
   setMapView(render);
 }
 
+// Switches the shell to the Garage view.
 function openGarageView() {
   setGarageView(render);
 }

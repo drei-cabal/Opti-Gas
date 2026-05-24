@@ -14,10 +14,12 @@ const deps = {
   syncFilterControls: null,
 };
 
+// Injects feature dependencies used by recommendation refresh.
 export function configureRecommendations(nextDeps) {
   Object.assign(deps, nextDeps);
 }
 
+// Calls the backend recommendation pipeline and stores the ranked response.
 export async function refreshRecommendations({ silent = false } = {}) {
   if (!state.userLocation) {
     deps.render?.();
@@ -69,6 +71,7 @@ export async function refreshRecommendations({ silent = false } = {}) {
   }
 }
 
+// Builds API query parameters from map, filter, and Garage state.
 function buildRecommendationParams(requestMode) {
   const params = {
     lat: state.userLocation.lat,

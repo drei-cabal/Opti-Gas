@@ -24,10 +24,12 @@ const deps = {
   syncFilterControls: null,
 };
 
+// Injects app-shell dependencies used by Garage actions.
 export function configureGarage(nextDeps) {
   Object.assign(deps, nextDeps);
 }
 
+// Renders saved vehicle cards and Garage empty state.
 export function renderGarage() {
   elements.vehicleCountMeta.textContent = `${state.vehicles.length} / ${MAX_SAVED_VEHICLES}`;
   elements.addVehicleButton.disabled = state.vehicles.length >= MAX_SAVED_VEHICLES;
@@ -73,6 +75,7 @@ export function renderGarage() {
   });
 }
 
+// Initializes vehicle family options in the vehicle form.
 export function populateVehicleFamilyOptions() {
   const familyOptions = Object.entries(VEHICLE_PRESETS)
     .map(
@@ -84,15 +87,18 @@ export function populateVehicleFamilyOptions() {
   populateVehicleSubtypeOptions(elements.vehicleFamilySelect.value || Object.keys(VEHICLE_PRESETS)[0]);
 }
 
+// Refreshes subtype options when the vehicle family changes.
 export function handleVehicleFamilyChange() {
   populateVehicleSubtypeOptions(elements.vehicleFamilySelect.value);
   applySubtypeDefaults();
 }
 
+// Applies vehicle preset defaults when subtype changes.
 export function handleVehicleSubtypeChange() {
   applySubtypeDefaults();
 }
 
+// Opens the vehicle form for creating or editing a Garage vehicle.
 export function openVehicleModal(vehicle = null) {
   if (!vehicle && state.vehicles.length >= MAX_SAVED_VEHICLES) {
     deps.showAnnouncement?.("Remove a saved vehicle before adding another one.", "info", {
@@ -127,6 +133,7 @@ export function openVehicleModal(vehicle = null) {
   deps.openSheet?.(elements.vehicleModal);
 }
 
+// Validates and persists the vehicle currently shown in the form.
 export async function saveVehicleProfile() {
   const nickname = elements.vehicleNicknameInput.value.trim();
   const plateNumber = elements.vehiclePlateNumberInput.value.trim();
@@ -201,6 +208,7 @@ export async function saveVehicleProfile() {
   }
 }
 
+// Deletes the edited vehicle and repairs active-vehicle state.
 export async function deleteVehicleProfile() {
   if (!state.editingVehicleId) {
     return;
@@ -234,6 +242,7 @@ export async function deleteVehicleProfile() {
   }
 }
 
+// Marks one saved vehicle active and refreshes dependent recommendation state.
 export async function setActiveVehicle(vehicleId) {
   const nextActive = state.vehicles.find((vehicle) => vehicle.id === vehicleId);
   if (!nextActive) {
@@ -256,6 +265,7 @@ export async function setActiveVehicle(vehicleId) {
   }
 }
 
+// Explains why personalized modes are unavailable before Garage setup.
 export function handleLockedModeAttempt() {
   deps.showAnnouncement?.("Add a vehicle in Garage to unlock personalized recommendations.", "info", {
     title: "Garage setup needed",
@@ -266,6 +276,7 @@ export function handleLockedModeAttempt() {
   }
 }
 
+// Builds one saved vehicle card for the Garage list.
 function renderGarageVehicleCard(vehicle) {
   const active = vehicle.id === state.activeVehicleId;
   const plateLine = vehicle.plate_number
@@ -298,6 +309,7 @@ function renderGarageVehicleCard(vehicle) {
   `;
 }
 
+// Loads subtype options for the selected vehicle family.
 function populateVehicleSubtypeOptions(familyKey) {
   const family = VEHICLE_PRESETS[familyKey];
   if (!family) {
@@ -312,6 +324,7 @@ function populateVehicleSubtypeOptions(familyKey) {
     .join("");
 }
 
+// Copies selected subtype defaults into the vehicle form fields.
 function applySubtypeDefaults() {
   const defaults = getSelectedSubtypeDefaults();
   if (!defaults) {
@@ -322,6 +335,7 @@ function applySubtypeDefaults() {
   elements.vehicleKmPerLiterInput.value = String(defaults.kmPerLiter);
 }
 
+// Finds the preset defaults for the current family and subtype fields.
 function getSelectedSubtypeDefaults() {
   const family = VEHICLE_PRESETS[elements.vehicleFamilySelect.value];
   if (!family) {

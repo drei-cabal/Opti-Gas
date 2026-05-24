@@ -1,3 +1,4 @@
+// Opens Google Maps navigation for the selected station and user origin.
 export function openDirections(station, userLocation) {
   if (!station || !userLocation) {
     return;

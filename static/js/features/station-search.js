@@ -7,6 +7,7 @@ const stationSearchIndex = {
   index: null,
 };
 
+// Chooses the station shown in the summary card.
 export function getPrimaryStation() {
   const visibleStations = getVisibleStations();
   // Keep the summary card aligned with the station the user selected on the map.
@@ -21,10 +22,12 @@ export function getPrimaryStation() {
   return state.best || visibleStations[0] || null;
 }
 
+// Returns the active station or falls back to the primary station.
 export function getActiveStation() {
   return getDisplayStationById(state.activeStationId) || getPrimaryStation();
 }
 
+// Finds a display-ready station by station identity.
 export function getDisplayStationById(stationId) {
   if (!stationId) {
     return null;
@@ -36,6 +39,7 @@ export function getDisplayStationById(stationId) {
   );
 }
 
+// Builds the station list visible under current search and recommendation state.
 export function getVisibleStations() {
   const query = state.searchQuery.trim().toLowerCase();
   if (query) {
@@ -60,6 +64,7 @@ export function getVisibleStations() {
   return [];
 }
 
+// Shapes a raw station record into card-ready display data.
 export function buildDisplayStation(station, recommendation = null) {
   if (!station) {
     return null;
@@ -91,6 +96,7 @@ export function buildDisplayStation(station, recommendation = null) {
   };
 }
 
+// Reattaches cached recommendation data to the current station collection.
 export function rebindCachedStation(station) {
   if (!station?.station_id) {
     return null;
@@ -101,12 +107,14 @@ export function rebindCachedStation(station) {
   return buildDisplayStation(currentStation, station);
 }
 
+// Runs Fuse.js search against the current station collection.
 function searchStations(query) {
   return getStationSearchIndex()
     .search(query)
     .map((result) => ({ station: result.item }));
 }
 
+// Creates or reuses the Fuse.js station search index.
 function getStationSearchIndex() {
   if (stationSearchIndex.source !== state.allStations) {
     stationSearchIndex.source = state.allStations;
@@ -124,6 +132,7 @@ function getStationSearchIndex() {
   return stationSearchIndex.index;
 }
 
+// Ranks search results with current recommendations before other matches.
 function sortStationsForSearch(left, right, rankByStationId) {
   const leftIsCandidate = state.candidates.some((station) => station.station_id === left.station_id);
   const rightIsCandidate = state.candidates.some(
