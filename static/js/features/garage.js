@@ -1,11 +1,12 @@
-import { elements, MAX_SAVED_VEHICLES, state, TANK_STATUS_FRACTIONS, VEHICLE_PRESETS } from "../shared/state.js";
-import { createVehicleId, escapeHtml, getFamilyLabel, getSubtypeLabel, normalizeMode } from "../shared/formatters.js";
+import { elements, MAX_SAVED_VEHICLES, state, VEHICLE_PRESETS } from "../shared/state.js";
+import { createVehicleId, escapeHtml, getFamilyLabel, getSubtypeLabel } from "../shared/formatters.js";
 import {
   dismissSetupPrompt,
   hydrateGarageState,
   persistGarageState,
   readSetupPromptDismissed,
 } from "../shared/persistence.js";
+import { getActiveVehicle } from "./garage-policy.js";
 
 export {
   dismissSetupPrompt,
@@ -253,29 +254,6 @@ export async function setActiveVehicle(vehicleId) {
   if (state.userLocation) {
     await deps.refreshRecommendations?.();
   }
-}
-
-export function deriveTripInputs(vehicle = getActiveVehicle(), tankStatus = state.currentTankStatus) {
-  if (!vehicle) {
-    return null;
-  }
-  const refillFraction = TANK_STATUS_FRACTIONS[tankStatus] ?? TANK_STATUS_FRACTIONS.half;
-  return {
-    kmPerLiter: Number(vehicle.km_per_liter),
-    litersToFill: Number(vehicle.tank_capacity_l) * refillFraction,
-  };
-}
-
-export function getActiveVehicle() {
-  return state.vehicles.find((vehicle) => vehicle.id === state.activeVehicleId) || null;
-}
-
-export function hasActiveVehicle() {
-  return Boolean(getActiveVehicle());
-}
-
-export function isModeLocked(mode) {
-  return !hasActiveVehicle() && normalizeMode(mode) !== "save-time";
 }
 
 export function handleLockedModeAttempt() {

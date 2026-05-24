@@ -33,6 +33,12 @@ Opti-Gas is a mobile-first Flask plus Leaflet app for Tagum City drivers. It rec
 - `utils/data/cache.py` owns file-metadata cache helpers shared by station and landmark loading.
 - `static/js/ui.js` is now the thin frontend entrypoint and composition seam.
 - `static/js/features/` owns feature-local browser behavior such as the Garage, station collection presentation, filters, advisories, sheets, and directions handoff.
+- `static/js/features/station-search.js` owns browser-side station lookup, Fuse.js search ranking, display-station shaping, and cached-station rebinding.
+- `static/js/features/station-summary.js` owns the selected/recommended station summary text shown in the app shell.
+- `static/js/features/price-updates.js` owns station price update flow behavior in the browser.
+- `static/js/features/garage-policy.js` owns active vehicle lookup, trip-input derivation, and recommendation-mode lock policy.
+- `static/js/features/location.js` owns GPS watch lifecycle, location-failure handling, and refresh-distance policy.
+- `static/js/features/recommendations.js` owns browser recommendation refresh, request assembly, cached recommendation updates, and map marker refresh after API responses.
 - `static/js/features/view.js` owns Map-vs-Garage visibility plus setup-prompt rendering.
 - `static/js/shared/state.js` owns the centralized frontend state, element registry, and shared constants for the current behavior-preserving module split.
 - Recommendation responses now include scoring breakdown fields such as travel cost, normalization values, and reference-price metadata so the algorithm can be explained directly from the API.

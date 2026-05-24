@@ -1,30 +1,24 @@
-import Fuse from "https://unpkg.com/fuse.js@7.3.0/dist/fuse.mjs";
-
-import { updatePrice } from "../api.js";
 import { elements, state } from "../shared/state.js";
 import {
   escapeHtml,
   formatDate,
   formatDistance,
   formatDuration,
-  normalizeMode,
 } from "../shared/formatters.js";
+import { openPriceModal } from "./price-updates.js";
+import {
+  buildDisplayStation,
+  getDisplayStationById,
+  getVisibleStations,
+} from "./station-search.js";
 
 const deps = {
-  closeSheet: null,
   getActiveVehicle: null,
   mapView: null,
   openDirections: null,
-  openSheet: null,
-  refreshRecommendations: null,
   render: null,
-  showAnnouncement: null,
 };
 let stationSelectionToken = 0;
-const stationSearchIndex = {
-  source: null,
-  index: null,
-};
 
 export function configureStations(nextDeps) {
   Object.assign(deps, nextDeps);
@@ -66,136 +60,6 @@ export function renderCandidates() {
       }
     });
   });
-}
-
-export async function submitPriceUpdate() {
-  const station = state.priceUpdateStation;
-  if (!station || state.isUpdatingPrice) {
-    return;
-  }
-
-  setPriceUpdateError("");
-  setPriceUpdateBusy(true);
-
-  try {
-    const response = await updatePrice({
-      station_name: station.name,
-      station_id: station.station_id,
-      fuel_type: station.fuel_type,
-      new_price: Number(elements.priceInput.value),
-    });
-
-    const updatedStation = response.station;
-    state.allStations = state.allStations.map((item) =>
-      item.station_id === updatedStation.station_id ? updatedStation : item
-    );
-    deps.closeSheet?.(elements.priceModal);
-    await deps.refreshRecommendations?.();
-    if (!state.userLocation) {
-      deps.render?.();
-    }
-  } catch (error) {
-    deps.showAnnouncement?.(error.message || "Unable to update the price.", "warning", {
-      title: "Price update failed",
-      kind: "system",
-    });
-    setPriceUpdateError(error.message || "Unable to update the price.");
-  } finally {
-    setPriceUpdateBusy(false);
-  }
-}
-
-export function getPrimaryStation() {
-  const visibleStations = getVisibleStations();
-  // Keep the summary card aligned with the station the user selected on the map.
-  const activeStation = getDisplayStationById(state.activeStationId);
-  if (activeStation) {
-    return activeStation;
-  }
-
-  if (state.searchQuery) {
-    return visibleStations[0] || null;
-  }
-  return state.best || visibleStations[0] || null;
-}
-
-export function getActiveStation() {
-  return getDisplayStationById(state.activeStationId) || getPrimaryStation();
-}
-
-export function getDisplayStationById(stationId) {
-  if (!stationId) {
-    return null;
-  }
-  return (
-    getVisibleStations().find((station) => station.station_id === stationId) ||
-    buildDisplayStation(state.allStations.find((station) => station.station_id === stationId))
-  );
-}
-
-export function getVisibleStations() {
-  const query = state.searchQuery.trim().toLowerCase();
-  if (query) {
-    const searchMatches = searchStations(query);
-    const rankByStationId = new Map(
-      searchMatches.map(({ station }, index) => [station.station_id, index])
-    );
-    return searchMatches
-      .map(({ station }) => {
-        const recommendation =
-          state.candidates.find((item) => item.station_id === station.station_id) ||
-          (state.best?.station_id === station.station_id ? state.best : null);
-        return buildDisplayStation(station, recommendation);
-      })
-      .sort((left, right) => sortStationsForSearch(left, right, rankByStationId));
-  }
-
-  if (state.candidates.length) {
-    return state.candidates;
-  }
-
-  return [];
-}
-
-export function buildDisplayStation(station, recommendation = null) {
-  if (!station) {
-    return null;
-  }
-
-  if (recommendation) {
-    return recommendation;
-  }
-
-  const fuel = station.fuels.find((item) => item.fuel_type === state.fuelType) || station.fuels[0];
-  return {
-    name: station.name,
-    station_id: station.station_id,
-    brand: station.brand,
-    lat: station.lat,
-    lng: station.lng,
-    fuel_type: fuel.fuel_type,
-    price: Number(fuel.price),
-    last_updated: fuel.last_updated,
-    available_fuel_types: station.fuels.map((item) => item.fuel_type),
-    distance_km: null,
-    duration_min: null,
-    economic_cost: null,
-    trip_cost: null,
-    is_stale_price: false,
-    primary_reason: null,
-    secondary_reasons: [],
-    distance_source: null,
-  };
-}
-
-export function rebindCachedStation(station) {
-  if (!station?.station_id) {
-    return null;
-  }
-
-  const currentStation =
-    state.allStations.find((item) => item.station_id === station.station_id) || null;
-  return buildDisplayStation(currentStation, station);
 }
 
 export function selectStationCard(stationId, { focusMap = true, scroll = true } = {}) {
@@ -315,115 +179,6 @@ function renderStationDetail(station) {
       </div>
     </div>
   `;
-}
-
-function openPriceModal(station) {
-  state.priceUpdateStation = createPriceUpdateTarget(station);
-  setPriceUpdateError("");
-  setPriceUpdateBusy(false);
-  elements.priceModalStation.textContent = `${station.name} - ${station.fuel_type}`;
-  elements.priceModalCurrent.textContent = `Current: P${station.price.toFixed(2)} - Reported ${formatDate(
-    station.last_updated
-  )}`;
-  elements.priceInput.value = station.price.toFixed(2);
-  deps.openSheet?.(elements.priceModal);
-  requestAnimationFrame(() => {
-    elements.priceInput.focus({ preventScroll: true });
-    elements.priceInput.scrollIntoView({ block: "center", inline: "nearest", behavior: "smooth" });
-  });
-}
-
-export function clearPriceModalTarget() {
-  state.priceUpdateStation = null;
-  setPriceUpdateError("");
-  setPriceUpdateBusy(false);
-}
-
-function createPriceUpdateTarget(station) {
-  return {
-    name: station.name,
-    station_id: station.station_id,
-    fuel_type: station.fuel_type,
-  };
-}
-
-function setPriceUpdateBusy(isBusy) {
-  state.isUpdatingPrice = isBusy;
-  elements.submitPriceButton.disabled = isBusy;
-  elements.submitPriceButton.textContent = isBusy ? "Updating..." : "Submit";
-  elements.priceInput.disabled = isBusy;
-}
-
-function setPriceUpdateError(message) {
-  if (!elements.priceModalError) {
-    return;
-  }
-  elements.priceModalError.textContent = message;
-  elements.priceModalError.classList.toggle("hidden", !message);
-}
-
-function searchStations(query) {
-  return getStationSearchIndex()
-    .search(query)
-    .map((result) => ({ station: result.item }));
-}
-
-function getStationSearchIndex() {
-  if (stationSearchIndex.source !== state.allStations) {
-    stationSearchIndex.source = state.allStations;
-    stationSearchIndex.index = new Fuse(state.allStations, {
-      keys: [
-        { name: "name", weight: 0.55 },
-        { name: "brand", weight: 0.3 },
-        { name: "fuels.fuel_type", weight: 0.15 },
-      ],
-      threshold: 0.35,
-      ignoreLocation: true,
-      minMatchCharLength: 1,
-    });
-  }
-  return stationSearchIndex.index;
-}
-
-function sortStationsForSearch(left, right, rankByStationId) {
-  const leftIsCandidate = state.candidates.some((station) => station.station_id === left.station_id);
-  const rightIsCandidate = state.candidates.some((station) => station.station_id === right.station_id);
-  if (leftIsCandidate !== rightIsCandidate) {
-    return leftIsCandidate ? -1 : 1;
-  }
-  if (rankByStationId) {
-    return (
-      (rankByStationId.get(left.station_id) ?? Number.MAX_SAFE_INTEGER) -
-      (rankByStationId.get(right.station_id) ?? Number.MAX_SAFE_INTEGER)
-    );
-  }
-  return left.station_id.localeCompare(right.station_id);
-}
-
-export function buildSummaryBadge(station) {
-  if (!state.userLocation) {
-    return "Awaiting location";
-  }
-  if (station.station_id === state.activeStationId && station.station_id !== state.best?.station_id) {
-    return "Selected station";
-  }
-  if (!deps.getActiveVehicle?.() && normalizeMode(state.mode) === "save-time") {
-    return "Quickest option";
-  }
-  return state.searchQuery ? "Station match" : "Best station";
-}
-
-export function buildSummaryMeta(station, activeVehicle) {
-  if (station.distance_km != null) {
-    const base = `P${station.price.toFixed(2)} per liter - ~${formatDistance(
-      station.distance_km
-    )}km - ~${formatDuration(station.duration_min)} min`;
-    if (!activeVehicle) {
-      return `${base}. Add a vehicle in Garage to unlock personalized recommendations.`;
-    }
-    return base;
-  }
-  return `${station.brand} - ${station.fuel_type} - updated ${formatDate(station.last_updated)}`;
 }
 
 function buildRowMeta(station) {

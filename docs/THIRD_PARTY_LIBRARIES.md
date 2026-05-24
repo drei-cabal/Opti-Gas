@@ -80,7 +80,7 @@ Current browser libraries:
 | Library | Online Location | Purpose |
 |---|---|---|
 | `DOMPurify` | `libraries/browser.json` | Sanitizes dynamic HTML before the browser renders it. |
-| `Fuse.js` | `static/js/features/stations.js` direct ESM import from `https://unpkg.com/fuse.js@7.3.0/dist/fuse.mjs` | Provides fuzzy station search by station name, brand, and fuel type. |
+| `Fuse.js` | `static/js/features/station-search.js` direct ESM import from `https://unpkg.com/fuse.js@7.3.0/dist/fuse.mjs` | Provides fuzzy station search by station name, brand, and fuel type. |
 
 The DOMPurify script tag uses Subresource Integrity:
 

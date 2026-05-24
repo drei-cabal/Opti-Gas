@@ -1,5 +1,5 @@
-import { fetchRecommend, fetchStations } from "./api.js";
-import { createMapView, DEFAULT_CENTER } from "./map.js";
+import { fetchStations } from "./api.js";
+import { createMapView } from "./map.js";
 import {
   applyLocationFailureMessage,
   bindAdvisoryDrag,
@@ -13,20 +13,18 @@ import { openDirections } from "./features/directions.js";
 import {
   deleteVehicleProfile,
   configureGarage,
-  deriveTripInputs,
   dismissSetupPrompt,
-  getActiveVehicle,
   handleLockedModeAttempt,
   handleVehicleFamilyChange,
   handleVehicleSubtypeChange,
   hydrateGarageState,
-  isModeLocked,
   openVehicleModal,
   populateVehicleFamilyOptions,
   readSetupPromptDismissed,
   renderGarage,
   saveVehicleProfile,
 } from "./features/garage.js";
+import { deriveTripInputs, getActiveVehicle, isModeLocked } from "./features/garage-policy.js";
 import {
   bindChoiceGroup,
   configureFilters,
@@ -34,6 +32,16 @@ import {
   resolveLocationFailureMessage,
   syncFilterControls,
 } from "./features/filters.js";
+import { configureLocation, requestLocation } from "./features/location.js";
+import {
+  clearPriceModalTarget,
+  configurePriceUpdates,
+  submitPriceUpdate,
+} from "./features/price-updates.js";
+import {
+  configureRecommendations,
+  refreshRecommendations,
+} from "./features/recommendations.js";
 import {
   bindSheetDrag,
   configureSheets,
@@ -42,18 +50,13 @@ import {
   openSheet,
   setSheetState,
 } from "./features/sheets.js";
+import { configureStations, renderCandidates, selectStationCard } from "./features/stations.js";
 import {
-  buildSummaryBadge,
-  buildSummaryMeta,
-  clearPriceModalTarget,
-  configureStations,
   getPrimaryStation,
   getVisibleStations,
   rebindCachedStation,
-  renderCandidates,
-  selectStationCard,
-  submitPriceUpdate,
-} from "./features/stations.js";
+} from "./features/station-search.js";
+import { buildSummaryBadge, buildSummaryMeta } from "./features/station-summary.js";
 import {
   configureView,
   openGarageView as setGarageView,
@@ -63,10 +66,7 @@ import {
 } from "./features/view.js";
 import { normalizeMode } from "./shared/formatters.js";
 import { elements, state } from "./shared/state.js";
-import {
-  hydrateCachedSession,
-  persistCachedSession,
-} from "./shared/persistence.js";
+import { hydrateCachedSession } from "./shared/persistence.js";
 
 const mapView = createMapView({
   onStationSelect: (stationId) => {
@@ -75,20 +75,37 @@ const mapView = createMapView({
   },
 });
 
-const LOCATION_OPTIONS = {
-  enableHighAccuracy: true,
-  timeout: 10000,
-  maximumAge: 5000,
-};
-const LOCATION_REFRESH_DISTANCE_METERS = 75;
-
-let locationWatchId = null;
-let lastRecommendationLocation = null;
-
 configureFilters({
   deriveTripInputs,
   getActiveVehicle,
   isModeLocked,
+});
+
+configureLocation({
+  applyLocationFailureMessage,
+  clearAnnouncement,
+  mapView,
+  refreshRecommendations,
+  render,
+  resolveLocationFailureMessage,
+});
+
+configureRecommendations({
+  deriveTripInputs,
+  getVisibleStations,
+  isModeLocked,
+  mapView,
+  render,
+  showAnnouncement,
+  syncFilterControls,
+});
+
+configurePriceUpdates({
+  closeSheet,
+  openSheet,
+  refreshRecommendations,
+  render,
+  showAnnouncement,
 });
 
 configureSheets({
@@ -101,14 +118,10 @@ configureSheets({
 });
 
 configureStations({
-  closeSheet,
   getActiveVehicle,
   mapView,
   openDirections: (station) => openDirections(station, state.userLocation),
-  openSheet,
-  refreshRecommendations,
   render,
-  showAnnouncement,
 });
 
 configureGarage({
@@ -267,155 +280,6 @@ function handleRadiusInput(event) {
   elements.radiusValue.textContent = `${state.radiusKm} km`;
 }
 
-async function requestLocation({ forceRetry = false } = {}) {
-  if (!navigator.geolocation) {
-    handleLocationFailure({ reason: "unsupported" });
-    return;
-  }
-
-  if (!forceRetry && navigator.permissions?.query) {
-    try {
-      const status = await navigator.permissions.query({ name: "geolocation" });
-      if (status.state === "denied") {
-        handleLocationFailure({ reason: "denied" });
-        return;
-      }
-    } catch (error) {
-      // Ignore permissions API failures and try geolocation directly.
-    }
-  }
-
-  if (locationWatchId !== null) {
-    navigator.geolocation.clearWatch(locationWatchId);
-  }
-
-  locationWatchId = navigator.geolocation.watchPosition(
-    (position) => {
-      void handleLocationSuccess(position);
-    },
-    (error) => handleLocationFailure({ error }),
-    LOCATION_OPTIONS
-  );
-}
-
-async function handleLocationSuccess(position) {
-  const lat = position.coords.latitude;
-  const lng = position.coords.longitude;
-  const nextLocation = { lat, lng };
-  const previousLocation = state.userLocation;
-  const shouldRefresh = shouldRefreshForLocation(nextLocation);
-
-  state.userLocation = nextLocation;
-  state.locationSource = "gps";
-  clearAnnouncement();
-  mapView.setUserLocation(lat, lng, { fly: !previousLocation || shouldRefresh });
-
-  if (shouldRefresh) {
-    await refreshRecommendations({ silent: Boolean(state.candidates.length) });
-  } else {
-    render();
-  }
-}
-
-function handleLocationFailure({ reason = null, error = null } = {}) {
-  state.userLocation = null;
-  state.locationSource = null;
-  lastRecommendationLocation = null;
-  applyLocationFailureMessage(resolveLocationFailureMessage(reason, error));
-  mapView.centerMap(DEFAULT_CENTER.lat, DEFAULT_CENTER.lng, DEFAULT_CENTER.zoom);
-}
-
-function shouldRefreshForLocation(nextLocation) {
-  if (!lastRecommendationLocation) {
-    return true;
-  }
-  return (
-    getDistanceMeters(lastRecommendationLocation, nextLocation) >= LOCATION_REFRESH_DISTANCE_METERS
-  );
-}
-
-function getDistanceMeters(origin, destination) {
-  const earthRadiusMeters = 6371000;
-  const originLat = toRadians(origin.lat);
-  const destinationLat = toRadians(destination.lat);
-  const latDelta = toRadians(destination.lat - origin.lat);
-  const lngDelta = toRadians(destination.lng - origin.lng);
-  const a =
-    Math.sin(latDelta / 2) ** 2 +
-    Math.cos(originLat) * Math.cos(destinationLat) * Math.sin(lngDelta / 2) ** 2;
-  return earthRadiusMeters * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
-
-function toRadians(value) {
-  return (value * Math.PI) / 180;
-}
-
-async function refreshRecommendations({ silent = false } = {}) {
-  if (!state.userLocation) {
-    render();
-    return;
-  }
-
-  const requestMode = isModeLocked(state.mode) ? "save-time" : normalizeMode(state.mode);
-  if (requestMode !== state.mode) {
-    state.mode = requestMode;
-    syncFilterControls();
-  }
-
-  if (!silent) {
-    state.isLoadingRecommendations = true;
-    render();
-  }
-
-  try {
-    const params = {
-      lat: state.userLocation.lat,
-      lng: state.userLocation.lng,
-      mode: requestMode,
-      brand: state.brand,
-      fuel_type: state.fuelType,
-      radius_km: state.radiusKm,
-    };
-
-    const tripInputs = deriveTripInputs();
-    if (tripInputs) {
-      params.km_per_liter = tripInputs.kmPerLiter;
-      params.liters_to_fill = tripInputs.litersToFill;
-    }
-
-    const response = await fetchRecommend(params);
-
-    state.best = response.best;
-    state.candidates = response.candidates;
-    state.recommendationReason = response.reason || null;
-    lastRecommendationLocation = { ...state.userLocation };
-
-    const visibleStations = getVisibleStations();
-    if (
-      !state.activeStationId ||
-      !visibleStations.some((station) => station.station_id === state.activeStationId)
-    ) {
-      state.activeStationId = visibleStations[0]?.station_id || state.best?.station_id || null;
-    }
-
-    persistCachedSession();
-    mapView.renderStations({
-      stations: state.allStations,
-      candidates: state.candidates,
-      best: state.best,
-      activeStationId: state.activeStationId,
-    });
-  } catch (error) {
-    showAnnouncement(error.message || "Unable to compute the recommendation.", "warning", {
-      title: "Recommendation unavailable",
-      kind: "system",
-    });
-  } finally {
-    state.isLoadingRecommendations = false;
-    render();
-  }
-}
-
 function render() {
   renderSummaryLoadingState();
 
@@ -425,7 +289,7 @@ function render() {
   elements.summaryBadge.textContent = primary
     ? hasSearch
       ? "Station match"
-      : buildSummaryBadge(primary)
+      : buildSummaryBadge(primary, activeVehicle)
     : "Awaiting location";
   elements.summaryTitle.textContent = primary ? primary.name : "Find the best station near you";
   elements.summaryMeta.textContent = primary

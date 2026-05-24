@@ -107,9 +107,15 @@ How to read it:
 The frontend is intentionally split by feature boundary:
 
 - `static/js/ui.js`: thin entrypoint that boots the app, wires events, and composes modules
-- `static/js/features/stations.js`: station list rendering, active station selection, and station actions
-- `static/js/features/garage.js`: Garage rendering, vehicle CRUD, active vehicle policy, and trip-input derivation
+- `static/js/features/stations.js`: station card rendering, active station selection, and station actions
+- `static/js/features/station-search.js`: station lookup, Fuse.js search ranking, display-station shaping, and cached-station rebinding
+- `static/js/features/station-summary.js`: summary badge and metadata text for the selected or recommended station
+- `static/js/features/price-updates.js`: station price update modal state, API mutation, and refreshed station collection handling
+- `static/js/features/garage.js`: Garage rendering, vehicle CRUD, and vehicle form handling
+- `static/js/features/garage-policy.js`: active vehicle lookup, trip-input derivation, and recommendation-mode lock policy
 - `static/js/features/filters.js`: filter UI syncing, fuel-type button rendering, and location-failure copy
+- `static/js/features/location.js`: GPS watch lifecycle, location-failure handling, and refresh-distance policy
+- `static/js/features/recommendations.js`: browser recommendation refresh, request assembly, and cached result updates
 - `static/js/features/advisories.js`: advisory sheet state, announcements, and drag/close behavior
 - `static/js/features/sheets.js`: generic sheet and modal open/close plus bottom-sheet drag behavior
 - `static/js/features/directions.js`: Google Maps handoff
@@ -286,7 +292,8 @@ Relevant files:
 
 - `utils/data/station_store.py`
 - `utils/recommendations/engine/recommender.py`
-- `static/js/features/stations.js`
+- `static/js/features/station-search.js`
+- `static/js/features/price-updates.js`
 
 This is an identity-resolution algorithm based on location rather than name alone.
 

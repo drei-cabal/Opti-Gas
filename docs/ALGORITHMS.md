@@ -14,6 +14,8 @@ This document lists the main project-specific algorithms and third-party algorit
 | Min-max normalization | Making pesos, minutes, and kilometers comparable. | Implemented in `utils/recommendations/product_rules/normalization.py`. Opti-Gas converts each metric into a `0` to `1` value before applying weights. |
 | Preset weighted scoring | Ranking filtered stations. | Implemented in `utils/recommendations/filters/scoring_filter.py`. Opti-Gas combines normalized cost, travel time, and distance using the selected mode: `opti-route`, `save-money`, `save-time`, or `balanced`. Lower score is better. |
 | Tie-break ranking | Keeping station order stable when scores are equal. | Implemented in `utils/recommendations/filters/scoring_filter.py`. Opti-Gas breaks ties by final score, economic cost, distance, duration, fuel price, and station ID. |
+| Browser station search ranking | Ordering station cards when the user searches by station, brand, or fuel type. | Implemented in `static/js/features/station-search.js`. Fuse.js returns search matches, then Opti-Gas keeps current recommendation candidates ahead of non-candidates and uses station identity for stable ordering. |
+| GPS refresh threshold | Avoiding route recomputation for small location jitter. | Implemented in `static/js/features/location.js`. Opti-Gas tracks the last successful recommendation origin and refreshes recommendations only after the GPS origin moves at least 75 meters. |
 
 ## Python Standard Library Utilities
 
